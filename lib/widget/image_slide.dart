@@ -1,6 +1,7 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 
+//점으로 현재 페이지 표시되는 이미지 슬라이드
 class ImageSlideHasDot extends StatefulWidget {
   @override
   _ImageSlideHasDotState createState() => _ImageSlideHasDotState();
@@ -10,46 +11,42 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
   PageController _pageController = PageController(initialPage: 0);
   double _currentPosition = 0.0;
   final List<Container> images = <Container>[
-    Container(
-      color: Colors.red,
-      height: 50,
-    ),
-    Container(color: Colors.blue, height: 50),
-    Container(color: Colors.black, height: 50),
+    Container(color: Colors.red),
+    Container(color: Colors.blue),
+    Container(color: Colors.black),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            itemCount: images.length,
-            itemBuilder: (BuildContext context, int index) {
-              _currentPosition = index.toDouble();
-              return images[index];
-            },
-            onPageChanged: (value) {
-              _currentPosition = value.toDouble();
-              setState(() {});
-            },
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: DotsIndicator(
-                dotsCount: images.length,
-                position: _currentPosition,
-              ),
+    return Stack(
+      children: [
+        PageView.builder(
+          controller: _pageController,
+          itemCount: images.length,
+          itemBuilder: (BuildContext context, int index) {
+            _currentPosition = index.toDouble();
+            return images[index];
+          },
+          onPageChanged: (value) {
+            _currentPosition = value.toDouble();
+            setState(() {});
+          },
+        ),
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: DotsIndicator(
+              dotsCount: images.length,
+              position: _currentPosition,
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }
 
+//숫자로 현재페이지 표시되는 이미지 슬라이드
 class ImageSlideHasNum extends StatefulWidget {
   final double height;
   final double width;
@@ -62,17 +59,16 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
   PageController _pageController = PageController(initialPage: 0);
   double _currentPosition = 0.0;
   final List<Container> images = <Container>[
-    Container(
-      color: Colors.purple[100],
-      height: 50,
-    ),
-    Container(color: Colors.purple[200], height: 50),
-    Container(color: Colors.purple[300], height: 50),
+    Container(color: Colors.purple[100]),
+    Container(color: Colors.purple[200]),
+    Container(color: Colors.purple[300]),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: widget.height,
+      width: widget.width,
       child: Stack(
         children: [
           PageView.builder(
@@ -87,13 +83,21 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
               setState(() {});
             },
           ),
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                child:
-                    Text("${(_currentPosition + 1).toInt()}/${images.length}"),
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: Container(
+              width: widget.width * 0.15,
+              height: widget.height * 0.2,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(7),
               ),
+              child: Center(
+                  child: Text(
+                "${(_currentPosition + 1).toInt()}/${images.length}",
+                style: TextStyle(fontSize: 20),
+              )),
             ),
           ),
         ],

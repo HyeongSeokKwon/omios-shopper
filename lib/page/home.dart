@@ -11,67 +11,68 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+  List<Widget> selectedPage = [
+    DeepyHome(),
+    SearchImage(),
+    Chatting(),
+    MyPage(),
+  ];
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text("deepy", style: TextStyle(color: Colors.black)),
-          backgroundColor: MAINCOLOR,
-        ),
-        body: TabBarView(
-          children: [
-            DeepyHome(),
-            SearchImage(),
-            Chatting(),
-            MyPage(),
-          ],
-        ),
-        bottomNavigationBar: TabBar(
-          indicatorColor: Colors.purple[200],
-          labelColor: Colors.purple[200],
-          tabs: [
-            Container(
-              child: Tab(
-                icon: Icon(
-                  Icons.home,
-                  color: Colors.purple[100],
-                ),
-                text: '홈',
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text("deepy", style: TextStyle(color: Colors.black)),
+        backgroundColor: MAINCOLOR,
+      ),
+      body: selectedPage[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            label: "홈",
+            icon: Icon(
+              Icons.home,
+              color: Colors.purple[100],
             ),
-            Container(
-              child: Tab(
-                icon: Icon(
-                  Icons.chat,
-                  color: Colors.purple[100],
-                ),
-                text: '이미지 검색',
-              ),
+          ),
+          BottomNavigationBarItem(
+            label: "이미지검색",
+            icon: Icon(
+              Icons.home,
+              color: Colors.purple[100],
             ),
-            Container(
-              child: Tab(
-                icon: Icon(
-                  Icons.people,
-                  color: Colors.purple[100],
-                ),
-                text: '채팅',
-              ),
+          ),
+          BottomNavigationBarItem(
+            label: "채팅",
+            icon: Icon(
+              Icons.home,
+              color: Colors.purple[100],
             ),
-            Container(
-              child: Tab(
-                icon: Icon(
-                  Icons.people,
-                  color: Colors.purple[100],
-                ),
-                text: '마이페이지',
-              ),
-            )
-          ],
-        ),
+          ),
+          BottomNavigationBarItem(
+            label: "마이페이지",
+            icon: Icon(
+              Icons.home,
+              color: Colors.purple[100],
+            ),
+          ),
+        ],
+        selectedItemColor: MAINCOLOR,
+        unselectedItemColor: Colors.grey,
+        selectedIconTheme: IconThemeData(color: MAINCOLOR),
+        unselectedIconTheme: IconThemeData(color: Colors.grey),
+        showUnselectedLabels: true,
+        selectedFontSize: 12.0,
+        onTap: onItemTapped,
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
       ),
     );
+  }
+
+  void onItemTapped(int index) {
+    _currentIndex = index;
+    setState(() {});
   }
 }

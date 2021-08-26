@@ -8,8 +8,6 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("3"),
-    );
+    return Container();
   }
 }
