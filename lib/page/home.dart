@@ -23,8 +23,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("deepy", style: TextStyle(color: Colors.black)),
-        backgroundColor: MAINCOLOR,
+        title: Container(
+            child: Row(
+          children: [
+            Text("deepy", style: TextStyle(color: Colors.black)),
+          ],
+        )),
+        backgroundColor: Colors.white,
       ),
       body: selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
