@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 //점으로 현재 페이지 표시되는 이미지 슬라이드
 class ImageSlideHasDot extends StatefulWidget {
@@ -56,13 +60,33 @@ class ImageSlideHasNum extends StatefulWidget {
 }
 
 class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
-  PageController _pageController = PageController(initialPage: 0);
   double _currentPosition = 0.0;
+  PageController _pageController = PageController(
+    initialPage: 0,
+  );
   final List<Container> images = <Container>[
     Container(color: Colors.purple[100]),
     Container(color: Colors.purple[200]),
     Container(color: Colors.purple[300]),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 3), (Timer timer) {
+      if (_pageController.hasClients) {
+        if (_currentPosition < 2) {
+          _currentPosition = _currentPosition + 1;
+          print(_currentPosition);
+        } else {
+          _currentPosition = 0;
+          print(_currentPosition);
+        }
+        _pageController.animateToPage(_currentPosition.toInt(),
+            duration: Duration(milliseconds: 3), curve: Curves.easeInOut);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +96,7 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
       child: Stack(
         children: [
           PageView.builder(
+            pageSnapping: true,
             controller: _pageController,
             itemCount: images.length,
             itemBuilder: (BuildContext context, int index) {
@@ -88,7 +113,7 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
             right: 10,
             child: Container(
               width: widget.width * 0.15,
-              height: widget.height * 0.2,
+              height: widget.height * 0.15,
               decoration: BoxDecoration(
                 color: Colors.grey[400],
                 borderRadius: BorderRadius.circular(7),
