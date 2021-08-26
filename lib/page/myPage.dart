@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Page3 extends StatefulWidget {
+class MyPage extends StatefulWidget {
   @override
-  _Page3State createState() => _Page3State();
+  _MyPageState createState() => _MyPageState();
 }
 
-class _Page3State extends State<Page3> {
+class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return Container(

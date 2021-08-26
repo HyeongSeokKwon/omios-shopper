@@ -1,6 +1,7 @@
-import 'package:cloth_collection/page/page1.dart';
-import 'package:cloth_collection/page/page2.dart';
-import 'package:cloth_collection/page/page3.dart';
+import 'package:cloth_collection/page/SearchImage.dart';
+import 'package:cloth_collection/page/deepyHome.dart';
+import 'package:cloth_collection/page/chatting.dart';
+import 'package:cloth_collection/page/myPage.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -22,9 +23,10 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            Page1(),
-            Page2(),
-            Page3(),
+            DeepyHome(),
+            SearchImage(),
+            Chatting(),
+            MyPage(),
           ],
         ),
         bottomNavigationBar: TabBar(
@@ -32,33 +34,39 @@ class _HomePageState extends State<HomePage> {
           labelColor: Colors.purple[200],
           tabs: [
             Container(
-              height: 50,
               child: Tab(
                 icon: Icon(
                   Icons.home,
-                  color: Colors.white,
+                  color: Colors.purple[100],
                 ),
-                text: 'home',
+                text: '홈',
               ),
             ),
             Container(
-              height: 50,
               child: Tab(
                 icon: Icon(
                   Icons.chat,
-                  color: Colors.white,
+                  color: Colors.purple[100],
                 ),
-                text: 'chat',
+                text: '이미지 검색',
               ),
             ),
             Container(
-              height: 50,
               child: Tab(
                 icon: Icon(
                   Icons.people,
-                  color: Colors.white,
+                  color: Colors.purple[100],
                 ),
-                text: 'my',
+                text: '채팅',
+              ),
+            ),
+            Container(
+              child: Tab(
+                icon: Icon(
+                  Icons.people,
+                  color: Colors.purple[100],
+                ),
+                text: '마이페이지',
               ),
             )
           ],

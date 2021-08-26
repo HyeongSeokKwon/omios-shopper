@@ -1,12 +1,12 @@
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 
-class Page1 extends StatefulWidget {
+class SearchImage extends StatefulWidget {
   @override
-  _Page1State createState() => _Page1State();
+  _SearchImageState createState() => _SearchImageState();
 }
 
-class _Page1State extends State<Page1> {
+class _SearchImageState extends State<SearchImage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
