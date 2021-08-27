@@ -43,9 +43,9 @@ class _DeepyHomeState extends State<DeepyHome> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ProductCard(),
-                SizedBox(width: 25),
+                SizedBox(width: 5),
                 ProductCard(),
-                SizedBox(width: 25),
+                SizedBox(width: 5),
                 ProductCard(),
               ],
             ),
