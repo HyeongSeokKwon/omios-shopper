@@ -1,4 +1,5 @@
 import 'package:cloth_collection/page/home.dart';
+import 'package:cloth_collection/page/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -17,10 +18,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.purple,
-      ),
-      home: HomePage(),
-    );
+        theme: ThemeData(
+          primaryColor: Colors.purple,
+        ),
+        home: Login());
   }
 }
