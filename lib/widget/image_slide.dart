@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 //점으로 현재 페이지 표시되는 이미지 슬라이드
 class ImageSlideHasDot extends StatefulWidget {
