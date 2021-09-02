@@ -1,4 +1,3 @@
-import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

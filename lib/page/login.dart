@@ -46,6 +46,10 @@ class _LoginState extends State<Login> {
               child: Row(
                 children: [
                   // 자동로그인
+                  IconButton(
+                    onPressed: () {},
+                    icon: Image.asset("assets/images/login_check/unLogin.png"),
+                  ),
                   Text("자동로그인",
                       style: TextStyle(
                           color: const Color(0xff666666),
@@ -63,6 +67,11 @@ class _LoginState extends State<Login> {
               child: TextButton(
                 child: Text("로그인", style: TextStyle(color: Colors.white)),
                 style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                    ),
+                  ),
                   fixedSize: MaterialStateProperty.all<Size>(Size(370.w, 60.h)),
                   backgroundColor:
                       MaterialStateProperty.all<Color>(const Color(0xffec5363)),
@@ -78,12 +87,12 @@ class _LoginState extends State<Login> {
                 InkWell(
                   child: Text(
                     "아이디 찾기",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: const Color(0xff999999),
                       fontWeight: FontWeight.w400,
                       fontFamily: "NotoSansKR",
                       fontStyle: FontStyle.normal,
-                      fontSize: 14.0,
+                      fontSize: 14.sp,
                     ),
                   ),
                   onTap: () {},
@@ -100,17 +109,41 @@ class _LoginState extends State<Login> {
                 InkWell(
                   child: Text(
                     "비밀번호 찾기",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: const Color(0xff999999),
                       fontWeight: FontWeight.w400,
                       fontFamily: "NotoSansKR",
                       fontStyle: FontStyle.normal,
-                      fontSize: 14.0,
+                      fontSize: 14.sp,
                     ),
                   ),
                   onTap: () {},
                 ),
               ],
+            ),
+            SizedBox(height: 100),
+            Center(
+              child: TextButton(
+                child: Text(
+                  "지금 회원가입하기!",
+                  style: TextStyle(
+                      color: const Color(0xff666666),
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "NotoSansKR",
+                      fontStyle: FontStyle.normal,
+                      fontSize: 16),
+                ),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                      side: BorderSide(color: const Color(0xffe2e2e2)),
+                    ),
+                  ),
+                  fixedSize: MaterialStateProperty.all<Size>(Size(370.w, 56.h)),
+                ),
+                onPressed: () {},
+              ),
             ),
           ],
         ),
