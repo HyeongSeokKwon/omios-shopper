@@ -1,5 +1,11 @@
+import 'package:cloth_collection/controller/loginController.dart';
+import 'package:cloth_collection/page/deepyHome.dart';
+import 'package:cloth_collection/page/home.dart';
+import 'package:cloth_collection/widget/frequently_used_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -7,6 +13,17 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  String autoLoginIcon = "assets/images/login_check/Login.png";
+  String autoUnLoginIcon = "assets/images/login_check/unLogin.png";
+  LoginController controller = LoginController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.init();
+    print(controller.isChecked);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,11 +43,13 @@ class _LoginState extends State<Login> {
                       fontWeight: FontWeight.w700,
                       fontFamily: "NotoSansKR",
                       fontStyle: FontStyle.normal,
-                      fontSize: 28.w),
+                      fontSize: 28.0.sp),
                 ),
               ),
             ),
+
             SizedBox(height: 50.h),
+
             Padding(
               padding: EdgeInsets.only(left: 22.w),
               child: _buildTextfield("아이디"),
@@ -46,9 +65,27 @@ class _LoginState extends State<Login> {
               child: Row(
                 children: [
                   // 자동로그인
-                  IconButton(
-                    onPressed: () {},
-                    icon: Image.asset("assets/images/login_check/unLogin.png"),
+                  GetBuilder<LoginController>(
+                    init: controller,
+                    builder: (_) => FutureBuilder(
+                      future: SharedPreferences.getInstance(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasData) {
+                            return IconButton(
+                              onPressed: () {
+                                controller.checkedAutoLogin();
+                              },
+                              icon: Image.asset(controller.isChecked
+                                  ? autoLoginIcon
+                                  : autoUnLoginIcon),
+                            );
+                          } else
+                            return progressBar();
+                        } else
+                          return progressBar();
+                      },
+                    ),
                   ),
                   Text("자동로그인",
                       style: TextStyle(
@@ -121,7 +158,7 @@ class _LoginState extends State<Login> {
                 ),
               ],
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 100.h),
             Center(
               child: TextButton(
                 child: Text(
@@ -131,7 +168,7 @@ class _LoginState extends State<Login> {
                       fontWeight: FontWeight.w500,
                       fontFamily: "NotoSansKR",
                       fontStyle: FontStyle.normal,
-                      fontSize: 16),
+                      fontSize: 16.sp),
                 ),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -145,6 +182,12 @@ class _LoginState extends State<Login> {
                 onPressed: () {},
               ),
             ),
+            InkWell(
+              child: Text("건너뛰기"),
+              onTap: () {
+                Get.off(() => HomePage());
+              },
+            ),
           ],
         ),
       ),
@@ -155,39 +198,38 @@ class _LoginState extends State<Login> {
     return Container(
       alignment: Alignment.center,
       width: 370.w,
-      height: 75.h,
+      height: 71.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(14.r)),
         border: Border.all(color: const Color(0xffcccccc), width: 1.w),
         color: const Color(0xffffffff),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Column(
-          children: [
-            TextFormField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: "$type",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelStyle: TextStyle(
-                    color: const Color(0xff666666),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
-                    fontStyle: FontStyle.normal,
-                    fontSize: 12.sp,
-                  ),
-                  hintText: ("$type를 입력하세요"),
-                  hintStyle: TextStyle(
-                      color: const Color(0xffcccccc),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: "NotoSansKR",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 16.sp),
-                ),
-                textAlign: TextAlign.left),
-          ],
-        ),
+        padding: EdgeInsets.only(left: 8.0.w),
+        child: TextFormField(
+            maxLength: 30,
+            obscureText: type == "아이디" ? false : true,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              labelText: "$type",
+              counterText: '',
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              labelStyle: TextStyle(
+                color: const Color(0xff666666),
+                fontWeight: FontWeight.w400,
+                fontFamily: "NotoSansKR",
+                fontStyle: FontStyle.normal,
+                fontSize: 14.sp,
+              ),
+              hintText: ("$type를 입력하세요"),
+              hintStyle: TextStyle(
+                  color: const Color(0xffcccccc),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: "NotoSansKR",
+                  fontStyle: FontStyle.normal,
+                  fontSize: 16.sp),
+            ),
+            textAlign: TextAlign.left),
       ),
     );
   }
