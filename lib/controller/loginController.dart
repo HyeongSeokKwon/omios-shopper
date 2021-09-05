@@ -19,7 +19,6 @@ class LoginController extends GetxController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isChecked = !isChecked;
     prefs.setBool('isChecked', isChecked);
-    print(isChecked);
     update();
   }
 }
