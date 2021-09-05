@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SearchImage extends StatefulWidget {
   @override
@@ -11,65 +12,87 @@ class _SearchImageState extends State<SearchImage> {
   PickedFile? _image;
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
-
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 130),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: InkWell(
-                child: Container(
-                  width: width * 0.6,
-                  height: width * 0.7,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.grey),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _image == null
-                          ? Center(
-                              child: Column(
-                                children: [
-                                  Text("찾고싶은 옷이 있으면 올려주세요."),
-                                  SizedBox(height: height * 0.03),
-                                  Icon(
-                                    Icons.add_a_photo_outlined,
-                                    color: Colors.grey,
-                                    size: 35,
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Image.file(
-                              File(_image!.path),
-                              width: width * 0.6,
-                              height: width * 0.6,
-                              fit: BoxFit.fitHeight,
-                            ),
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  showPicker(context);
-                },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 30.h, bottom: 15, left: 22.w),
+            child: Container(
+              child: Text(
+                "Deepy님!\n지금 어떤 옷을 찾고있나요?",
+                style: TextStyle(
+                    color: const Color(0xff333333),
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "NotoSansKR",
+                    fontStyle: FontStyle.normal,
+                    fontSize: 23.0.sp),
               ),
             ),
-          ],
-        ),
+          ),
+          Center(
+            child: InkWell(
+              child: Container(
+                width: 370.w,
+                height: 370.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xfffafafa),
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _image == null
+                        ? Center(
+                            child: Image.asset(
+                                "assets/images/uploaded_picture/uploaded_picture.png"),
+                          )
+                        : Image.file(
+                            File(_image!.path),
+                            width: 370.w,
+                            height: 370.w,
+                            fit: BoxFit.fitHeight,
+                          ),
+                  ],
+                ),
+              ),
+              onTap: () {
+                showPicker(context);
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Center(
+              child: TextButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                        "assets/images/upload_picture/upload_picture.png"),
+                    SizedBox(width: 5.w),
+                    Text(
+                      "이미지 업로드",
+                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                    ),
+                  ],
+                ),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                    ),
+                  ),
+                  fixedSize: MaterialStateProperty.all<Size>(Size(370.w, 60.h)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+                ),
+                onPressed: () {},
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
