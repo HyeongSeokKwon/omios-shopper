@@ -10,31 +10,48 @@ class SearchImage extends StatefulWidget {
 
 class _SearchImageState extends State<SearchImage> {
   PickedFile? _image;
+  final id = "Deepy";
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 30.h, bottom: 15, left: 22.w),
+            padding: EdgeInsets.only(
+                top: height * 0.045,
+                bottom: height * 0.025,
+                left: width * 0.053),
             child: Container(
-              child: Text(
-                "Deepy님!\n지금 어떤 옷을 찾고있나요?",
-                style: TextStyle(
-                    color: const Color(0xff333333),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "NotoSansKR",
-                    fontStyle: FontStyle.normal,
-                    fontSize: 23.0.sp),
+              child: RichText(
+                text: TextSpan(
+                  text: "$id님!\n",
+                  style: TextStyle(
+                      color: const Color(0xffec5363),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 18.sp),
+                  children: [
+                    TextSpan(
+                      text: "지금 어떤 옷을 찾고있나요?",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 18.sp),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           Center(
             child: InkWell(
               child: Container(
-                width: 370.w,
-                height: 370.w,
+                width: width * 0.894,
+                height: width * 0.894,
                 decoration: BoxDecoration(
                   color: const Color(0xfffafafa),
                   border: Border.all(color: Colors.grey),
@@ -46,7 +63,9 @@ class _SearchImageState extends State<SearchImage> {
                     _image == null
                         ? Center(
                             child: Image.asset(
-                                "assets/images/uploaded_picture/uploaded_picture.png"),
+                              "assets/images/uploaded_picture/uploaded_picture.png",
+                              fit: BoxFit.fitHeight,
+                            ),
                           )
                         : Image.file(
                             File(_image!.path),
@@ -63,7 +82,7 @@ class _SearchImageState extends State<SearchImage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 30.0),
+            padding: EdgeInsets.only(top: height * 0.029),
             child: Center(
               child: TextButton(
                 child: Row(
@@ -74,7 +93,11 @@ class _SearchImageState extends State<SearchImage> {
                     SizedBox(width: 5.w),
                     Text(
                       "이미지 업로드",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 16.sp),
                     ),
                   ],
                 ),
@@ -84,7 +107,8 @@ class _SearchImageState extends State<SearchImage> {
                       borderRadius: BorderRadius.circular(14.r),
                     ),
                   ),
-                  fixedSize: MaterialStateProperty.all<Size>(Size(370.w, 60.h)),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                      Size(width * 0.894, height * 0.067)),
                   backgroundColor:
                       MaterialStateProperty.all<Color>(const Color(0xffec5363)),
                 ),
