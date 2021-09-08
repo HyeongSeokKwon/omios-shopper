@@ -21,7 +21,6 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     controller.init();
-    print(controller.isChecked);
   }
 
   @override
@@ -31,6 +30,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
+        color: const Color(0xffffffff),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -60,49 +60,56 @@ class _LoginState extends State<Login> {
                   _buildTextfield("비밀번호", width, height),
                   Container(
                     height: height * 0.069,
-                    child: Row(
-                      children: [
-                        // 자동로그인
-                        GetBuilder<LoginController>(
-                          init: controller,
-                          builder: (_) => FutureBuilder(
-                            future: SharedPreferences.getInstance(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                if (snapshot.hasData) {
-                                  return IconButton(
-                                    onPressed: () {
-                                      controller.checkedAutoLogin();
-                                    },
-                                    icon: Container(
-                                      width: width * 0.043,
-                                      height: height * 0.043,
-                                      child: Image.asset(controller.isChecked
-                                          ? autoLoginIcon
-                                          : autoUnLoginIcon),
-                                    ),
-                                  );
-                                } else
-                                  return progressBar();
-                              } else
-                                return progressBar();
-                            },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: width * 0.03),
+                      child: Row(
+                        children: [
+                          // 자동로그인
+                          Container(
+                            width: width * 0.1,
+                            child: GetBuilder<LoginController>(
+                              init: controller,
+                              builder: (_) => FutureBuilder(
+                                future: SharedPreferences.getInstance(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    if (snapshot.hasData) {
+                                      return IconButton(
+                                        onPressed: () {
+                                          controller.checkedAutoLogin();
+                                        },
+                                        icon: Container(
+                                          width: width * 0.043,
+                                          height: width * 0.043,
+                                          child: Image.asset(
+                                            controller.isChecked
+                                                ? autoLoginIcon
+                                                : autoUnLoginIcon,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      );
+                                    } else
+                                      return progressBar();
+                                  } else
+                                    return progressBar();
+                                },
+                              ),
+                            ),
                           ),
-                        ),
-                        Text("자동로그인",
-                            style: TextStyle(
-                                color: const Color(0xff666666),
-                                fontWeight: FontWeight.w400,
-                                fontFamily: "NotoSansKR",
-                                fontStyle: FontStyle.normal,
-                                fontSize: 14.w),
-                            textAlign: TextAlign.left)
-                      ],
+                          Text("자동로그인",
+                              style: TextStyle(
+                                  color: const Color(0xff666666),
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "NotoSansKR",
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 14.w),
+                              textAlign: TextAlign.left)
+                        ],
+                      ),
                     ),
                   ),
-                  //SizedBox(height: height * 0.029),
-                  // 사각형 3740
                   Center(
                     child: TextButton(
                       child: Text("로그인", style: TextStyle(color: Colors.white)),
@@ -220,34 +227,35 @@ class _LoginState extends State<Login> {
       child: Padding(
         padding: EdgeInsets.only(left: width * 0.038),
         child: TextFormField(
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
-            ],
-            textInputAction: TextInputAction.next,
-            maxLength: 30,
-            obscureText: type == "아이디" ? false : true,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              labelText: "$type",
-              counterText: '',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              labelStyle: TextStyle(
-                color: const Color(0xff666666),
-                height: 0.6,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+          ],
+          textInputAction: TextInputAction.next,
+          maxLength: 30,
+          obscureText: type == "아이디" ? false : true,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            labelText: "$type",
+            counterText: '',
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            labelStyle: TextStyle(
+              color: const Color(0xff666666),
+              height: 0.6,
+              fontWeight: FontWeight.w400,
+              fontFamily: "NotoSansKR",
+              fontStyle: FontStyle.normal,
+              fontSize: 14.sp,
+            ),
+            hintText: ("$type를 입력하세요"),
+            hintStyle: TextStyle(
+                color: const Color(0xffcccccc),
                 fontWeight: FontWeight.w400,
                 fontFamily: "NotoSansKR",
                 fontStyle: FontStyle.normal,
-                fontSize: 14.sp,
-              ),
-              hintText: ("$type를 입력하세요"),
-              hintStyle: TextStyle(
-                  color: const Color(0xffcccccc),
-                  fontWeight: FontWeight.w400,
-                  fontFamily: "NotoSansKR",
-                  fontStyle: FontStyle.normal,
-                  fontSize: 16.sp),
-            ),
-            textAlign: TextAlign.left),
+                fontSize: 16.sp),
+          ),
+          textAlign: TextAlign.left,
+        ),
       ),
     );
   }
