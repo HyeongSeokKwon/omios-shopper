@@ -11,6 +11,7 @@ class SearchImage extends StatefulWidget {
 
 class _SearchImageState extends State<SearchImage> {
   final upLoadIcon = "assets/images/uploaded_picture/uploaded_picture.png";
+  final upLoadButtonIcon = "assets/images/upload_picture/upload_picture.png";
   final id = "Deepy";
   final controller = Get.put(UploadImageController());
 
@@ -91,8 +92,7 @@ class _SearchImageState extends State<SearchImage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                          "assets/images/upload_picture/upload_picture.png"),
+                      Image.asset("$upLoadButtonIcon"),
                       SizedBox(width: 5.w),
                       Text(
                         "이미지 업로드",
