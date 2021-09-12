@@ -27,188 +27,187 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        color: const Color(0xffffffff),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
-            Padding(
-              padding:
-                  EdgeInsets.only(top: height * 0.123, left: width * 0.053),
-              child: Container(
-                child: Text(
-                  "지금 당신의 쇼핑몰을\n책임지는 시간\nDeepy",
-                  style: TextStyle(
-                      color: const Color(0xff333333),
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "NotoSansKR",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 28.0.sp),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          color: const Color(0xffffffff),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
+              Padding(
+                padding:
+                    EdgeInsets.only(top: height * 0.123, left: width * 0.053),
+                child: Container(
+                  child: Text(
+                    "지금 당신의 쇼핑몰을\n책임지는 시간\nDeepy",
+                    style: TextStyle(
+                        color: const Color(0xff333333),
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "NotoSansKR",
+                        fontStyle: FontStyle.normal,
+                        fontSize: 28.0.sp),
+                  ),
                 ),
               ),
-            ),
 
-            Center(
-              child: Column(
-                children: [
-                  SizedBox(height: height * 0.056),
-                  _buildTextfield("아이디", width, height),
-                  SizedBox(height: height * 0.018),
-                  _buildTextfield("비밀번호", width, height),
-                  Container(
-                    height: height * 0.069,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: width * 0.03),
-                      child: Row(
-                        children: [
-                          // 자동로그인
-                          Container(
-                            width: width * 0.1,
-                            child: GetBuilder<LoginController>(
-                              init: controller,
-                              builder: (_) => FutureBuilder(
-                                future: SharedPreferences.getInstance(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    if (snapshot.hasData) {
-                                      return IconButton(
-                                        onPressed: () {
-                                          controller.checkedAutoLogin();
-                                        },
-                                        icon: Container(
-                                          width: width * 0.043,
-                                          height: width * 0.043,
-                                          child: Image.asset(
-                                            controller.isChecked
-                                                ? autoLoginIcon
-                                                : autoUnLoginIcon,
-                                            fit: BoxFit.fill,
+              Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: height * 0.056),
+                    _buildTextfield("아이디", width, height),
+                    SizedBox(height: height * 0.018),
+                    _buildTextfield("비밀번호", width, height),
+                    Container(
+                      height: height * 0.069,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: width * 0.03),
+                        child: Row(
+                          children: [
+                            // 자동로그인
+                            Container(
+                              width: width * 0.1,
+                              child: GetBuilder<LoginController>(
+                                init: controller,
+                                builder: (_) => FutureBuilder(
+                                  future: SharedPreferences.getInstance(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      if (snapshot.hasData) {
+                                        return IconButton(
+                                          onPressed: () {
+                                            controller.checkedAutoLogin();
+                                          },
+                                          icon: Container(
+                                            width: width * 0.043,
+                                            height: width * 0.043,
+                                            child: Image.asset(
+                                              controller.isChecked
+                                                  ? autoLoginIcon
+                                                  : autoUnLoginIcon,
+                                              fit: BoxFit.fill,
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                        );
+                                      } else
+                                        return progressBar();
                                     } else
                                       return progressBar();
-                                  } else
-                                    return progressBar();
-                                },
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          Text("자동로그인",
-                              style: TextStyle(
-                                  color: const Color(0xff666666),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: "NotoSansKR",
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 14.w),
-                              textAlign: TextAlign.left)
-                        ],
+                            Text("자동로그인",
+                                style: TextStyle(
+                                    color: const Color(0xff666666),
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: "NotoSansKR",
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 14.w),
+                                textAlign: TextAlign.left)
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Center(
-                    child: TextButton(
-                      child: Text("로그인", style: TextStyle(color: Colors.white)),
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
+                    Center(
+                      child: TextButton(
+                        child:
+                            Text("로그인", style: TextStyle(color: Colors.white)),
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                            ),
+                          ),
+                          fixedSize: MaterialStateProperty.all<Size>(
+                              Size(width * 0.894, height * 0.067)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xffec5363)),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                    SizedBox(height: height * 0.022),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          child: Text(
+                            "아이디 찾기",
+                            style: TextStyle(
+                              color: const Color(0xff999999),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "NotoSansKR",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          onTap: () {},
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.w),
+                          child: Container(
+                            height: 15.h,
+                            child: VerticalDivider(
+                              color: const Color(0xff999999),
+                            ),
                           ),
                         ),
-                        fixedSize: MaterialStateProperty.all<Size>(
-                            Size(width * 0.894, height * 0.067)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xffec5363)),
-                      ),
-                      onPressed: () {},
+                        InkWell(
+                          child: Text(
+                            "비밀번호 찾기",
+                            style: TextStyle(
+                              color: const Color(0xff999999),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "NotoSansKR",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          onTap: () {},
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: height * 0.022),
-                  // 아이디 찾기       |       비밀번호 찾기
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
+                    SizedBox(height: height * 0.212),
+                    Center(
+                      child: TextButton(
                         child: Text(
-                          "아이디 찾기",
+                          "지금 회원가입하기!",
                           style: TextStyle(
-                            color: const Color(0xff999999),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "NotoSansKR",
-                            fontStyle: FontStyle.normal,
-                            fontSize: 14.sp,
+                              color: const Color(0xff666666),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "NotoSansKR",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 16.sp),
+                        ),
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                              side: BorderSide(color: const Color(0xffe2e2e2)),
+                            ),
+                          ),
+                          fixedSize: MaterialStateProperty.all<Size>(
+                            Size(width * 0.894, height * 0.063),
                           ),
                         ),
-                        onTap: () {},
+                        onPressed: () {
+                          Get.to(HomePage());
+                        },
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: Container(
-                          height: 15.h,
-                          child: VerticalDivider(
-                            color: const Color(0xff999999),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        child: Text(
-                          "비밀번호 찾기",
-                          style: TextStyle(
-                            color: const Color(0xff999999),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "NotoSansKR",
-                            fontStyle: FontStyle.normal,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: height * 0.212),
-                  Center(
-                    child: TextButton(
-                      child: Text(
-                        "지금 회원가입하기!",
-                        style: TextStyle(
-                            color: const Color(0xff666666),
-                            fontWeight: FontWeight.w500,
-                            fontFamily: "NotoSansKR",
-                            fontStyle: FontStyle.normal,
-                            fontSize: 16.sp),
-                      ),
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
-                            side: BorderSide(color: const Color(0xffe2e2e2)),
-                          ),
-                        ),
-                        fixedSize: MaterialStateProperty.all<Size>(
-                          Size(width * 0.894, height * 0.063),
-                        ),
-                      ),
-                      onPressed: () {
-                        Get.to(HomePage());
-                      },
                     ),
-                  ),
-                  // InkWell(
-                  //   child: Text("건너뛰기"),
-                  //   onTap: () {
-                  //     Get.off(() => HomePage());
-                  //   },
-                  // ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
