@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:cloth_collection/controller/uploadImageController.dart';
+import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_crop/image_crop.dart';
 
 class SearchImage extends StatefulWidget {
   @override
@@ -15,8 +17,11 @@ class _SearchImageState extends State<SearchImage> {
   final id = "Deepy";
   final controller = Get.put(UploadImageController());
 
+  final cropKey = GlobalKey<CropState>();
+
   @override
   Widget build(BuildContext context) {
+    @override
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Container(
@@ -25,104 +30,118 @@ class _SearchImageState extends State<SearchImage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.only(
-                  top: height * 0.045,
-                  bottom: height * 0.025,
-                  left: width * 0.053),
-              child: Container(
-                child: RichText(
-                  text: TextSpan(
-                    text: "$id님!\n",
-                    style: TextStyle(
-                        color: const Color(0xffec5363),
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "NotoSansKR",
-                        fontSize: 18.sp),
-                    children: [
-                      TextSpan(
-                        text: "지금 어떤 옷을 찾고있나요?",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: "NotoSansKR",
-                            fontSize: 18.sp),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: InkWell(
-                child: Container(
-                  width: width * 0.894,
-                  height: width * 0.894,
-                  decoration: BoxDecoration(
-                    color: const Color(0xfffafafa),
-                    borderRadius: BorderRadius.all(Radius.circular(20.r)),
-                  ),
-                  child: GetBuilder<UploadImageController>(
-                    builder: (_) => Center(
-                      child: controller.upLoadimage == null
-                          ? Center(
-                              child: Image.asset(
-                                "$upLoadIcon",
-                                fit: BoxFit.fitHeight,
-                              ),
-                            )
-                          : Image.file(
-                              File(controller.upLoadimage!.path),
-                              width: 370.w,
-                              height: 370.w,
-                              fit: BoxFit.fitHeight,
-                            ),
-                    ),
-                  ),
-                ),
-                onTap: () {
-                  showPicker(context);
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: height * 0.029),
-              child: Center(
-                child: TextButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset("$upLoadButtonIcon"),
-                      SizedBox(width: 5.w),
-                      Text(
-                        "이미지 업로드",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: "NotoSansKR",
-                            fontSize: 16.sp),
-                      ),
-                    ],
-                  ),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.r),
-                      ),
-                    ),
-                    fixedSize: MaterialStateProperty.all<Size>(
-                        Size(width * 0.894, height * 0.067)),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xffec5363)),
-                  ),
-                  onPressed: () {
-                    showPicker(context);
-                  },
-                ),
-              ),
-            ),
+            _buildMainText(width, height),
+            _buildImageArea(width, height),
+            _buildUploadButton(width, height),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMainText(double width, double height) {
+    return Padding(
+      padding: EdgeInsets.only(
+          top: height * 0.045, bottom: height * 0.025, left: width * 0.053),
+      child: Container(
+        child: RichText(
+          text: TextSpan(
+            text: "$id님!\n",
+            style: textStyle(
+                const Color(0xffec5363), FontWeight.w700, "NotoSansKR", 18.sp),
+            children: [
+              TextSpan(
+                text: "지금 어떤 옷을 찾고있나요?",
+                style: textStyle(
+                    Colors.black, FontWeight.w500, "NotoSansKR", 18.sp),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageArea(double width, double height) {
+    return Center(
+      child: InkWell(
+        child: Container(
+          width: width * 0.894,
+          height: width * 0.894,
+          decoration: BoxDecoration(
+            color: const Color(0xfffafafa),
+            borderRadius: BorderRadius.all(Radius.circular(20.r)),
+          ),
+          child: _buildOpenImage(),
+        ),
+        onTap: () {
+          showPicker(context);
+        },
+      ),
+    );
+  }
+
+  Widget _buildUploadButton(double width, double height) {
+    return Padding(
+      padding: EdgeInsets.only(top: height * 0.029),
+      child: Center(
+        child: TextButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("$upLoadButtonIcon"),
+              SizedBox(width: 5.w),
+              Text(
+                "이미지 업로드",
+                style: textStyle(
+                    Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
+              ),
+            ],
+          ),
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.r),
+              ),
+            ),
+            fixedSize: MaterialStateProperty.all<Size>(
+                Size(width * 0.894, height * 0.067)),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+          ),
+          onPressed: () {
+            showPicker(context);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOpenImage() {
+    return GetBuilder<UploadImageController>(
+      builder: (_) => Column(
+        children: [
+          Center(
+            child: controller.upLoadimage == null
+                ? Center(
+                    child: Image.asset(
+                      "$upLoadIcon",
+                      fit: BoxFit.fitHeight,
+                    ),
+                  )
+                : Image.file(
+                    File(controller.upLoadimage!.path),
+                    width: 200.w,
+                    height: 200.w,
+                    fit: BoxFit.fitHeight,
+                  ),
+          ),
+          ElevatedButton(
+              onPressed: () {
+                controller.cropImage();
+              },
+              child: Text("자르기")),
+        ],
       ),
     );
   }
