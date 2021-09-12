@@ -20,10 +20,11 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
-          theme: ThemeData(
-            primaryColor: Colors.purple,
-          ),
-          home: Login()),
+        theme: ThemeData(
+          primaryColor: Colors.purple,
+        ),
+        home: Login(),
+      ),
     );
   }
 }
