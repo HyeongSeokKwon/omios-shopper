@@ -1,4 +1,4 @@
-# cloth_collection
+# Deepy
 
 A new Flutter project.
 
