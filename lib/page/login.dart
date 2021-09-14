@@ -41,7 +41,6 @@ class _LoginState extends State<Login> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
-
                 _buildMainText(width, height),
                 Column(
                   children: [
@@ -96,26 +95,21 @@ class _LoginState extends State<Login> {
           maxLength: 30,
           obscureText: type == "아이디" ? false : true,
           decoration: InputDecoration(
-            border: InputBorder.none,
-            labelText: "$type",
-            counterText: '',
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            labelStyle: TextStyle(
-              color: const Color(0xff666666),
-              height: 0.6,
-              fontWeight: FontWeight.w400,
-              fontFamily: "NotoSansKR",
-              fontStyle: FontStyle.normal,
-              fontSize: 14.sp,
-            ),
-            hintText: ("$type를 입력하세요"),
-            hintStyle: TextStyle(
-                color: const Color(0xffcccccc),
+              border: InputBorder.none,
+              labelText: "$type",
+              counterText: '',
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              labelStyle: TextStyle(
+                color: const Color(0xff666666),
+                height: 0.6,
                 fontWeight: FontWeight.w400,
                 fontFamily: "NotoSansKR",
                 fontStyle: FontStyle.normal,
-                fontSize: 16.sp),
-          ),
+                fontSize: 14.sp,
+              ),
+              hintText: ("$type를 입력하세요"),
+              hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                  "NotoSansKR", 16.sp)),
           textAlign: TextAlign.left,
         ),
       ),
@@ -126,33 +120,39 @@ class _LoginState extends State<Login> {
     return Container(
       height: height * 0.069,
       child: Padding(
-        padding: EdgeInsets.only(left: width * 0.03),
+        padding: EdgeInsets.only(left: width * 0.053),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // 자동로그인
             Container(
-              width: width * 0.1,
+              width: width * 0.065,
               child: GetBuilder<LoginController>(
+                id: "autoLogin",
                 init: controller,
                 builder: (_) => FutureBuilder(
                   future: SharedPreferences.getInstance(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasData) {
-                        return IconButton(
-                          onPressed: () {
+                        return InkWell(
+                          child: Row(
+                            children: [
+                              Container(
+                                width: width * 0.043,
+                                height: width * 0.043,
+                                child: Image.asset(
+                                  controller.isChecked
+                                      ? autoLoginIcon
+                                      : autoUnLoginIcon,
+                                ),
+                              ),
+                              SizedBox(width: width * 0.014),
+                            ],
+                          ),
+                          onTap: () {
                             controller.checkedAutoLogin();
                           },
-                          icon: Container(
-                            width: width * 0.043,
-                            height: width * 0.043,
-                            child: Image.asset(
-                              controller.isChecked
-                                  ? autoLoginIcon
-                                  : autoUnLoginIcon,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
                         );
                       } else
                         return progressBar();
@@ -162,14 +162,21 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            Text("자동로그인",
-                style: TextStyle(
-                    color: const Color(0xff666666),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
-                    fontStyle: FontStyle.normal,
-                    fontSize: 14.w),
-                textAlign: TextAlign.left)
+            InkWell(
+              child: Container(
+                height: height * 0.6,
+                child: Center(
+                  child: Text(
+                    "자동로그인",
+                    style: textStyle(const Color(0xff666666), FontWeight.w400,
+                        "NotoSansKR", 14.sp),
+                  ),
+                ),
+              ),
+              onTap: () {
+                controller.checkedAutoLogin();
+              },
+            )
           ],
         ),
       ),
@@ -235,12 +242,8 @@ class _LoginState extends State<Login> {
       child: TextButton(
         child: Text(
           "지금 회원가입하기!",
-          style: TextStyle(
-              color: const Color(0xff666666),
-              fontWeight: FontWeight.w500,
-              fontFamily: "NotoSansKR",
-              fontStyle: FontStyle.normal,
-              fontSize: 16.sp),
+          style: textStyle(
+              const Color(0xff666666), FontWeight.w500, "NotoSansKR", 16.sp),
         ),
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
