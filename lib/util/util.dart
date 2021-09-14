@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 const MAINCOLOR = Color.fromRGBO(176, 140, 217, 100);
 
-TextStyle textstyle(
+TextStyle textStyle(
     Color color, FontWeight fontWeight, var fontFamily, var fontSize) {
   return TextStyle(
       color: color,
