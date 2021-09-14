@@ -67,12 +67,12 @@ class _SearchImageState extends State<SearchImage> {
       child: InkWell(
         child: Container(
           width: width * 0.894,
-          height: width * 0.894,
+          height: height * 0.55,
           decoration: BoxDecoration(
             color: const Color(0xfffafafa),
             borderRadius: BorderRadius.all(Radius.circular(20.r)),
           ),
-          child: _buildOpenImage(),
+          child: _buildOpenImage(width, height),
         ),
         onTap: () {
           showPicker(context);
@@ -117,7 +117,7 @@ class _SearchImageState extends State<SearchImage> {
     );
   }
 
-  Widget _buildOpenImage() {
+  Widget _buildOpenImage(double width, double height) {
     return GetBuilder<UploadImageController>(
       builder: (_) => Column(
         children: [
@@ -131,16 +131,16 @@ class _SearchImageState extends State<SearchImage> {
                   )
                 : Image.file(
                     File(controller.upLoadimage!.path),
-                    width: 200.w,
-                    height: 200.w,
+                    width: width * 0.894,
+                    height: height * 0.55,
                     fit: BoxFit.fitHeight,
                   ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                controller.cropImage();
-              },
-              child: Text("자르기")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       controller.cropImage();
+          //     },
+          //     child: Text("자르기")),
         ],
       ),
     );
