@@ -1,30 +1,53 @@
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadImageController extends GetxController {
-  File? upLoadimage;
+  Image? upLoadimage =
+      Image.asset("assets/images/uploaded_picture/uploaded_picture.png");
+  PickedFile? pickedFile;
 
   void getImageFromPhoto() async {
-    final image = await ImagePicker.platform
-        .pickImage(source: ImageSource.camera, imageQuality: 50);
-
-    upLoadimage = File(image!.path);
+    pickedFile = await ImagePicker.platform.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 50,
+    );
+    if (pickedFile == null) {
+      upLoadimage =
+          Image.asset("assets/images/uploaded_picture/uploaded_picture.png");
+    } else {
+      upLoadimage = Image.file(
+        File(pickedFile!.path),
+      );
+    }
     update();
   }
 
   void getImageFromGallery() async {
-    var image = await ImagePicker.platform
+    pickedFile = await ImagePicker.platform
         .pickImage(source: ImageSource.gallery, imageQuality: 50);
+    if (pickedFile == null) {
+      upLoadimage = Image.asset(
+        "assets/images/uploaded_picture/uploaded_picture.png",
+      );
+    } else {
+      upLoadimage = Image.file(File(pickedFile!.path));
+    }
+    update();
+  }
 
-    upLoadimage = File(image!.path);
+  void deleteImage() {
+    upLoadimage =
+        Image.asset("assets/images/uploaded_picture/uploaded_picture.png");
+
     update();
   }
 
   Future<Null> cropImage() async {
     File? croppedFile = await ImageCropper.cropImage(
-        sourcePath: upLoadimage!.path,
+        sourcePath: pickedFile!.path,
         aspectRatioPresets: Platform.isAndroid
             ? [
                 CropAspectRatioPreset.square,
@@ -48,7 +71,7 @@ class UploadImageController extends GetxController {
           title: 'Cropper',
         ));
     if (croppedFile != null) {
-      upLoadimage = croppedFile;
+      upLoadimage = Image.file(File(croppedFile.path));
       update();
     }
   }
