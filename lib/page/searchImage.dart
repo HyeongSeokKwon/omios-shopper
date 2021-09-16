@@ -32,6 +32,11 @@ class _SearchImageState extends State<SearchImage> {
           children: [
             _buildMainText(width, height),
             _buildImageArea(width, height),
+            ElevatedButton(
+                onPressed: () {
+                  controller.deleteImage();
+                },
+                child: Text("삭제")),
             _buildUploadButton(width, height),
           ],
         ),
@@ -91,10 +96,16 @@ class _SearchImageState extends State<SearchImage> {
             children: [
               Image.asset("$upLoadButtonIcon"),
               SizedBox(width: 5.w),
-              Text(
-                "이미지 업로드",
-                style: textStyle(
-                    Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
+              GetBuilder<UploadImageController>(
+                builder: (_) => Text(
+                  controller.upLoadimage ==
+                          Image.asset(
+                              "assets/images/uploaded_picture/uploaded_picture.png")
+                      ? "검색하기"
+                      : "이미지 업로드",
+                  style: textStyle(
+                      Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
+                ),
               ),
             ],
           ),
@@ -110,7 +121,9 @@ class _SearchImageState extends State<SearchImage> {
                 MaterialStateProperty.all<Color>(const Color(0xffec5363)),
           ),
           onPressed: () {
-            showPicker(context);
+            if (controller.upLoadimage == null) {
+              showPicker(context);
+            }
           },
         ),
       ),
@@ -120,21 +133,13 @@ class _SearchImageState extends State<SearchImage> {
   Widget _buildOpenImage(double width, double height) {
     return GetBuilder<UploadImageController>(
       builder: (_) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: controller.upLoadimage == null
-                ? Center(
-                    child: Image.asset(
-                      "$upLoadIcon",
-                      fit: BoxFit.fitHeight,
-                    ),
-                  )
-                : Image.file(
-                    File(controller.upLoadimage!.path),
-                    width: width * 0.894,
-                    height: height * 0.55,
-                    fit: BoxFit.fitHeight,
-                  ),
+            child: Container(
+              height: height * 0.55,
+              child: controller.upLoadimage,
+            ),
           ),
           // ElevatedButton(
           //     onPressed: () {
