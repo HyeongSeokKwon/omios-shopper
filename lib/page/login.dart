@@ -28,36 +28,34 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            color: const Color(0xffffffff),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
-                _buildMainText(width, height),
-                Column(
-                  children: [
-                    SizedBox(height: height * 0.056),
-                    _buildTextfield("아이디", width, height),
-                    SizedBox(height: height * 0.018),
-                    _buildTextfield("비밀번호", width, height),
-                    _buildAutoLogin(width, height),
-                    _buildLoginButton(width, height),
-                    SizedBox(height: height * 0.022),
-                    _buildFindArea(),
-                    SizedBox(height: height * 0.212),
-                    _buildSignInButton(width, height)
-                  ],
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          color: const Color(0xffffffff),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
+              _buildMainText(width, height),
+              Column(
+                children: [
+                  SizedBox(height: height * 0.056),
+                  _buildTextfield("아이디", width, height),
+                  SizedBox(height: height * 0.018),
+                  _buildTextfield("비밀번호", width, height),
+                  _buildAutoLogin(width, height),
+                  _buildLoginButton(width, height),
+                  SizedBox(height: height * 0.022),
+                  _buildFindArea(),
+                  SizedBox(height: height * 0.212),
+                  _buildSignInButton(width, height)
+                ],
+              ),
+            ],
           ),
         ),
       ),
