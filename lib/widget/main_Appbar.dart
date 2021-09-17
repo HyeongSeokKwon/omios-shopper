@@ -1,4 +1,3 @@
-import 'package:cloth_collection/controller/searchController.dart';
 import 'package:cloth_collection/page/searchText.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ class MainAppbar extends StatelessWidget with PreferredSizeWidget {
   final FocusNode focusNode;
 
   MainAppbar(this.focusNode);
-  final controller = Get.put(SearchController());
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 
