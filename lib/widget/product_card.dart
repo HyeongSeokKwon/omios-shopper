@@ -20,7 +20,7 @@ class ProductCard extends StatelessWidget {
           children: [
             Container(
               width: width * 0.425,
-              height: width * 0.425,
+              height: width * 0.425 * (500 / 375),
               child: Image.asset("${product.image}", fit: BoxFit.fill),
               decoration: BoxDecoration(
                 color: Colors.red,
@@ -44,7 +44,7 @@ class ProductCard extends StatelessWidget {
                   SizedBox(height: height * 0.003),
                   Text(
                     "${product.price}",
-                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                    style: textStyle(const Color(0xff333333), FontWeight.w700,
                         "NotoSansKR", 16.0),
                   ),
                   SizedBox(height: height * 0.003),
