@@ -14,8 +14,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  String autoLoginIcon = "assets/images/login_check/Login.png";
-  String autoUnLoginIcon = "assets/images/login_check/unLogin.png";
+  String autoLoginIcon = "assets/images/Login.png";
+  String autoUnLoginIcon = "assets/images/unLogin.png";
   LoginController controller = LoginController();
 
   @override

@@ -13,6 +13,7 @@ TextStyle textStyle(
   return TextStyle(
     color: color,
     fontWeight: fontWeight,
+    fontStyle: FontStyle.normal,
     fontFamily: fontFamily,
     fontSize: fontSize,
   );

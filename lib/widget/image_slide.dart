@@ -63,11 +63,6 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
   PageController _pageController = PageController(
     initialPage: 0,
   );
-  final List<Container> images = <Container>[
-    Container(color: Colors.purple[100]),
-    Container(color: Colors.purple[200]),
-    Container(color: Colors.purple[300]),
-  ];
 
   @override
   void initState() {
@@ -89,6 +84,11 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Container> images = <Container>[
+      Container(color: Colors.purple[100]),
+      Container(color: Colors.purple[200]),
+      Container(color: Colors.purple[300]),
+    ];
     return Container(
       height: widget.height,
       width: widget.width,

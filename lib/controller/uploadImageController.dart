@@ -5,8 +5,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadImageController extends GetxController {
-  Image? upLoadimage =
-      Image.asset("assets/images/uploaded_picture/uploaded_picture.png");
+  Image? upLoadimage = Image.asset("assets/images/uploaded_picture.png");
   PickedFile? pickedFile;
 
   void getImageFromPhoto() async {
@@ -15,8 +14,7 @@ class UploadImageController extends GetxController {
       imageQuality: 50,
     );
     if (pickedFile == null) {
-      upLoadimage =
-          Image.asset("assets/images/uploaded_picture/uploaded_picture.png");
+      upLoadimage = Image.asset("assets/images/uploaded_picture.png");
     } else {
       upLoadimage = Image.file(
         File(pickedFile!.path),
@@ -30,7 +28,7 @@ class UploadImageController extends GetxController {
         .pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile == null) {
       upLoadimage = Image.asset(
-        "assets/images/uploaded_picture/uploaded_picture.png",
+        "assets/images/uploaded_picture.png",
       );
     } else {
       upLoadimage = Image.file(File(pickedFile!.path));
@@ -39,8 +37,7 @@ class UploadImageController extends GetxController {
   }
 
   void deleteImage() {
-    upLoadimage =
-        Image.asset("assets/images/uploaded_picture/uploaded_picture.png");
+    upLoadimage = Image.asset("assets/images/uploaded_picture.png");
 
     update();
   }

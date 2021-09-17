@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor: Colors.purple,
         ),
-        home: Login(),
+        home: SafeArea(child: Login()),
       ),
     );
   }

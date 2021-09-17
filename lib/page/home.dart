@@ -1,8 +1,9 @@
 import 'package:cloth_collection/page/SearchImage.dart';
-import 'package:cloth_collection/page/deepyHome.dart';
+import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/chatting.dart';
 import 'package:cloth_collection/page/myPage.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/main_Appbar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,17 +21,10 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Container(
-            child: Row(
-          children: [
-            Text("deepy", style: TextStyle(color: Colors.black)),
-          ],
-        )),
-        backgroundColor: Colors.white,
-      ),
+      appBar: mainAppbar(width, height),
       body: selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: [
