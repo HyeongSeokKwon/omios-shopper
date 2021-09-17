@@ -17,8 +17,6 @@ class _SearchImageState extends State<SearchImage> {
   final id = "Deepy";
   final controller = Get.put(UploadImageController());
 
-  final cropKey = GlobalKey<CropState>();
-
   @override
   Widget build(BuildContext context) {
     @override

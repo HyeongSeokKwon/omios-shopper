@@ -13,6 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  FocusNode focusNode = FocusNode();
   List<Widget> selectedPage = [
     DeepyHome(),
     SearchImage(),
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: mainAppbar(width, height),
+      appBar: MainAppbar(focusNode),
       body: selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: [

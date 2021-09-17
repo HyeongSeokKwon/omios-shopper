@@ -1,3 +1,4 @@
+import 'package:cloth_collection/data/product.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:cloth_collection/widget/product_card.dart';
@@ -10,21 +11,33 @@ class DeepyHome extends StatefulWidget {
 }
 
 class _DeepyHomeState extends State<DeepyHome> {
+  late List<Product> products;
+
+  @override
+  void initState() {
+    super.initState();
+    products = getProduct();
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            ImageSlideHasNum(width * 0.62, width),
-            SizedBox(height: height * 0.026),
-            _buildRecommendComment(width),
-            SizedBox(height: height * 0.019),
-            _buildProduct(width, height),
-            _buildProduct(width, height),
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ImageSlideHasNum(width * 0.62, width),
+              SizedBox(height: height * 0.026),
+              _buildRecommendComment(width),
+              SizedBox(height: height * 0.019),
+              _buildProduct(width, height),
+            ],
+          ),
         ),
       ),
     );
@@ -59,13 +72,25 @@ class _DeepyHomeState extends State<DeepyHome> {
     return Container(
       child: Column(
         children: [
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Column(
             children: [
-              ProductCard(),
-              SizedBox(width: width * 0.043),
-              ProductCard(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ProductCard(products[0]),
+                  SizedBox(width: width * 0.043),
+                  ProductCard((products[1])),
+                ],
+              ),
+              SizedBox(height: height * 0.03),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ProductCard((products[2])),
+                  SizedBox(width: width * 0.043),
+                  ProductCard((products[3])),
+                ],
+              ),
             ],
           ),
         ],
