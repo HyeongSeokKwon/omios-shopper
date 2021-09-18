@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class DeepyHome extends StatefulWidget {
+  ScrollController scrollController;
+
+  DeepyHome(this.scrollController);
   @override
   _DeepyHomeState createState() => _DeepyHomeState();
 }
@@ -29,6 +32,7 @@ class _DeepyHomeState extends State<DeepyHome> {
       },
       child: Container(
         child: SingleChildScrollView(
+          controller: widget.scrollController,
           child: Column(
             children: [
               ImageSlideHasNum(width * 0.62, width),
