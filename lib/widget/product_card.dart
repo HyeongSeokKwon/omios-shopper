@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProductCard extends StatelessWidget {
-  late Product product;
+  final Product product;
   ProductCard(this.product);
   @override
   Widget build(BuildContext context) {
@@ -18,52 +18,65 @@ class ProductCard extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
-            Container(
-              width: width * 0.425,
-              height: width * 0.425 * (500 / 375),
-              child: Image.asset("${product.image}", fit: BoxFit.fill),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(14),
-                ),
-              ),
-            ),
-            Container(
-              width: width * 0.425,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: height * 0.01),
-                  Text(
-                    "${product.name}",
-                    style: textStyle(const Color(0xff333333), FontWeight.w400,
-                        "NotoSansKR", 14.0),
-                    maxLines: 1,
-                  ),
-                  SizedBox(height: height * 0.003),
-                  Text(
-                    "${product.price}",
-                    style: textStyle(const Color(0xff333333), FontWeight.w700,
-                        "NotoSansKR", 16.0),
-                  ),
-                  SizedBox(height: height * 0.003),
-                  Row(
-                    children: [
-                      Image.asset("assets/images/location.png"),
-                      SizedBox(width: width * 0.01),
-                      Text(
-                        "${product.location}",
-                        style: textStyle(const Color(0xff999999),
-                            FontWeight.w400, "NotoSansKR", 12.0),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            _buildProductImage(width, height),
+            _buildProductInfo(width, height),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProductImage(double width, double height) {
+    return Container(
+      width: width * 0.425,
+      height: width * 0.425 * (500 / 375),
+      child: ClipRRect(
+        child: Image.asset("${product.image}", fit: BoxFit.cover),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(14),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductInfo(double width, double height) {
+    return Container(
+      width: width * 0.425,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: height * 0.01),
+          Text(
+            "${product.name}",
+            style: textStyle(
+                const Color(0xff333333), FontWeight.w400, "NotoSansKR", 14.0),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: height * 0.003),
+          Text(
+            setPriceFormat(product.price),
+            style: textStyle(
+                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 16.0),
+          ),
+          SizedBox(height: height * 0.003),
+          Row(
+            children: [
+              Image.asset("assets/images/location.png"),
+              SizedBox(width: width * 0.01),
+              Text(
+                "${product.location}",
+                style: textStyle(const Color(0xff999999), FontWeight.w400,
+                    "NotoSansKR", 12.0),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
