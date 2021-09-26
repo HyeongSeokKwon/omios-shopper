@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class DeepyHome extends StatefulWidget {
-  ScrollController scrollController;
+  final ScrollController scrollController;
 
   DeepyHome(this.scrollController);
   @override
