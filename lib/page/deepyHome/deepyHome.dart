@@ -35,7 +35,7 @@ class _DeepyHomeState extends State<DeepyHome> {
           controller: widget.scrollController,
           child: Column(
             children: [
-              ImageSlideHasNum(width * 0.62, width),
+              ImageSlideHasNum(width, width * 0.62),
               SizedBox(height: height * 0.026),
               _buildRecommendComment(width),
               SizedBox(height: height * 0.019),

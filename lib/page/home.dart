@@ -60,8 +60,10 @@ class _HomePageState extends State<HomePage> {
       });
     }
     if (index == HOME) {
-      scrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+      if (scrollController.hasClients) {
+        scrollController.animateTo(0.0,
+            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+      }
     }
   }
 
