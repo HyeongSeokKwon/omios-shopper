@@ -22,9 +22,9 @@ class MyApp extends StatelessWidget {
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
         theme: ThemeData(
-          primaryColor: Colors.purple,
+          primaryColor: Colors.white,
         ),
-        home: SafeArea(child: Login()),
+        home: Login(),
       ),
     );
   }

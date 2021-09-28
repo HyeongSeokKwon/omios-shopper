@@ -13,7 +13,7 @@ class ProductCard extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: () {
-        Get.to(ProductDetail());
+        Get.to(ProductDetail(product));
       },
       child: Container(
         child: Column(
