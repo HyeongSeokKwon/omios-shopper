@@ -1,9 +1,14 @@
 import 'package:cloth_collection/page/SearchImage.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
-import 'package:cloth_collection/page/chatting.dart';
 import 'package:cloth_collection/page/myPage.dart';
-import 'package:cloth_collection/widget/main_Appbar.dart';
+import 'package:cloth_collection/widget/appbar/chatting_Appbar.dart';
+import 'package:cloth_collection/widget/appbar/deepyHomeAppbar.dart';
+import 'package:cloth_collection/widget/appbar/imageSearch_Appbar.dart';
+import 'package:cloth_collection/widget/appbar/myPage_Appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+
+import 'chatting/chatting.dart';
 
 const int HOME = 0;
 const int SEARCH = 1;
@@ -19,25 +24,24 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   FocusNode focusNode = FocusNode();
   ScrollController scrollController = ScrollController();
-
   late List<Widget> selectedPage;
   List<String> currentIconUrl = [
-    "assets/images/homeTapped.png",
-    "assets/images/searchImage.png",
-    "assets/images/chat.png",
-    "assets/images/myPage.png"
+    "assets/images/svg/homeTapped.svg",
+    "assets/images/svg/searchImage.svg",
+    "assets/images/svg/chat.svg",
+    "assets/images/svg/myPage.svg"
   ];
   List<String> navigationIconUrl = [
-    "assets/images/home.png",
-    "assets/images/searchImage.png",
-    "assets/images/chat.png",
-    "assets/images/myPage.png"
+    "assets/images/svg/home.svg",
+    "assets/images/svg/searchImage.svg",
+    "assets/images/svg/chat.svg",
+    "assets/images/svg/myPage.svg"
   ];
   List<String> navigationOnTapIconUrl = [
-    "assets/images/homeTapped.png",
-    "assets/images/searchImageTapped.png",
-    "assets/images/chatTapped.png",
-    "assets/images/myPageTapped.png"
+    "assets/images/svg/homeTapped.svg",
+    "assets/images/svg/searchImageTapped.svg",
+    "assets/images/svg/chatTapped.svg",
+    "assets/images/svg/myPageTapped.svg"
   ];
 
   @override
@@ -69,26 +73,32 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<PreferredSizeWidget> appBar = [
+      DeepyHomeAppbar(),
+      ImageSearchAppbar(),
+      ChattingAppbar(),
+      MypageAppbar()
+    ];
     return Scaffold(
-      appBar: MainAppbar(focusNode),
+      appBar: appBar[_currentIndex],
       body: selectedPage[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
             label: "홈",
-            icon: Image.asset(currentIconUrl[HOME]),
+            icon: SvgPicture.asset(currentIconUrl[HOME]),
           ),
           BottomNavigationBarItem(
             label: "이미지검색",
-            icon: Image.asset(currentIconUrl[SEARCH]),
+            icon: SvgPicture.asset(currentIconUrl[SEARCH]),
           ),
           BottomNavigationBarItem(
             label: "채팅",
-            icon: Image.asset(currentIconUrl[CHAT]),
+            icon: SvgPicture.asset(currentIconUrl[CHAT]),
           ),
           BottomNavigationBarItem(
             label: "마이페이지",
-            icon: Image.asset(currentIconUrl[MYPAGE]),
+            icon: SvgPicture.asset(currentIconUrl[MYPAGE]),
           ),
         ],
         showUnselectedLabels: true,

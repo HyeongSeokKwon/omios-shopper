@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadImageController extends GetxController {
-  Image? upLoadimage = Image.asset("assets/images/uploaded_picture.png");
+  var uploadImage = SvgPicture.asset("assets/images/svg/upload_picture.svg");
   PickedFile? pickedFile;
 
   void getImageFromPhoto() async {
@@ -14,9 +15,9 @@ class UploadImageController extends GetxController {
       imageQuality: 50,
     );
     if (pickedFile == null) {
-      upLoadimage = Image.asset("assets/images/uploaded_picture.png");
+      uploadImage = SvgPicture.asset("assets/images/svg/upload_picture.svg");
     } else {
-      upLoadimage = Image.file(
+      uploadImage = SvgPicture.file(
         File(pickedFile!.path),
       );
     }
@@ -27,17 +28,17 @@ class UploadImageController extends GetxController {
     pickedFile = await ImagePicker.platform
         .pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile == null) {
-      upLoadimage = Image.asset(
-        "assets/images/uploaded_picture.png",
+      uploadImage = SvgPicture.asset(
+        "assets/images/svg/upload_picture.svg",
       );
     } else {
-      upLoadimage = Image.file(File(pickedFile!.path));
+      uploadImage = SvgPicture.file(File(pickedFile!.path));
     }
     update();
   }
 
   void deleteImage() {
-    upLoadimage = Image.asset("assets/images/uploaded_picture.png");
+    uploadImage = SvgPicture.asset("assets/images/svg/upload_picture.svg");
 
     update();
   }
@@ -68,7 +69,7 @@ class UploadImageController extends GetxController {
           title: 'Cropper',
         ));
     if (croppedFile != null) {
-      upLoadimage = Image.file(File(croppedFile.path));
+      uploadImage = SvgPicture.file(File(croppedFile.path));
       update();
     }
   }

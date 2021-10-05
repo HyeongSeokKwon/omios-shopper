@@ -2,6 +2,7 @@ import 'package:cloth_collection/controller/uploadImageController.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class SearchImage extends StatefulWidget {
@@ -10,8 +11,8 @@ class SearchImage extends StatefulWidget {
 }
 
 class _SearchImageState extends State<SearchImage> {
-  final upLoadIcon = "assets/images/uploaded_picture/uploaded_picture.png";
-  final upLoadButtonIcon = "assets/images/upload_picture/upload_picture.png";
+  final upLoadIcon = "assets/images/svg/upload_picture.svg";
+  final upLoadButtonIcon = "assets/images/svg/cloud_computing.svg";
   final id = "Deepy";
   final controller = Get.put(UploadImageController());
 
@@ -90,13 +91,12 @@ class _SearchImageState extends State<SearchImage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("$upLoadButtonIcon"),
+              SvgPicture.asset("$upLoadButtonIcon"),
               SizedBox(width: 5.w),
               GetBuilder<UploadImageController>(
                 builder: (_) => Text(
-                  controller.upLoadimage ==
-                          Image.asset(
-                              "assets/images/uploaded_picture/uploaded_picture.png")
+                  controller.uploadImage ==
+                          SvgPicture.asset("$upLoadButtonIcon")
                       ? "검색하기"
                       : "이미지 업로드",
                   style: textStyle(
@@ -117,7 +117,7 @@ class _SearchImageState extends State<SearchImage> {
                 MaterialStateProperty.all<Color>(const Color(0xffec5363)),
           ),
           onPressed: () {
-            if (controller.upLoadimage == null) {
+            if (controller.uploadImage == null) {
               showPicker(context);
             }
           },
@@ -134,7 +134,7 @@ class _SearchImageState extends State<SearchImage> {
           Center(
             child: Container(
               height: height * 0.55,
-              child: controller.upLoadimage,
+              child: controller.uploadImage,
             ),
           ),
           // ElevatedButton(

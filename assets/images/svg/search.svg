@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.251" height="32" viewbox = "0,0,20.251,32">
+    <defs>
+        <clipPath id="a">
+            <path style="fill:none" d="M1.9-4h20.251v32H1.9z"/>
+        </clipPath>
+    </defs>
+    <g data-name="스크롤 그룹 66" transform="translate(-1.9 4)" style="isolation:isolate;clip-path:url(#a)">
+        <path data-name="패스 11179" d="m186.649 573.474-.009-.008-3.718-3.854a9.062 9.062 0 0 0 2.1-5.725 9.094 9.094 0 1 0-9.172 9.016h.081a9.035 9.035 0 0 0 5.941-2.229l3.663 3.794a.745.745 0 1 0 1.112-.994zM175.9 556.205h.035a7.6 7.6 0 0 1 0 15.2h-.069a7.6 7.6 0 0 1 .031-15.2z" transform="translate(-164.839 -552.216)" style="fill:#333;stroke:#333;stroke-width:.2px"/>
+    </g>
+</svg>

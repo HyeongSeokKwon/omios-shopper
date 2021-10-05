@@ -2,12 +2,11 @@ import 'package:cloth_collection/data/product.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductRecommentCard extends StatelessWidget {
   final Product product;
-  ProductCard(this.product);
+  ProductRecommentCard(this.product);
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -29,8 +28,8 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildProductImage(double width, double height) {
     return Container(
-      width: width * 0.425,
-      height: width * 0.425 * (500 / 375),
+      width: width * 0.377,
+      height: width * 0.377 * (500 / 375),
       child: ClipRRect(
         child: Image.asset("${product.image}", fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(8.0),
@@ -45,7 +44,7 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildProductInfo(double width, double height) {
     return Container(
-      width: width * 0.425,
+      width: width * 0.377,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -64,19 +63,6 @@ class ProductCard extends StatelessWidget {
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 16.0),
           ),
           SizedBox(height: height * 0.003),
-          Row(
-            children: [
-              SvgPicture.asset("assets/images/svg/location.svg"),
-              SizedBox(width: width * 0.01),
-              Text(
-                "${product.location}",
-                style: textStyle(const Color(0xff999999), FontWeight.w400,
-                    "NotoSansKR", 12.0),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
         ],
       ),
     );

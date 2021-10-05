@@ -5,6 +5,7 @@ import 'package:cloth_collection/widget/frequently_used_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,14 +15,15 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  String autoLoginIcon = "assets/images/Login.png";
-  String autoUnLoginIcon = "assets/images/unLogin.png";
-  LoginController controller = LoginController();
-
+  String autoLoginIcon = "assets/images/svg/login.svg";
+  String autoUnLoginIcon = "assets/images/svg/unlogin.svg";
+  LoginController loginController = LoginController();
+  TextEditingController idTextController = TextEditingController();
+  TextEditingController pwdTextController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    controller.init();
+    loginController.init();
   }
 
   @override
@@ -91,6 +93,7 @@ class _LoginState extends State<Login> {
           ],
           textInputAction: TextInputAction.next,
           maxLength: 30,
+          controller: type == "아이디" ? idTextController : pwdTextController,
           obscureText: type == "아이디" ? false : true,
           decoration: InputDecoration(
               border: InputBorder.none,
@@ -109,6 +112,11 @@ class _LoginState extends State<Login> {
               hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
                   "NotoSansKR", 16.sp)),
           textAlign: TextAlign.left,
+          onFieldSubmitted: (value) {
+            if (type == "비밀번호") {
+              FocusScope.of(context).requestFocus(FocusNode());
+            }
+          },
         ),
       ),
     );
@@ -127,7 +135,7 @@ class _LoginState extends State<Login> {
               width: width * 0.065,
               child: GetBuilder<LoginController>(
                 id: "autoLogin",
-                init: controller,
+                init: loginController,
                 builder: (_) => FutureBuilder(
                   future: SharedPreferences.getInstance(),
                   builder: (context, snapshot) {
@@ -139,8 +147,8 @@ class _LoginState extends State<Login> {
                               Container(
                                 width: width * 0.043,
                                 height: width * 0.043,
-                                child: Image.asset(
-                                  controller.isChecked
+                                child: SvgPicture.asset(
+                                  loginController.isChecked
                                       ? autoLoginIcon
                                       : autoUnLoginIcon,
                                 ),
@@ -149,7 +157,7 @@ class _LoginState extends State<Login> {
                             ],
                           ),
                           onTap: () {
-                            controller.checkedAutoLogin();
+                            loginController.checkedAutoLogin();
                           },
                         );
                       } else
@@ -172,7 +180,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
               onTap: () {
-                controller.checkedAutoLogin();
+                loginController.checkedAutoLogin();
               },
             )
           ],
@@ -196,7 +204,10 @@ class _LoginState extends State<Login> {
           backgroundColor:
               MaterialStateProperty.all<Color>(const Color(0xffec5363)),
         ),
-        onPressed: () {},
+        onPressed: () {
+          loginController.getLoginInfo(
+              idTextController.text, pwdTextController.text);
+        },
       ),
     );
   }
@@ -255,7 +266,7 @@ class _LoginState extends State<Login> {
           ),
         ),
         onPressed: () {
-          Get.to(HomePage());
+          Get.to(() => HomePage());
         },
       ),
     );
