@@ -23,10 +23,16 @@ class _LoginState extends State<Login> {
   TextEditingController pwdTextController = TextEditingController();
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     loginController.init();
-    canVibrate = await Vibrate.canVibrate;
+    getVibratePermission();
+  }
+
+  void getVibratePermission() async {
+    try {
+      canVibrate = await Vibrate.canVibrate;
+    } catch (e) {}
   }
 
   @override
