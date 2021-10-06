@@ -21,6 +21,12 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaleFactor: 0.9,
+          ),
+          child: child!,
+        ),
         theme: ThemeData(
           primaryColor: Colors.white,
         ),
