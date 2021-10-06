@@ -305,7 +305,7 @@ class _ProductDetailState extends State<ProductDetail> {
       decoration: BoxDecoration(
         color: const Color(0xffffffff),
         boxShadow: [
-          BoxShadow(offset: Offset(0, 0), blurRadius: 3, spreadRadius: 0)
+          BoxShadow(offset: Offset(0, 2), blurRadius: 3, spreadRadius: 0)
         ],
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20), topRight: Radius.circular(20)),
