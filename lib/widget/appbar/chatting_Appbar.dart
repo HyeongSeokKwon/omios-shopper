@@ -1,6 +1,7 @@
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class ChattingAppbar extends StatelessWidget with PreferredSizeWidget {
   @override
@@ -20,7 +21,9 @@ class ChattingAppbar extends StatelessWidget with PreferredSizeWidget {
           child: SvgPicture.asset(
             "assets/images/svg/search.svg",
           ),
-          onTap: () {},
+          onTap: () {
+            Vibrate.feedback(VIBRATETYPE);
+          },
         ),
       ],
     );
