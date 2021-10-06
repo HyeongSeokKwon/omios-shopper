@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,10 +21,12 @@ class _LoginState extends State<Login> {
   LoginController loginController = LoginController();
   TextEditingController idTextController = TextEditingController();
   TextEditingController pwdTextController = TextEditingController();
+
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     loginController.init();
+    canVibrate = await Vibrate.canVibrate;
   }
 
   @override
@@ -76,6 +79,9 @@ class _LoginState extends State<Login> {
   }
 
   Widget _buildTextfield(String type, width, height) {
+    final TextEditingController textController =
+        type == "아이디" ? idTextController : pwdTextController;
+
     return Container(
       alignment: Alignment.center,
       width: width * 0.894,
@@ -87,36 +93,60 @@ class _LoginState extends State<Login> {
       ),
       child: Padding(
         padding: EdgeInsets.only(left: width * 0.038),
-        child: TextFormField(
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+        child: Stack(
+          children: [
+            TextFormField(
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+              ],
+              onChanged: (value) {
+                setState(() {});
+              },
+              textInputAction: TextInputAction.next,
+              maxLength: 30,
+              controller: textController,
+              obscureText: type == "아이디" ? false : true,
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: "$type",
+                  counterText: '',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelStyle: TextStyle(
+                    color: const Color(0xff666666),
+                    height: 0.6,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "NotoSansKR",
+                    fontStyle: FontStyle.normal,
+                    fontSize: 14.sp,
+                  ),
+                  hintText: ("$type를 입력하세요"),
+                  hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                      "NotoSansKR", 16.sp)),
+              textAlign: TextAlign.left,
+              onFieldSubmitted: (value) {
+                if (type == "비밀번호") {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                }
+              },
+            ),
+            textController.text.length > 0
+                ? Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                        icon: new Icon(
+                          Icons.clear,
+                          color: const Color(0xffcccccc),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            textController.clear();
+                          });
+                        }),
+                  )
+                : Container(
+                    height: 0.0,
+                  ),
           ],
-          textInputAction: TextInputAction.next,
-          maxLength: 30,
-          controller: type == "아이디" ? idTextController : pwdTextController,
-          obscureText: type == "아이디" ? false : true,
-          decoration: InputDecoration(
-              border: InputBorder.none,
-              labelText: "$type",
-              counterText: '',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              labelStyle: TextStyle(
-                color: const Color(0xff666666),
-                height: 0.6,
-                fontWeight: FontWeight.w400,
-                fontFamily: "NotoSansKR",
-                fontStyle: FontStyle.normal,
-                fontSize: 14.sp,
-              ),
-              hintText: ("$type를 입력하세요"),
-              hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                  "NotoSansKR", 16.sp)),
-          textAlign: TextAlign.left,
-          onFieldSubmitted: (value) {
-            if (type == "비밀번호") {
-              FocusScope.of(context).requestFocus(FocusNode());
-            }
-          },
         ),
       ),
     );
@@ -272,3 +302,42 @@ class _LoginState extends State<Login> {
     );
   }
 }
+
+// class SearchTextFieldState extends State<SearchTextField> {
+//   final TextEditingController _textController = new TextEditingController();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // TODO: implement build
+//     return new Row(
+//       children: <Widget>[
+//         new Expanded(
+//           child: new Stack(
+//               alignment: const Alignment(1.0, 1.0),
+//               children: <Widget>[
+//                 new TextField(
+//                   decoration: InputDecoration(hintText: 'Search'),
+//                   onChanged: (text) {
+//                     setState(() {
+//                       print(text);
+//                     });
+//                   },
+//                   controller: _textController,
+//                 ),
+//                 _textController.text.length > 0
+//                     ? new IconButton(
+//                         icon: new Icon(Icons.clear),
+//                         onPressed: () {
+//                           setState(() {
+//                             _textController.clear();
+//                           });
+//                         })
+//                     : new Container(
+//                         height: 0.0,
+//                       )
+//               ]),
+//         ),
+//       ],
+//     );
+//   }
+// }
