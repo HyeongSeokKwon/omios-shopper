@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20.251" height="32" viewbox = "0,0,20.251,32">
-    <defs>
-        <clipPath id="a">
-            <path style="fill:none" d="M1.9-4h20.251v32H1.9z"/>
-        </clipPath>
-    </defs>
-    <g data-name="스크롤 그룹 66" transform="translate(-1.9 4)" style="isolation:isolate;clip-path:url(#a)">
-        <path data-name="패스 11179" d="m186.649 573.474-.009-.008-3.718-3.854a9.062 9.062 0 0 0 2.1-5.725 9.094 9.094 0 1 0-9.172 9.016h.081a9.035 9.035 0 0 0 5.941-2.229l3.663 3.794a.745.745 0 1 0 1.112-.994zM175.9 556.205h.035a7.6 7.6 0 0 1 0 15.2h-.069a7.6 7.6 0 0 1 .031-15.2z" transform="translate(-164.839 -552.216)" style="fill:#333;stroke:#333;stroke-width:.2px"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" width="22.358" height="32" viewBox="0 0 22.358 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect y="-4" width="22.358" height="32" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="돋보기" transform="translate(0 4)" clip-path="url(#clip-path)" style="isolation: isolate">
+    <path id="패스_11154" data-name="패스 11154" d="M188.63,575.35l-.01-.009-4.089-4.239a9.969,9.969,0,0,0,2.313-6.3,10,10,0,1,0-10.09,9.918h.089a9.939,9.939,0,0,0,6.535-2.452l4.029,4.173a.82.82,0,1,0,1.223-1.093Zm-11.83-19h.038a8.363,8.363,0,0,1,0,16.726h-.076a8.362,8.362,0,0,1,.034-16.725Z" transform="translate(-166.688 -554.566)" fill="#444" stroke="#444" stroke-width="0.3"/>
+  </g>
 </svg>
