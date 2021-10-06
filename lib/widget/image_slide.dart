@@ -4,6 +4,7 @@ import 'package:cloth_collection/util/util.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 //점으로 현재 페이지 표시되는 이미지 슬라이드
 class ImageSlideHasDot extends StatefulWidget {
@@ -16,14 +17,13 @@ class ImageSlideHasDot extends StatefulWidget {
 
 class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
   PageController _pageController = PageController(initialPage: 0);
-  double _currentPosition = 0.0;
 
   @override
   Widget build(BuildContext context) {
     final List<Container> images = <Container>[
       Container(color: Colors.red),
       Container(color: Colors.blue),
-      Container(color: Colors.black)
+      Container(color: Colors.pink)
     ];
     return Container(
       width: widget.width,
@@ -34,29 +34,27 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
             controller: _pageController,
             itemCount: images.length,
             itemBuilder: (BuildContext context, int index) {
-              _currentPosition = index.toDouble();
               return images[index];
             },
             onPageChanged: (value) {
-              _currentPosition = value.toDouble();
               setState(() {});
             },
           ),
-          Positioned(
-            bottom: 5.0,
-            right: 0.0,
-            left: 0.0,
-            child: DotsIndicator(
-              decorator: DotsDecorator(
-                size: Size.square(9.0),
-                activeSize: Size(18.0, 9.0),
-                activeShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
-                color: Colors.white, // Inactive color
-                activeColor: Color(0xff333333),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: SmoothPageIndicator(
+                controller: _pageController,
+                count: images.length,
+                effect: WormEffect(
+                    spacing: 8.0,
+                    dotWidth: 15.0,
+                    dotHeight: 15.0,
+                    strokeWidth: 1.5,
+                    dotColor: Colors.grey,
+                    activeDotColor: Colors.black),
               ),
-              dotsCount: images.length,
-              position: _currentPosition,
             ),
           ),
         ],

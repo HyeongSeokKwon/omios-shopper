@@ -2,6 +2,7 @@ import 'package:cloth_collection/data/product.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 class ProductRecommentCard extends StatelessWidget {
@@ -11,8 +12,9 @@ class ProductRecommentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return InkWell(
+    return GestureDetector(
       onTap: () {
+        Vibrate.feedback(VIBRATETYPE);
         Get.to(() => ProductDetail(product));
       },
       child: Container(

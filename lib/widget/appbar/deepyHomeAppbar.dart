@@ -2,6 +2,7 @@ import 'package:cloth_collection/page/searchText.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
@@ -18,29 +19,37 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
             style: textStyle(
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 20.0)),
       ),
-      titleSpacing: width * 0.053,
       actions: <Widget>[
-        Row(
-          children: [
-            GestureDetector(
-              child: SvgPicture.asset(
-                "assets/images/svg/search.svg",
+        Padding(
+          padding: EdgeInsets.only(right: width * 0.053),
+          child: Row(
+            children: [
+              GestureDetector(
+                child: SvgPicture.asset(
+                  "assets/images/svg/search.svg",
+                ),
+                onTap: () {
+                  Vibrate.feedback(VIBRATETYPE);
+                  Get.to(() => SearchText());
+                },
               ),
-              onTap: () {
-                Get.to(() => SearchText());
-              },
-            ),
-            SizedBox(width: 13),
-            GestureDetector(
-              onTap: () {},
-              child: SvgPicture.asset("assets/images/svg/alarm.svg"),
-            ),
-            SizedBox(width: 13),
-            GestureDetector(
-              onTap: () {},
-              child: SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
-            ),
-          ],
+              SizedBox(width: width * 0.053),
+              GestureDetector(
+                onTap: () {
+                  Vibrate.feedback(VIBRATETYPE);
+                },
+                child: SvgPicture.asset("assets/images/svg/alarm.svg"),
+              ),
+              SizedBox(width: width * 0.053),
+              GestureDetector(
+                onTap: () {
+                  Vibrate.feedback(VIBRATETYPE);
+                },
+                child:
+                    SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
+              ),
+            ],
+          ),
         ),
       ],
       backgroundColor: Colors.white,

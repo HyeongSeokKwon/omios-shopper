@@ -82,32 +82,48 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: appBar[_currentIndex],
       body: selectedPage[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            label: "홈",
-            icon: SvgPicture.asset(currentIconUrl[HOME]),
+      bottomNavigationBar: _buildBottomNaviagationBar(),
+    );
+  }
+
+  Widget _buildBottomNaviagationBar() {
+    return BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(
+          label: "홈",
+          icon: Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: SvgPicture.asset(currentIconUrl[HOME]),
           ),
-          BottomNavigationBarItem(
-            label: "이미지검색",
-            icon: SvgPicture.asset(currentIconUrl[SEARCH]),
+        ),
+        BottomNavigationBarItem(
+          label: "이미지검색",
+          icon: Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: SvgPicture.asset(currentIconUrl[SEARCH]),
           ),
-          BottomNavigationBarItem(
-            label: "채팅",
-            icon: SvgPicture.asset(currentIconUrl[CHAT]),
+        ),
+        BottomNavigationBarItem(
+          label: "채팅",
+          icon: Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: SvgPicture.asset(currentIconUrl[CHAT]),
           ),
-          BottomNavigationBarItem(
-            label: "마이페이지",
-            icon: SvgPicture.asset(currentIconUrl[MYPAGE]),
+        ),
+        BottomNavigationBarItem(
+          label: "마이페이지",
+          icon: Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: SvgPicture.asset(currentIconUrl[MYPAGE]),
           ),
-        ],
-        showUnselectedLabels: true,
-        selectedFontSize: 12.0,
-        selectedItemColor: const Color(0xffec5363),
-        onTap: _onItemTapped,
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-      ),
+        ),
+      ],
+      showUnselectedLabels: true,
+      selectedFontSize: 12.0,
+      selectedItemColor: const Color(0xffec5363),
+      onTap: _onItemTapped,
+      currentIndex: _currentIndex,
+      type: BottomNavigationBarType.fixed,
     );
   }
 }

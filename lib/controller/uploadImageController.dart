@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_cropper/image_cropper.dart';

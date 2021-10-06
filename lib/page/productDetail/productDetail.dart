@@ -2,11 +2,12 @@ import 'package:cloth_collection/data/product.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
-import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;
@@ -20,20 +21,24 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: _buildAppBar(),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [_buildScroll(width, height)],
-        ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
       ),
-      extendBody: true,
-      bottomNavigationBar: _buildBottomNaviagationBar(width, height),
+      child: Scaffold(
+        appBar: _buildAppBar(width),
+        extendBodyBehindAppBar: true,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [_buildScroll(width, height)],
+          ),
+        ),
+        bottomNavigationBar: _buildBottomNaviagationBar(width, height),
+      ),
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(double width) {
     return AppBar(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -46,9 +51,12 @@ class _ProductDetailState extends State<ProductDetail> {
         ],
       ),
       actions: [
-        GestureDetector(
-          onTap: () {},
-          child: SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
+        Padding(
+          padding: EdgeInsets.only(right: width * 0.053),
+          child: GestureDetector(
+            onTap: () {},
+            child: SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
+          ),
         )
       ],
       titleSpacing: 0.0,
@@ -123,6 +131,7 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget _buildProductInfo(double width, double height) {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           //대표적인 정보
           _buildProductRepresentativeInfo(width, height),
@@ -151,7 +160,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Widget _buildProductRepresentativeInfo(double width, double height) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.053),
+      padding: EdgeInsets.only(left: width * 0.053),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -171,26 +180,26 @@ class _ProductDetailState extends State<ProductDetail> {
               style: textStyle(const Color(0xff333333), FontWeight.w700,
                   "NotoSansKR", 18.0)),
           SizedBox(height: 10),
-          Row(
-            children: [
-              RatingBarIndicator(
-                rating: 5, // 상품 평점
-                itemCount: 5,
-                itemSize: width * 0.035,
-                itemBuilder: (context, index) => Icon(
-                  Icons.star,
-                  color: const Color(0xffffbe3f),
-                ),
-              ),
-              SizedBox(width: width * 0.015),
-              Text(
-                "4.5",
-                style: textStyle(const Color(0xff333333), FontWeight.w500,
-                    "NotoSansKR", 13.0),
-              )
-            ],
-          ),
-          SizedBox(height: 10),
+          // Row(
+          //   children: [
+          //     RatingBarIndicator(
+          //       rating: 5, // 상품 평점
+          //       itemCount: 5,
+          //       itemSize: width * 0.035,
+          //       itemBuilder: (context, index) => Icon(
+          //         Icons.star,
+          //         color: const Color(0xffffbe3f),
+          //       ),
+          //     ),
+          //     SizedBox(width: width * 0.015),
+          //     Text(
+          //       "4.5",
+          //       style: textStyle(const Color(0xff333333), FontWeight.w500,
+          //           "NotoSansKR", 13.0),
+          //     )
+          //   ],
+          // ),
+          // SizedBox(height: 10),
         ],
       ),
     );
@@ -316,7 +325,9 @@ class _ProductDetailState extends State<ProductDetail> {
                   child: Center(
                     child: SvgPicture.asset("assets/images/svg/heart.svg"),
                   )),
-              onTap: () {},
+              onTap: () {
+                Vibrate.feedback(VIBRATETYPE);
+              },
             ),
           ),
           TextButton(
@@ -353,7 +364,9 @@ class _ProductDetailState extends State<ProductDetail> {
                 backgroundColor:
                     MaterialStateProperty.all<Color>(const Color(0xffec5363)),
               ),
-              onPressed: () {}),
+              onPressed: () {
+                Vibrate.feedback(VIBRATETYPE);
+              }),
         ],
       ),
     );
