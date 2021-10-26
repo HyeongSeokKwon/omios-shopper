@@ -87,40 +87,39 @@ class _SearchImageState extends State<SearchImage> {
     return Padding(
       padding: EdgeInsets.only(top: height * 0.029),
       child: Center(
-        child: TextButton(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset("$upLoadButtonIcon"),
-              SizedBox(width: 5.w),
-              GetBuilder<UploadImageController>(
-                builder: (_) => Text(
-                  controller.uploadImage ==
-                          SvgPicture.asset("$upLoadButtonIcon")
-                      ? "검색하기"
-                      : "이미지 업로드",
+        child: GetBuilder<UploadImageController>(
+          builder: (_) => TextButton(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("$upLoadButtonIcon"),
+                SizedBox(width: 5.w),
+                Text(
+                  controller.isSelectedImage() == false ? "검색하기" : "이미지 업로드",
                   style: textStyle(
                       Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
                 ),
-              ),
-            ],
-          ),
-          style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14.r),
-              ),
+              ],
             ),
-            fixedSize: MaterialStateProperty.all<Size>(
-                Size(width * 0.894, height * 0.067)),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(
+                  Size(width * 0.894, height * 0.067)),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+            ),
+            onPressed: () {
+              if (!controller.isSelectedImage()) {
+                showPicker(context);
+              } else {
+                controller.convert2BytesCode();
+              }
+            },
           ),
-          onPressed: () {
-            if (controller.uploadImage == null) {
-              showPicker(context);
-            }
-          },
         ),
       ),
     );
@@ -134,7 +133,9 @@ class _SearchImageState extends State<SearchImage> {
           Center(
             child: Container(
               height: height * 0.55,
-              child: controller.uploadImage,
+              child: controller.isSelectedImage() == false
+                  ? controller.uploadIcon
+                  : controller.uploadImage,
             ),
           ),
           // ElevatedButton(

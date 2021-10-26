@@ -1,45 +1,59 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
 
 class UploadImageController extends GetxController {
-  var uploadImage = SvgPicture.asset("assets/images/svg/upload_picture.svg");
+  var uploadIcon = SvgPicture.asset("assets/images/svg/upload_picture.svg");
+  var uploadImage;
   PickedFile? pickedFile;
+  late List<int> imageBytes;
+
+  void convert2BytesCode() async {
+    imageBytes = await pickedFile!.readAsBytes();
+    String base64Image = base64UrlEncode(imageBytes);
+    print("바이트코드 => " + base64Image);
+  }
 
   void getImageFromPhoto() async {
     pickedFile = await ImagePicker.platform.pickImage(
       source: ImageSource.camera,
       imageQuality: 50,
     );
-    if (pickedFile == null) {
-      uploadImage = SvgPicture.asset("assets/images/svg/upload_picture.svg");
-    } else {
-      uploadImage = SvgPicture.file(
+    if (pickedFile != null) {
+      uploadImage = Image.file(
         File(pickedFile!.path),
       );
     }
+
     update();
   }
 
   void getImageFromGallery() async {
     pickedFile = await ImagePicker.platform
         .pickImage(source: ImageSource.gallery, imageQuality: 50);
-    if (pickedFile == null) {
-      uploadImage = SvgPicture.asset(
-        "assets/images/svg/upload_picture.svg",
+    if (pickedFile != null) {
+      uploadImage = Image.file(
+        File(pickedFile!.path),
       );
-    } else {
-      uploadImage = SvgPicture.file(File(pickedFile!.path));
     }
     update();
   }
 
   void deleteImage() {
-    uploadImage = SvgPicture.asset("assets/images/svg/upload_picture.svg");
-
+    uploadImage = null;
     update();
+  }
+
+  bool isSelectedImage() {
+    if (uploadImage == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   Future<Null> cropImage() async {
