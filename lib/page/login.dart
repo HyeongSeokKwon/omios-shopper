@@ -309,41 +309,162 @@ class _LoginState extends State<Login> {
   }
 }
 
-// class SearchTextFieldState extends State<SearchTextField> {
-//   final TextEditingController _textController = new TextEditingController();
+// abstract class LoginTextField {
+//   Widget makeTextField(double width, double height, TextEditingController textController);
 
+//   factory LoginTextField(String type) {
+//     switch (type) {
+//       case "아이디":
+//         {
+//           return IdTextField();
+//         }
+//       case "비밀번호":
+//         {
+//           return PwdTextField();
+//         }
+//     }
+//   }
+// }
+
+// class IdTextField implements LoginTextField {
 //   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     return new Row(
-//       children: <Widget>[
-//         new Expanded(
-//           child: new Stack(
-//               alignment: const Alignment(1.0, 1.0),
-//               children: <Widget>[
-//                 new TextField(
-//                   decoration: InputDecoration(hintText: 'Search'),
-//                   onChanged: (text) {
-//                     setState(() {
-//                       print(text);
-//                     });
-//                   },
-//                   controller: _textController,
-//                 ),
-//                 _textController.text.length > 0
-//                     ? new IconButton(
-//                         icon: new Icon(Icons.clear),
+//   Widget makeTextField(double width, double height, TextEditingController textController) {
+//     return Container(
+//       alignment: Alignment.center,
+//       width: width * 0.894,
+//       height: height * 0.079,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.all(Radius.circular(14.r)),
+//         border: Border.all(color: const Color(0xffcccccc), width: 1.w),
+//         color: const Color(0xffffffff),
+//       ),
+//       child: Padding(
+//         padding: EdgeInsets.only(left: width * 0.038),
+//         child: Stack(
+//           children: [
+//             TextFormField(
+//               inputFormatters: [
+//                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+//               ],
+//               onChanged: (value) {
+//                 setState(() {});
+//               },
+//               textInputAction: TextInputAction.next,
+//               maxLength: 30,
+//               controller: textController,
+//               obscureText: false,
+//               decoration: InputDecoration(
+//                   border: InputBorder.none,
+//                   labelText: "아이디",
+//                   counterText: '',
+//                   floatingLabelBehavior: FloatingLabelBehavior.always,
+//                   labelStyle: TextStyle(
+//                     color: const Color(0xff666666),
+//                     height: 0.6,
+//                     fontWeight: FontWeight.w400,
+//                     fontFamily: "NotoSansKR",
+//                     fontStyle: FontStyle.normal,
+//                     fontSize: 14.sp,
+//                   ),
+//                   hintText: ("아이디를 입력하세요"),
+//                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+//                       "NotoSansKR", 16.sp)),
+//               textAlign: TextAlign.left,
+//             ),
+//             textController.text.length > 0
+//                 ? Align(
+//                     alignment: Alignment.centerRight,
+//                     child: IconButton(
+//                         icon: new Icon(
+//                           Icons.clear,
+//                           color: const Color(0xffcccccc),
+//                         ),
 //                         onPressed: () {
 //                           setState(() {
-//                             _textController.clear();
+//                             textController.clear();
 //                           });
-//                         })
-//                     : new Container(
-//                         height: 0.0,
-//                       )
-//               ]),
+//                         }),
+//                   )
+//                 : Container(
+//                     height: 0.0,
+//                   ),
+//           ],
 //         ),
-//       ],
+//       ),
+//     );
+//   }
+// }
+
+// class PwdTextField implements LoginTextField {
+//   @override
+//   Widget makeTextField() {
+//     return Container(
+//       alignment: Alignment.center,
+//       width: width * 0.894,
+//       height: height * 0.079,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.all(Radius.circular(14.r)),
+//         border: Border.all(color: const Color(0xffcccccc), width: 1.w),
+//         color: const Color(0xffffffff),
+//       ),
+//       child: Padding(
+//         padding: EdgeInsets.only(left: width * 0.038),
+//         child: Stack(
+//           children: [
+//             TextFormField(
+//               inputFormatters: [
+//                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+//               ],
+//               onChanged: (value) {
+//                 setState(() {});
+//               },
+//               textInputAction: TextInputAction.next,
+//               maxLength: 30,
+//               controller: textController,
+//               obscureText: type == "아이디" ? false : true,
+//               decoration: InputDecoration(
+//                   border: InputBorder.none,
+//                   labelText: "$type",
+//                   counterText: '',
+//                   floatingLabelBehavior: FloatingLabelBehavior.always,
+//                   labelStyle: TextStyle(
+//                     color: const Color(0xff666666),
+//                     height: 0.6,
+//                     fontWeight: FontWeight.w400,
+//                     fontFamily: "NotoSansKR",
+//                     fontStyle: FontStyle.normal,
+//                     fontSize: 14.sp,
+//                   ),
+//                   hintText: ("$type를 입력하세요"),
+//                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+//                       "NotoSansKR", 16.sp)),
+//               textAlign: TextAlign.left,
+//               onFieldSubmitted: (value) {
+//                 if (type == "비밀번호") {
+//                   FocusScope.of(context).requestFocus(FocusNode());
+//                 }
+//               },
+//             ),
+//             textController.text.length > 0
+//                 ? Align(
+//                     alignment: Alignment.centerRight,
+//                     child: IconButton(
+//                         icon: new Icon(
+//                           Icons.clear,
+//                           color: const Color(0xffcccccc),
+//                         ),
+//                         onPressed: () {
+//                           setState(() {
+//                             textController.clear();
+//                           });
+//                         }),
+//                   )
+//                 : Container(
+//                     height: 0.0,
+//                   ),
+//           ],
+//         ),
+//       ),
 //     );
 //   }
 // }
