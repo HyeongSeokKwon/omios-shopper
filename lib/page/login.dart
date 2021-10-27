@@ -108,7 +108,8 @@ class _LoginState extends State<Login> {
               onChanged: (value) {
                 setState(() {});
               },
-              textInputAction: TextInputAction.next,
+              textInputAction:
+                  type == "아이디" ? TextInputAction.next : TextInputAction.done,
               maxLength: 30,
               controller: textController,
               obscureText: type == "아이디" ? false : true,
@@ -135,27 +136,33 @@ class _LoginState extends State<Login> {
                 }
               },
             ),
-            textController.text.length > 0
-                ? Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                        icon: new Icon(
-                          Icons.clear,
-                          color: const Color(0xffcccccc),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            textController.clear();
-                          });
-                        }),
-                  )
-                : Container(
-                    height: 0.0,
-                  ),
+            _buildDeleteTextButton(textController),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildDeleteTextButton(TextEditingController textController) {
+    if (textController.text.length > 0) {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: IconButton(
+            icon: new Icon(
+              Icons.clear,
+              color: const Color(0xffcccccc),
+            ),
+            onPressed: () {
+              setState(() {
+                textController.clear();
+              });
+            }),
+      );
+    } else {
+      return Container(
+        height: 0.0,
+      );
+    }
   }
 
   Widget _buildAutoLogin(double width, double height) {
@@ -243,6 +250,7 @@ class _LoginState extends State<Login> {
         onPressed: () {
           loginController.getLoginInfo(
               idTextController.text, pwdTextController.text);
+          loginController.loginRequest();
         },
       ),
     );
