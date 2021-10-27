@@ -57,6 +57,7 @@ class UploadImageController extends GetxController {
   }
 
   Future<Null> cropImage() async {
+  
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: pickedFile!.path,
         aspectRatioPresets: Platform.isAndroid
