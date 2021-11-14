@@ -45,6 +45,7 @@ class UploadImageController extends GetxController {
 
   void deleteImage() {
     uploadImage = null;
+    pickedFile = null;
     update();
   }
 
@@ -57,34 +58,54 @@ class UploadImageController extends GetxController {
   }
 
   Future<Null> cropImage() async {
-  
-    File? croppedFile = await ImageCropper.cropImage(
+    if (pickedFile != null) {
+      File? croppedFile = await ImageCropper.cropImage(
         sourcePath: pickedFile!.path,
-        aspectRatioPresets: Platform.isAndroid
-            ? [
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio3x2,
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPreset.ratio16x9
-              ]
-            : [
-                CropAspectRatioPreset.original,
-                CropAspectRatioPreset.square,
-                CropAspectRatioPreset.ratio3x2,
-                CropAspectRatioPreset.ratio4x3,
-                CropAspectRatioPreset.ratio5x3,
-                CropAspectRatioPreset.ratio5x4,
-                CropAspectRatioPreset.ratio7x5,
-                CropAspectRatioPreset.ratio16x9
-              ],
-        androidUiSettings: AndroidUiSettings(lockAspectRatio: false),
-        iosUiSettings: IOSUiSettings(
-          title: 'Cropper',
-        ));
-    if (croppedFile != null) {
-      uploadImage = SvgPicture.file(File(croppedFile.path));
-      update();
+        // aspectRatioPresets: Platform.isAndroid
+        //     ? [
+        //         CropAspectRatioPreset.square,
+        //         CropAspectRatioPreset.ratio3x2,
+        //         CropAspectRatioPreset.original,
+        //         CropAspectRatioPreset.ratio4x3,
+        //         CropAspectRatioPreset.ratio16x9
+        //       ]
+        //     : [
+        //         CropAspectRatioPreset.original,
+        //         CropAspectRatioPreset.square,
+        //         CropAspectRatioPreset.ratio3x2,
+        //         CropAspectRatioPreset.ratio4x3,
+        //         CropAspectRatioPreset.ratio5x3,
+        //         CropAspectRatioPreset.ratio5x4,
+        //         CropAspectRatioPreset.ratio7x5,
+        //         CropAspectRatioPreset.ratio16x9
+        //       ],
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: null,
+          toolbarColor: Colors.transparent,
+          statusBarColor: Colors.transparent,
+          toolbarWidgetColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          activeControlsWidgetColor: Colors.transparent,
+          dimmedLayerColor: Colors.transparent,
+          cropFrameColor: Colors.transparent,
+          cropGridColor: Colors.transparent,
+          // cropFrameStrokeWidth,
+          // cropGridRowCount,
+          // cropGridColumnCount,
+          // cropGridStrokeWidth,
+          // showCropGrid,
+          // lockAspectRatio,
+          hideBottomControls: true,
+          // initAspectRatio}),
+          // iosUiSettings: IOSUiSettings(
+          //   title: 'Cropper',
+          // ),
+        ),
+      );
+      if (croppedFile != null) {
+        uploadImage = Image.file(File(croppedFile.path));
+        update();
+      }
     }
   }
 }

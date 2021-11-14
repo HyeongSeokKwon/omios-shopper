@@ -10,6 +10,7 @@ class ImageSearchAppbar extends StatelessWidget with PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       elevation: 0,
+      backgroundColor: Colors.white,
       leadingWidth: width * 0.3,
       leading: Container(
         child: Center(

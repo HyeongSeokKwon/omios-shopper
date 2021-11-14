@@ -1,23 +1,36 @@
+import 'dart:convert';
+
 import 'package:cloth_collection/http/loginHttp.dart';
 import 'package:cloth_collection/model/loginModel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
-  var isChecked;
-  late String userId;
-  late String userPwd;
-  late LoginRequestModel loginRequestModel;
-  late LoginHttp loginApi;
-  void init() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isChecked = prefs.getBool('isChecked');
-    if (isChecked == null) {
-      isChecked = false;
-    }
+  var isAutoLoginChecked;
+  var loginResponseModel;
 
-    print("LoginController init");
-    prefs.setBool('isChecekd', isChecked);
+  String errorString = "";
+  String userId = "";
+  String userPwd = "";
+  String errorMessage = "";
+  late BuildContext context;
+
+  late LoginRequestModel loginRequestModel;
+  late LoginHttp loginHttp;
+  late final SharedPreferences prefs;
+  late var userData;
+
+  void init() async {
+    prefs = await SharedPreferences.getInstance();
+    isAutoLoginChecked = prefs.getBool('isChecked');
+
+    if (isAutoLoginChecked == null) {
+      isAutoLoginChecked = false;
+      prefs.setBool('isCheckd', isAutoLoginChecked);
+    }
+    print(isAutoLoginChecked);
+    update(["autoLogin"]);
   }
 
   void getLoginInfo(String id, String pwd) {
@@ -27,16 +40,45 @@ class LoginController extends GetxController {
     print("pwd:" + pwd);
   }
 
-  void checkedAutoLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isChecked = !isChecked;
-    prefs.setBool('isChecked', isChecked);
+  void checkedAutoLogin() {
+    isAutoLoginChecked = !isAutoLoginChecked;
+
+    prefs.setBool('isChecked', isAutoLoginChecked);
     update(["autoLogin"]);
   }
 
-  void loginRequest() {
+  Future<String?> loginRequest() async {
     loginRequestModel = LoginRequestModel(userId, userPwd);
-    loginApi = LoginHttp();
-    loginApi.login(loginRequestModel);
+    loginHttp = LoginHttp();
+    try {
+      loginResponseModel = await loginHttp.login(loginRequestModel);
+    } catch (e) {
+      print(e);
+      errorMessage = e.toString();
+    }
+  }
+
+  void loginButtonPressed(String userId, String userPwd) {
+    getLoginInfo(userId, userPwd);
+    if (userId != "" && userPwd != "") {
+      if (isAutoLoginChecked) {
+        //자동 로그인 되어있으면 userdata to json 해서 공유변수에 저장
+        userData = json.encode(
+          {
+            'accessToken': null, //_token;
+            'refreshToken': null,
+            'id': userId,
+            'pwd': userPwd,
+            'refreshTokenExpiryDate': null, //expiryDate,
+          },
+        );
+
+        // prefs.setString('userData', userData);
+      }
+
+      loginRequest();
+    } else {
+      print("ID PWD 누락");
+    }
   }
 }

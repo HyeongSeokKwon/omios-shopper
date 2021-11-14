@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloth_collection/util/util.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

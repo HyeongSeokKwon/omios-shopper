@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_crop/image_crop.dart';
 
 class SearchImage extends StatefulWidget {
   @override
@@ -96,7 +95,7 @@ class _SearchImageState extends State<SearchImage> {
                 SvgPicture.asset("$upLoadButtonIcon"),
                 SizedBox(width: 5.w),
                 Text(
-                  controller.isSelectedImage() == false ? "검색하기" : "이미지 업로드",
+                  controller.isSelectedImage() == false ? "이미지 업로드" : "검색하기",
                   style: textStyle(
                       Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
                 ),
@@ -133,17 +132,17 @@ class _SearchImageState extends State<SearchImage> {
         children: [
           Center(
             child: Container(
-              height: height * 0.55,
+              height: height * 0.3,
               child: controller.isSelectedImage() == false
                   ? controller.uploadIcon
                   : controller.uploadImage,
             ),
           ),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       controller.cropImage();
-          //     },
-          //     child: Text("자르기")),
+          ElevatedButton(
+              onPressed: () {
+                controller.cropImage();
+              },
+              child: Text("자르기")),
         ],
       ),
     );
