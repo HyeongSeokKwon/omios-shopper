@@ -14,7 +14,7 @@ class LoginHttp {
       loginResponse = LoginResponseModel.fromJson(jsonDecode(response.data));
       return loginResponse;
     }
-    throw 'Request failed \n Status : ${response.statusCode} \n';
+    throw 'Request failed \n Status : ${response.statusCode}\n';
     // try {
     //   response = await http.post(Uri.parse(url), body: requestModel.toJson());
     //   if (response.statusCode != 200)

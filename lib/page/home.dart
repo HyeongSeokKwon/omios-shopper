@@ -1,3 +1,4 @@
+import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/SearchImage.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/myPage.dart';
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    DBHelper().db;
     selectedPage = [
       DeepyHome(scrollController),
       SearchImage(),
