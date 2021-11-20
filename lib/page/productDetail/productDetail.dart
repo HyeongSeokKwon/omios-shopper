@@ -1,4 +1,6 @@
+import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/data/product.dart';
+import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
@@ -16,6 +18,16 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  DBHelper _dbHelper = DBHelper();
+  RecentViewController recentViewController = RecentViewController();
+  @override
+  void initState() {
+    super.initState();
+    recentViewController.dataInit(_dbHelper);
+    recentViewController.insertRecentView(
+        widget.product.productCode, _dbHelper);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
