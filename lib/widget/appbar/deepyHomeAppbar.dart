@@ -12,19 +12,37 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return AppBar(
-      automaticallyImplyLeading: true,
+      //automaticallyImplyLeading: true,
       elevation: 0,
-      leadingWidth: width * 0.3,
-      leading: Container(
-        child: Center(
-          child: Row(
-            children: [
-              SizedBox(width: width * 0.053),
-              Text("Deepy",
-                  style: textStyle(const Color(0xff333333), FontWeight.w700,
-                      "NotoSansKR", 22.0)),
-            ],
-          ),
+      titleSpacing: 0,
+      leadingWidth: 0,
+      title: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 13.0),
+        child: GestureDetector(
+          onTap: () {},
+          child: Container(
+              width: 600,
+              height: 35,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.all(
+                  Radius.circular(15),
+                ),
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 10),
+                  Icon(
+                    Icons.search,
+                    size: 20,
+                    color: Colors.grey[500],
+                  ),
+                  SizedBox(width: 5),
+                  Text("검색어를 입력하세요",
+                      style: textStyle(Colors.grey[500]!, FontWeight.w600,
+                          "NotoSansKR", 14.0)),
+                ],
+              )),
         ),
       ),
       actions: <Widget>[
@@ -32,16 +50,15 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
           padding: EdgeInsets.only(right: width * 0.053),
           child: Row(
             children: [
-              GestureDetector(
-                child: SvgPicture.asset(
-                  "assets/images/svg/search.svg",
-                ),
-                onTap: () {
-                  Vibrate.feedback(VIBRATETYPE);
-                  Get.to(() => SearchText());
-                },
-              ),
-              SizedBox(width: width * 0.053),
+              // GestureDetector(
+              //   child: SvgPicture.asset(
+              //     "assets/images/svg/search.svg",
+              //   ),
+              //   onTap: () {
+              //     Vibrate.feedback(VIBRATETYPE);
+              //     Get.to(() => SearchText());
+              //   },
+              // ),
               GestureDetector(
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
@@ -63,4 +80,8 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: Colors.white,
     );
   }
+
+  // Widget _searchArea() {
+  //   return
+  // }
 }
