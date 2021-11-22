@@ -1,4 +1,6 @@
+import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/data/product.dart';
+import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:get/get.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   ProductCard(this.product);
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -17,6 +20,7 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Vibrate.feedback(VIBRATETYPE);
+
         Get.to(() => ProductDetail(product));
       },
       child: Container(

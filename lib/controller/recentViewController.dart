@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 class RecentViewController extends GetxController {
   var recentViewList = Future.value().obs;
-
   void dataInit(DBHelper _dbHelper) {
     recentViewList.value = getRecentView(_dbHelper.db);
   }
@@ -23,6 +22,7 @@ class RecentViewController extends GetxController {
     }
 
     setRecentView(_dbHelper.db, productCode);
+
     update();
   }
 }

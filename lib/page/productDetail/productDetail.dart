@@ -18,8 +18,8 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
-  DBHelper _dbHelper = DBHelper();
-  RecentViewController recentViewController = RecentViewController();
+  final DBHelper _dbHelper = DBHelper();
+  final RecentViewController recentViewController = RecentViewController();
   @override
   void initState() {
     super.initState();
