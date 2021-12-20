@@ -22,7 +22,7 @@ class LoginRequestModel {
 
   Map<String, String> toJson() {
     Map<String, String> map = {
-      'id': this.id,
+      'username': this.id,
       'password': this.password,
     };
     return map;
