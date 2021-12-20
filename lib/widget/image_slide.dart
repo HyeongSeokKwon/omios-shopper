@@ -7,9 +7,6 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 //점으로 현재 페이지 표시되는 이미지 슬라이드
 class ImageSlideHasDot extends StatefulWidget {
-  final double width;
-  final double height;
-  ImageSlideHasDot(this.width, this.height);
   @override
   _ImageSlideHasDotState createState() => _ImageSlideHasDotState();
 }
@@ -25,8 +22,8 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
       Container(color: Colors.pink)
     ];
     return Container(
-      width: widget.width,
-      height: widget.height,
+      width: 414 * Scale.width,
+      height: 340 * Scale.height,
       child: Stack(
         children: [
           PageView.builder(
@@ -64,9 +61,6 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
 
 //숫자로 현재페이지 표시되는 이미지 슬라이드
 class ImageSlideHasNum extends StatefulWidget {
-  final double width;
-  final double height;
-  ImageSlideHasNum(this.width, this.height);
   @override
   _ImageSlideHasNumState createState() => _ImageSlideHasNumState();
 }
@@ -103,8 +97,8 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
       Container(color: Colors.purple[300]),
     ];
     return Container(
-      width: widget.width,
-      height: widget.height,
+      width: 414 * Scale.width,
+      height: 340 * Scale.height,
       child: Stack(
         children: [
           PageView.builder(
@@ -121,13 +115,13 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
             },
           ),
           Positioned(
-            bottom: widget.height * 0.054,
-            right: widget.width * 0.053,
+            bottom: Scale.height * 0.054,
+            right: Scale.width * 0.053,
             child: Opacity(
               opacity: 0.5,
               child: Container(
-                width: widget.width * 0.109,
-                height: widget.height * 0.092,
+                width: Scale.width * 0.109,
+                height: Scale.height * 0.092,
                 decoration: BoxDecoration(
                   color: const Color(0xff444444),
                   borderRadius: BorderRadius.circular(7),

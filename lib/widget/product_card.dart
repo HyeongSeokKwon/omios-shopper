@@ -4,6 +4,7 @@ import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
@@ -14,9 +15,6 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-
     return GestureDetector(
       onTap: () {
         Vibrate.feedback(VIBRATETYPE);
@@ -26,18 +24,19 @@ class ProductCard extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
-            _buildProductImage(width, height),
-            _buildProductInfo(width, height),
+            _buildProductImage(),
+            SizedBox(height: 12 * Scale.height),
+            _buildProductInfo(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProductImage(double width, double height) {
+  Widget _buildProductImage() {
     return Container(
-      width: width * 0.425,
-      height: width * 0.425 * (500 / 375),
+      width: 176 * Scale.width,
+      height: 176 * Scale.width * (500 / 375),
       child: ClipRRect(
         child: Image.asset("${product.image}", fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(8.0),
@@ -50,13 +49,13 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProductInfo(double width, double height) {
+  Widget _buildProductInfo() {
     return Container(
-      width: width * 0.425,
+      width: 176 * Scale.width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: height * 0.01),
+          SizedBox(height: 12 * Scale.height),
           Text(
             "${product.name}",
             style: textStyle(
@@ -64,17 +63,17 @@ class ProductCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: height * 0.003),
+          SizedBox(height: 4 * Scale.height),
           Text(
             setPriceFormat(product.price),
             style: textStyle(
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 16.0),
           ),
-          SizedBox(height: height * 0.003),
+          SizedBox(height: 4 * Scale.height),
           Row(
             children: [
               SvgPicture.asset("assets/images/svg/location.svg"),
-              SizedBox(width: width * 0.01),
+              SizedBox(width: 4 * Scale.width),
               Text(
                 "${product.location}",
                 style: textStyle(const Color(0xff999999), FontWeight.w400,

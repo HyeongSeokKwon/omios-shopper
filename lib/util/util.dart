@@ -2,10 +2,22 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const MAINCOLOR = Color.fromRGBO(176, 140, 217, 100);
 const VIBRATETYPE = FeedbackType.light;
+
 late bool canVibrate;
+
+class Scale {
+  static late double width;
+  static late double height;
+
+  static void setScale(BuildContext context) {
+    width = MediaQuery.of(context).size.width / 414;
+    height = MediaQuery.of(context).size.height / 896;
+  }
+}
 
 String setPriceFormat(int price) {
   final oCcy = new NumberFormat("#,###", "ko_KR");
