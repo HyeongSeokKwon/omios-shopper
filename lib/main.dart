@@ -1,4 +1,5 @@
 import 'package:cloth_collection/page/login.dart';
+import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,12 +22,6 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaleFactor: 0.9,
-          ),
-          child: child!,
-        ),
         theme: ThemeData(
           primaryColor: Colors.white,
         ),
