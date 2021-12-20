@@ -1,21 +1,19 @@
 import 'dart:convert';
 
-import 'package:cloth_collection/http/loginHttp.dart';
+import 'package:cloth_collection/http/httpService.dart';
 import 'package:cloth_collection/model/loginModel.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloth_collection/page/home.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   var isAutoLoginChecked;
-  var loginResponseModel;
+  var loginResponse;
 
   String errorString = "";
   String userId = "";
   String userPwd = "";
   String errorMessage = "";
-  late BuildContext context;
-
   late LoginRequestModel loginRequestModel;
   late LoginHttp loginHttp;
   late final SharedPreferences prefs;
@@ -29,6 +27,15 @@ class LoginController extends GetxController {
       isAutoLoginChecked = false;
       prefs.setBool('isCheckd', isAutoLoginChecked);
     }
+
+    if (HttpService.isRefreshExpired()) {
+      // refresh token 만료되면 오토로그인 풀리게
+      prefs.setBool('isCheckd', isAutoLoginChecked);
+    }
+    if (isAutoLoginChecked) {
+      HttpService.updateToken();
+      Get.to(() => HomePage());
+    }
     print(isAutoLoginChecked);
     update(["autoLogin"]);
   }
@@ -36,8 +43,6 @@ class LoginController extends GetxController {
   void getLoginInfo(String id, String pwd) {
     userId = id;
     userPwd = pwd;
-    print("id:" + id);
-    print("pwd:" + pwd);
   }
 
   void checkedAutoLogin() {
@@ -47,38 +52,38 @@ class LoginController extends GetxController {
     update(["autoLogin"]);
   }
 
-  Future<String?> loginRequest() async {
-    loginRequestModel = LoginRequestModel(userId, userPwd);
-    loginHttp = LoginHttp();
-    try {
-      loginResponseModel = await loginHttp.login(loginRequestModel);
-    } catch (e) {
-      print(e);
-      errorMessage = e.toString();
+  void autoLogin() async {
+    prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("isChecked") == true) {
+      print("do autologin");
+      HttpService.updateToken();
+      Get.to(() => HomePage());
     }
   }
 
-  void loginButtonPressed(String userId, String userPwd) {
-    getLoginInfo(userId, userPwd);
-    if (userId != "" && userPwd != "") {
-      if (isAutoLoginChecked) {
-        //자동 로그인 되어있으면 userdata to json 해서 공유변수에 저장
-        userData = json.encode(
-          {
-            'accessToken': null, //_token;
-            'refreshToken': null,
-            'id': userId,
-            'pwd': userPwd,
-            'refreshTokenExpiryDate': null, //expiryDate,
-          },
-        );
+  Future<bool> loginRequest() async {
+    loginRequestModel = LoginRequestModel(userId, userPwd);
 
-        // prefs.setString('userData', userData);
-      }
+    loginResponse =
+        await HttpService.httpPost('/user/token/', loginRequestModel.toJson());
+    var responseBody = jsonDecode(loginResponse.body);
 
-      loginRequest();
-    } else {
-      print("ID PWD 누락");
+    //만약 ID PW가 틀리면 =>
+    if (responseBody['detail'] ==
+        "No active account found with the given credentials") {
+      print("check id pw");
+      return false;
     }
+    //만약 ID PW가 맞으면=>
+    else {
+      HttpService.setAccessToken(responseBody['access']);
+      HttpService.setRefreshToken(responseBody['refresh']);
+      return true;
+    }
+  }
+
+  Future<bool> loginButtonPressed(String username, String password) {
+    getLoginInfo(username, password);
+    return loginRequest();
   }
 }
