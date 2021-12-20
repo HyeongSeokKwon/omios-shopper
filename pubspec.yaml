@@ -40,6 +40,8 @@ dependencies:
   dio: ^4.0.1
   sqflite: ^2.0.0+4
   path: ^1.8.0
+  jwt_decode: ^0.3.1
+  menu_button: ^1.4.2+1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
