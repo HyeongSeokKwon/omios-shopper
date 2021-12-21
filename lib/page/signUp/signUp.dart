@@ -1,8 +1,10 @@
+import 'package:cloth_collection/controller/signUpController.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/state_manager.dart';
 import 'package:menu_button/menu_button.dart';
 
 class SignUp extends StatefulWidget {
@@ -16,6 +18,8 @@ class _SignUpState extends State<SignUp> {
   TextEditingController idTextController = TextEditingController();
   TextEditingController pwdTextController = TextEditingController();
   TextEditingController pwdCheckTextController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  SignUpController signUpController = SignUpController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,68 +94,96 @@ class _SignUpState extends State<SignUp> {
             children: [
               Container(
                 height: 60 * Scale.height,
-                child: TextFormField(
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
-                  ],
-                  validator: (text) {
-                    if (text!.trim().isNotEmpty && text.trim().length < 4) {
-                      return "아이디는 4글자 이상 입력해주세요";
-                    } else
-                      return null;
+                child: Focus(
+                  onFocusChange: (hasFocus) {
+                    if (!hasFocus && idTextController.text.length != 0) {
+                      signUpController.validateId(idTextController.text);
+                    }
+                    if (hasFocus) {
+                      signUpController.resetIsDuplicationCheck();
+                    }
                   },
-                  onChanged: (text) {
-                    setState(() {});
-                  },
-                  textInputAction: TextInputAction.next,
-                  maxLength: 30,
-                  controller: textController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 12 * Scale.width),
-                    counterText: "",
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    labelStyle: TextStyle(
-                      color: const Color(0xff666666),
-                      height: 0.6,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: "NotoSansKR",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14.sp,
-                    ),
-                    suffixIcon: IconButton(
-                      padding: EdgeInsets.zero,
-                      icon: Icon(
-                        Icons.clear,
+                  child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+                    ],
+                    validator: (text) {
+                      if (text!.trim().isNotEmpty && text.trim().length < 4) {
+                        return "아이디는 4글자 이상 입력해주세요";
+                      } else
+                        return null;
+                    },
+                    onChanged: (text) {},
+                    textInputAction: TextInputAction.next,
+                    maxLength: 20,
+                    controller: textController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(left: 12 * Scale.width),
+                      counterText: "",
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelStyle: TextStyle(
                         color: const Color(0xff666666),
-                        size: 20.0 * Scale.width,
+                        height: 0.6,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: "NotoSansKR",
+                        fontStyle: FontStyle.normal,
+                        fontSize: 14.sp,
                       ),
-                      onPressed: () => textController.clear(),
+                      suffixIcon: GetBuilder<SignUpController>(
+                          init: signUpController,
+                          builder: (controller) {
+                            if (controller.isDuplicationCheck == "accept") {
+                              print("accept");
+                              return IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: SvgPicture.asset(
+                                    "assets/images/svg/accept.svg"),
+                                onPressed: () {},
+                              );
+                            } else if (controller.isDuplicationCheck ==
+                                "deny") {
+                              return IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: SvgPicture.asset(
+                                    "assets/images/svg/deny.svg"),
+                                onPressed: () {},
+                              );
+                            } else {
+                              return IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.ac_unit,
+                                  size: 0,
+                                ),
+                              );
+                            }
+                          }),
+                      hintText: ("아이디를 입력하세요"),
+                      hintStyle: textStyle(const Color(0xffcccccc),
+                          FontWeight.w400, "NotoSansKR", 16.sp),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                            color: const Color(0xffcccccc), width: 1.w),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                            color: const Color(0xffcccccc), width: 1.w),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                            color: const Color(0xffcccccc), width: 1.w),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                            color: const Color(0xffcccccc), width: 1.w),
+                      ),
                     ),
-                    hintText: ("아이디를 입력하세요"),
-                    hintStyle: textStyle(const Color(0xffcccccc),
-                        FontWeight.w400, "NotoSansKR", 16.sp),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
-                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
                 ),
               ),
             ],
@@ -199,20 +231,16 @@ class _SignUpState extends State<SignUp> {
                 height: 60 * Scale.height,
                 child: TextFormField(
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+                    FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9!-~]')),
                   ],
-                  validator: (text) {
-                    if (text!.trim().isNotEmpty && text.trim().length < 4) {
-                      return "비밀번호는 10글자 이상 입력해주세요";
-                    } else
-                      return null;
-                  },
                   onChanged: (text) {
-                    setState(() {});
+                    signUpController.validatePassword(
+                        text, pwdCheckTextController.text);
                   },
                   textInputAction: TextInputAction.next,
                   maxLength: 30,
                   controller: textController,
+                  obscureText: true,
                   decoration: InputDecoration(
                     counterText: "",
                     contentPadding: EdgeInsets.only(left: 12 * Scale.width),
@@ -225,15 +253,34 @@ class _SignUpState extends State<SignUp> {
                       fontStyle: FontStyle.normal,
                       fontSize: 14.sp,
                     ),
-                    suffixIcon: IconButton(
-                      padding: EdgeInsets.zero,
-                      icon: Icon(
-                        Icons.clear,
-                        color: const Color(0xff666666),
-                        size: 20.0 * Scale.width,
-                      ),
-                      onPressed: () => textController.clear(),
-                    ),
+                    suffixIcon: GetBuilder<SignUpController>(
+                        init: signUpController,
+                        builder: (controller) {
+                          if (controller.isPwdValidate == "accept") {
+                            print("accept");
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: SvgPicture.asset(
+                                  "assets/images/svg/accept.svg"),
+                              onPressed: () {},
+                            );
+                          } else if (controller.isPwdValidate == "deny") {
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: SvgPicture.asset(
+                                  "assets/images/svg/deny.svg"),
+                              onPressed: () {},
+                            );
+                          } else {
+                            return IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.ac_unit,
+                                size: 0,
+                              ),
+                            );
+                          }
+                        }),
                     hintText: ("비밀번호를 입력하세요"),
                     hintStyle: textStyle(const Color(0xffcccccc),
                         FontWeight.w400, "NotoSansKR", 16.sp),
@@ -306,19 +353,23 @@ class _SignUpState extends State<SignUp> {
                 height: 60 * Scale.height,
                 child: TextFormField(
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+                    FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9!-~]')),
                   ],
+                  onChanged: (text) {
+                    signUpController.validateDuplicationCheck(
+                        pwdTextController.text, pwdCheckTextController.text);
+                    print(text);
+                    print(pwdTextController.text);
+                  },
                   validator: (text) {
                     if (text!.trim().isNotEmpty && text.trim().length < 4) {
                       return "비밀번호는 10글자 이상 입력해주세요";
                     } else
                       return null;
                   },
-                  onChanged: (text) {
-                    setState(() {});
-                  },
                   textInputAction: TextInputAction.next,
                   maxLength: 30,
+                  obscureText: true,
                   controller: textController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(left: 12 * Scale.width),
@@ -332,15 +383,34 @@ class _SignUpState extends State<SignUp> {
                       fontStyle: FontStyle.normal,
                       fontSize: 14.sp,
                     ),
-                    suffixIcon: IconButton(
-                      padding: EdgeInsets.zero,
-                      icon: Icon(
-                        Icons.clear,
-                        color: const Color(0xff666666),
-                        size: 20.0 * Scale.width,
-                      ),
-                      onPressed: () => textController.clear(),
-                    ),
+                    suffixIcon: GetBuilder<SignUpController>(
+                        init: signUpController,
+                        builder: (controller) {
+                          if (controller.isPwdSame == "accept") {
+                            print("accept");
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: SvgPicture.asset(
+                                  "assets/images/svg/accept.svg"),
+                              onPressed: () {},
+                            );
+                          } else if (controller.isPwdSame == "deny") {
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: SvgPicture.asset(
+                                  "assets/images/svg/deny.svg"),
+                              onPressed: () {},
+                            );
+                          } else {
+                            return IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.ac_unit,
+                                size: 0,
+                              ),
+                            );
+                          }
+                        }),
                     hintText: ("비밀번호를 입력하세요"),
                     hintStyle: textStyle(const Color(0xffcccccc),
                         FontWeight.w400, "NotoSansKR", 16.sp),
@@ -376,7 +446,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget emailArea() {
-    final TextEditingController textController = pwdCheckTextController;
+    final TextEditingController textController = emailController;
     String selectedKey = "선택하기";
     List<String> keys = <String>[
       'naver.com',
@@ -526,19 +596,22 @@ class _SignUpState extends State<SignUp> {
                 scrollPhysics: AlwaysScrollableScrollPhysics(),
                 child: normalChildButton,
                 items: keys,
-                itemBuilder: (String value) => Container(
-                  height: 40,
-                  alignment: Alignment.centerLeft,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 0.0, horizontal: 16),
-                  child: Text(value),
-                ),
+                itemBuilder: (String value) {
+                  return Container(
+                    height: 40,
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 0.0, horizontal: 16),
+                    child: Text(value),
+                  );
+                },
                 toggledChild: Container(
                   child: normalChildButton,
                 ),
                 onItemSelected: (String value) {
                   setState(() {
                     selectedKey = value;
+                    print(selectedKey);
                   });
                 },
                 onMenuButtonToggle: (bool isToggle) {
