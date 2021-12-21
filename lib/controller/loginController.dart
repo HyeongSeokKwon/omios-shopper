@@ -78,6 +78,7 @@ class LoginController extends GetxController {
     else {
       HttpService.setAccessToken(responseBody['access']);
       HttpService.setRefreshToken(responseBody['refresh']);
+      //HttpService.httpGet("/user/shopper/");
       return true;
     }
   }
