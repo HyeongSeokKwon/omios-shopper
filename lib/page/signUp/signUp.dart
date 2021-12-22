@@ -19,10 +19,12 @@ class _SignUpState extends State<SignUp> {
   TextEditingController pwdTextController = TextEditingController();
   TextEditingController pwdCheckTextController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController recommandController = TextEditingController();
   SignUpController signUpController = SignUpController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffffffff),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +34,9 @@ class _SignUpState extends State<SignUp> {
             passwordArea(),
             passwordCheckArea(),
             emailArea(),
-            signUpButton(),
+            recommandPersonArea(),
+            termsArea(),
+            signUpButtonArea(),
           ],
         ),
       ),
@@ -567,9 +571,210 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget signUpButton() {
+  Widget recommandPersonArea() {
+    var textController = recommandController;
     return Padding(
-      padding: EdgeInsets.only(bottom: 1.0),
+      padding: EdgeInsets.only(
+          left: 22 * Scale.width, right: 22 * Scale.width, top: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            " 추천인 (친구초대 이벤트 - 친구아이디)",
+            style: textStyle(
+                Color(0xff797979), FontWeight.w400, "NotoSansKR", 13.0),
+          ),
+          SizedBox(height: 4 * Scale.height),
+          TextFormField(
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+            ],
+            onChanged: (text) {
+              signUpController.email = text;
+            },
+            maxLength: 30,
+            controller: textController,
+            decoration: InputDecoration(
+              counterText: "",
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              contentPadding: EdgeInsets.only(left: 12 * Scale.width),
+              labelStyle: TextStyle(
+                color: const Color(0xff666666),
+                height: 0.6,
+                fontWeight: FontWeight.w400,
+                fontFamily: "NotoSansKR",
+                fontStyle: FontStyle.normal,
+                fontSize: 14.sp,
+              ),
+              hintText: ("추천인을 입력하세요"),
+              hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                  "NotoSansKR", 16.sp),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide:
+                    BorderSide(color: const Color(0xffcccccc), width: 1.w),
+              ),
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget termsArea() {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 22 * Scale.width, right: 22 * Scale.width, top: 40),
+      child: Column(
+        children: [
+          Text(
+            "deepy 이용약관 및 개인정보취급방침에 동의하셔야 회원가입이 완료됩니다.",
+            style: textStyle(
+                Color(0xff797979), FontWeight.w400, "NotoSansKR", 14.0),
+          ),
+          SizedBox(height: 15 * Scale.height),
+          GetBuilder<SignUpController>(
+              init: signUpController,
+              builder: (controller) {
+                return Container(
+                    width: 370 * Scale.width,
+                    height: 48 * Scale.height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: signUpController.isAgreeAllTerms == false
+                          ? Color(0xfffafafa)
+                          : Color(0xffebf7f1),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 14 * Scale.width),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            child: SvgPicture.asset(
+                              signUpController.isAgreeAllTerms == false
+                                  ? "assets/images/svg/termcheck.svg"
+                                  : "assets/images/svg/termaccept.svg",
+                              width: 22 * Scale.width,
+                              height: 22 * Scale.height,
+                            ),
+                            onTap: () {
+                              signUpController.clickedAllTerm();
+                            },
+                          ),
+                          SizedBox(width: 10 * Scale.width),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "전체 동의",
+                                style: textStyle(Color(0xff555555),
+                                    FontWeight.w400, "NotoSansKR", 16.0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ));
+              }),
+          SizedBox(height: 10 * Scale.height),
+          GetBuilder<SignUpController>(
+              init: signUpController,
+              builder: (controller) {
+                return Container(
+                    width: 370 * Scale.width,
+                    height: 69 * Scale.height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: signUpController.isAgreeFirstTerms == false
+                          ? Color(0xfffafafa)
+                          : Color(0xffebf7f1),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 14 * Scale.width),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            child: SvgPicture.asset(
+                              signUpController.isAgreeFirstTerms == false
+                                  ? "assets/images/svg/termcheck.svg"
+                                  : "assets/images/svg/termaccept.svg",
+                              width: 22 * Scale.width,
+                              height: 22 * Scale.height,
+                            ),
+                            onTap: () {
+                              signUpController.clickedFirstTerm();
+                            },
+                          ),
+                          SizedBox(width: 10 * Scale.width),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "이용 약관 동의",
+                                style: textStyle(Color(0xff555555),
+                                    FontWeight.w400, "NotoSansKR", 16.0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ));
+              }),
+          SizedBox(height: 10 * Scale.height),
+          GetBuilder<SignUpController>(
+            init: signUpController,
+            builder: (controller) {
+              return Container(
+                width: 370 * Scale.width,
+                height: 69 * Scale.height,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: signUpController.isAgreeSecondTerms == false
+                      ? Color(0xfffafafa)
+                      : Color(0xffebf7f1),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 14 * Scale.width),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        child: SvgPicture.asset(
+                          signUpController.isAgreeSecondTerms == false
+                              ? "assets/images/svg/termcheck.svg"
+                              : "assets/images/svg/termaccept.svg",
+                          width: 22 * Scale.width,
+                          height: 22 * Scale.height,
+                        ),
+                        onTap: () {
+                          signUpController.clickedSecondTerm();
+                        },
+                      ),
+                      SizedBox(width: 10 * Scale.width),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "개인정보취급방침 및 이메일, SMS 수신동의",
+                            style: textStyle(Color(0xff555555), FontWeight.w400,
+                                "NotoSansKR", 16.0),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget signUpButtonArea() {
+    return Padding(
+      padding: EdgeInsets.only(top: 25 * Scale.height),
       child: Container(
         width: 414 * Scale.width,
         height: 100 * Scale.height,
