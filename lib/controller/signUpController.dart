@@ -66,6 +66,7 @@ class SignUpController extends GetxController {
     if (isDuplicationCheck == "accept" &&
         isPwdValidate == "accept" &&
         isPwdSame == "accept" &&
+        isAgreeFirstTerms == true &&
         email != "") {
       isSatisfy = true;
       return true;
@@ -74,7 +75,49 @@ class SignUpController extends GetxController {
     return false;
   }
 
-  void gotoAuthentification() {
+  void clickedAllTerm() {
+    if (!isAgreeAllTerms) {
+      isAgreeAllTerms = true;
+      isAgreeFirstTerms = true;
+      isAgreeSecondTerms = true;
+    } else {
+      isAgreeAllTerms = false;
+      isAgreeFirstTerms = false;
+      isAgreeSecondTerms = false;
+    }
+
+    update();
+  }
+
+  void clickedFirstTerm() {
+    if (isAgreeFirstTerms) {
+      isAgreeAllTerms = false;
+      isAgreeFirstTerms = false;
+    } else {
+      isAgreeFirstTerms = true;
+      if (isAgreeSecondTerms) {
+        isAgreeAllTerms = true;
+      }
+    }
+    update();
+  }
+
+  void clickedSecondTerm() {
+    if (isAgreeSecondTerms) {
+      isAgreeAllTerms = false;
+      isAgreeSecondTerms = false;
+    } else {
+      isAgreeSecondTerms = true;
+      if (isAgreeFirstTerms) {
+        isAgreeAllTerms = true;
+      }
+    }
+    update();
+  }
+
+  void gotoAuthentification() async {
+    var response;
+
     update();
   }
 }
