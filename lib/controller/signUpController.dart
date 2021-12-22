@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:cloth_collection/http/httpService.dart';
 
 class SignUpController extends GetxController {
   late String id;
   late String pwd;
-  late String email;
+  String email = "";
 
   String isDuplicationCheck = "default";
   String isPwdValidate = "default";
@@ -14,7 +12,7 @@ class SignUpController extends GetxController {
   bool isAgreeAllTerms = false;
   bool isAgreeFirstTerms = false;
   bool isAgreeSecondTerms = false;
-
+  bool isSatisfy = false;
   void resetIsDuplicationCheck() {
     isDuplicationCheck = "default";
     update();
@@ -61,6 +59,22 @@ class SignUpController extends GetxController {
       isPwdSame = "deny";
     }
 
+    update();
+  }
+
+  bool isPerfectForSignUp() {
+    if (isDuplicationCheck == "accept" &&
+        isPwdValidate == "accept" &&
+        isPwdSame == "accept" &&
+        email != "") {
+      isSatisfy = true;
+      return true;
+    }
+    isSatisfy = false;
+    return false;
+  }
+
+  void gotoAuthentification() {
     update();
   }
 }
