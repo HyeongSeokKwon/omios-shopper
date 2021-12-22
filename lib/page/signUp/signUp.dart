@@ -24,18 +24,16 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              subjectArea(),
-              idArea(),
-              passwordArea(),
-              passwordCheckArea(),
-              emailArea(),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            subjectArea(),
+            idArea(),
+            passwordArea(),
+            passwordCheckArea(),
+            emailArea(),
+            signUpButton(),
+          ],
         ),
       ),
     );
@@ -43,7 +41,10 @@ class _SignUpState extends State<SignUp> {
 
   Widget subjectArea() {
     return Padding(
-      padding: EdgeInsets.only(top: 60 * Scale.height),
+      padding: EdgeInsets.only(
+          top: 60 * Scale.height,
+          left: 22 * Scale.width,
+          right: 22 * Scale.width),
       child: Row(
         children: [
           SvgPicture.asset("assets/images/svg/moveToBack.svg"),
@@ -61,7 +62,10 @@ class _SignUpState extends State<SignUp> {
   Widget idArea() {
     final TextEditingController textController = idTextController;
     return Padding(
-      padding: EdgeInsets.only(top: 30 * Scale.width),
+      padding: EdgeInsets.only(
+          top: 30 * Scale.width,
+          left: 22 * Scale.width,
+          right: 22 * Scale.width),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -113,7 +117,9 @@ class _SignUpState extends State<SignUp> {
                       } else
                         return null;
                     },
-                    onChanged: (text) {},
+                    onChanged: (text) {
+                      signUpController.id = text;
+                    },
                     textInputAction: TextInputAction.next,
                     maxLength: 20,
                     controller: textController,
@@ -196,7 +202,10 @@ class _SignUpState extends State<SignUp> {
   Widget passwordArea() {
     final TextEditingController textController = pwdTextController;
     return Padding(
-      padding: EdgeInsets.only(top: 18 * Scale.width),
+      padding: EdgeInsets.only(
+          top: 18 * Scale.width,
+          left: 22 * Scale.width,
+          right: 22 * Scale.width),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -234,6 +243,7 @@ class _SignUpState extends State<SignUp> {
                     FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9!-~]')),
                   ],
                   onChanged: (text) {
+                    signUpController.pwd = text;
                     signUpController.validatePassword(
                         text, pwdCheckTextController.text);
                   },
@@ -318,7 +328,10 @@ class _SignUpState extends State<SignUp> {
   Widget passwordCheckArea() {
     final TextEditingController textController = pwdCheckTextController;
     return Padding(
-      padding: EdgeInsets.only(top: 18 * Scale.width),
+      padding: EdgeInsets.only(
+          top: 18 * Scale.height,
+          left: 22 * Scale.width,
+          right: 22 * Scale.width),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -447,53 +460,12 @@ class _SignUpState extends State<SignUp> {
 
   Widget emailArea() {
     final TextEditingController textController = emailController;
-    String selectedKey = "선택하기";
-    List<String> keys = <String>[
-      'naver.com',
-      'gmail.com',
-      'daum.net',
-      'naver.com',
-      'gmail.com',
-      'daum.net',
-      'naver.com',
-      'gmail.com',
-      'daum.net',
-      'naver.com',
-      'gmail.com',
-      'daum.net',
-      'naver.com',
-      'gmail.com',
-      'daum.net',
-    ];
-    final Widget normalChildButton = Container(
-      height: 60 * Scale.height,
-      width: 165 * Scale.width,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-        border: Border.all(color: Color(0xffcccccc), width: 1.w),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 11),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Flexible(
-                child: Text(selectedKey,
-                    style: textStyle(Color(0xffcccccc), FontWeight.w400,
-                        "NotoSansKR", 16.sp),
-                    overflow: TextOverflow.ellipsis)),
-            SizedBox(
-              width: 12,
-              height: 17,
-              child: FittedBox(
-                  child: SvgPicture.asset("assets/images/svg/dropdown.svg")),
-            ),
-          ],
-        ),
-      ),
-    );
+
     return Padding(
-      padding: EdgeInsets.only(top: 18 * Scale.width),
+      padding: EdgeInsets.only(
+          top: 18 * Scale.width,
+          left: 22 * Scale.width,
+          right: 22 * Scale.width),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -527,16 +499,17 @@ class _SignUpState extends State<SignUp> {
               Stack(
                 children: [
                   Container(
-                    width: 170 * Scale.width,
                     height: 60 * Scale.height,
+                    width: 370 * Scale.width,
                     child: TextFormField(
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp('[a-zA-Z0-9]')),
+                            RegExp('[a-zA-Z0-9!-~]')),
                       ],
                       onChanged: (text) {
-                        setState(() {});
+                        signUpController.email = text;
                       },
+                      keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       maxLength: 30,
                       controller: textController,
@@ -581,46 +554,69 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ],
               ),
-              SizedBox(width: 7 * Scale.width),
-              Text(
-                "@",
-                style: textStyle(
-                  Color(0xff333333),
-                  FontWeight.w500,
-                  "NotoSansKR",
-                  16.0,
-                ),
-              ),
-              SizedBox(width: 7 * Scale.width),
-              MenuButton<String>(
-                scrollPhysics: AlwaysScrollableScrollPhysics(),
-                child: normalChildButton,
-                items: keys,
-                itemBuilder: (String value) {
-                  return Container(
-                    height: 40,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 0.0, horizontal: 16),
-                    child: Text(value),
-                  );
-                },
-                toggledChild: Container(
-                  child: normalChildButton,
-                ),
-                onItemSelected: (String value) {
-                  setState(() {
-                    selectedKey = value;
-                    print(selectedKey);
-                  });
-                },
-                onMenuButtonToggle: (bool isToggle) {
-                  print(isToggle);
-                },
-              )
             ],
           ),
+          SizedBox(height: 20 * Scale.height),
+          Text(
+            " 신규가입혜택 안내와 비밀번호 찾기가 이메일로 제공됩니다.\n 이메일을 정확히 입력해주세요.",
+            style: textStyle(
+                Color(0xff797979), FontWeight.w400, "NotoSansKR", 13.0),
+          )
         ],
+      ),
+    );
+  }
+
+  Widget signUpButton() {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 1.0),
+      child: Container(
+        width: 414 * Scale.width,
+        height: 100 * Scale.height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          ),
+          boxShadow: [
+            BoxShadow(
+                color: const Color(0x1a000000),
+                offset: Offset(0, -2),
+                blurRadius: 3,
+                spreadRadius: 0)
+          ],
+          color: Color(0xffffffff),
+        ),
+        child: Center(
+          child: GetBuilder<SignUpController>(
+            init: signUpController,
+            builder: (controller) {
+              return TextButton(
+                child: Text("본인인증하고 가입하기",
+                    style: textStyle(Color(0xffffffff), FontWeight.w500,
+                        "NotoSansKR", 16.0)),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                    ),
+                  ),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                      Size(370 * Scale.width, 60 * Scale.height)),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      signUpController.isPerfectForSignUp() == true
+                          ? Color(0xffec5363)
+                          : Color(0xffcccccc)),
+                ),
+                onPressed: () {
+                  if (signUpController.isSatisfy) {
+                    signUpController.gotoAuthentification();
+                  }
+                },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
