@@ -13,29 +13,26 @@ class LoginController extends GetxController {
   String errorString = "";
   String userId = "";
   String userPwd = "";
-  String errorMessage = "";
   late LoginRequestModel loginRequestModel;
-  late LoginHttp loginHttp;
   late final SharedPreferences prefs;
-  late var userData;
+
+  HttpService httpservice = HttpService();
 
   void init() async {
+    httpservice.getToken();
     prefs = await SharedPreferences.getInstance();
     isAutoLoginChecked = prefs.getBool('isChecked');
 
     if (isAutoLoginChecked == null) {
       isAutoLoginChecked = false;
-      prefs.setBool('isCheckd', isAutoLoginChecked);
+      prefs.setBool('isChecked', isAutoLoginChecked);
     }
 
-    if (HttpService.isRefreshExpired()) {
+    if (httpservice.isRefreshExpired()) {
       // refresh token 만료되면 오토로그인 풀리게
-      prefs.setBool('isCheckd', isAutoLoginChecked);
+      prefs.setBool('isChecked', isAutoLoginChecked);
     }
-    if (isAutoLoginChecked) {
-      HttpService.updateToken();
-      Get.to(() => HomePage());
-    }
+    autoLogin();
     print(isAutoLoginChecked);
     update(["autoLogin"]);
   }
@@ -53,33 +50,32 @@ class LoginController extends GetxController {
   }
 
   void autoLogin() async {
-    prefs = await SharedPreferences.getInstance();
     if (prefs.getBool("isChecked") == true) {
       print("do autologin");
-      HttpService.updateToken();
+      httpservice.updateToken();
       Get.to(() => HomePage());
     }
   }
 
   Future<bool> loginRequest() async {
     loginRequestModel = LoginRequestModel(userId, userPwd);
+    try {
+      loginResponse = await httpservice.httpPost(
+          '/user/token/', loginRequestModel.toJson());
 
-    loginResponse =
-        await HttpService.httpPost('/user/token/', loginRequestModel.toJson());
-    var responseBody = jsonDecode(loginResponse.body);
-
-    //만약 ID PW가 틀리면 =>
-    if (responseBody['detail'] ==
-        "No active account found with the given credentials") {
-      print("check id pw");
-      return false;
-    }
-    //만약 ID PW가 맞으면=>
-    else {
-      HttpService.setAccessToken(responseBody['access']);
-      HttpService.setRefreshToken(responseBody['refresh']);
-      //HttpService.httpGet("/user/shopper/");
-      return true;
+      //만약 ID PW가 틀리면 =>
+      if (loginResponse['detail'] ==
+          "No active account found with the given credentials") {
+        return false;
+      }
+      //만약 ID PW가 맞으면=>
+      else {
+        httpservice.setAccessToken(loginResponse['access']);
+        httpservice.setRefreshToken(loginResponse['refresh']);
+        return true;
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
