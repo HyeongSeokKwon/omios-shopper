@@ -1,10 +1,13 @@
+import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/data/product.dart';
+import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -16,29 +19,40 @@ class ProductDetail extends StatefulWidget {
   _ProductDetailState createState() => _ProductDetailState();
 }
 
-class _ProductDetailState extends State<ProductDetail> {
+class _ProductDetailState extends State<ProductDetail>
+    with SingleTickerProviderStateMixin {
+  final DBHelper _dbHelper = DBHelper();
+  final RecentViewController recentViewController = RecentViewController();
+  late TabController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 4, vsync: this);
+    recentViewController.dataInit(_dbHelper);
+    recentViewController.insertRecentView(
+        widget.product.productCode, _dbHelper);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        appBar: _buildAppBar(width),
+        appBar: _buildAppBar(),
         extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
           child: Column(
-            children: [_buildScroll(width, height)],
+            children: [_buildScroll()],
           ),
         ),
-        bottomNavigationBar: _buildBottomNaviagationBar(width, height),
+        bottomNavigationBar: _buildBottomNaviagationBar(),
       ),
     );
   }
 
-  AppBar _buildAppBar(double width) {
+  AppBar _buildAppBar() {
     return AppBar(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -52,7 +66,7 @@ class _ProductDetailState extends State<ProductDetail> {
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.only(right: width * 0.053),
+          padding: EdgeInsets.only(right: 22 * Scale.width),
           child: GestureDetector(
             onTap: () {},
             child: SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
@@ -66,209 +80,387 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-  Widget _buildScroll(double width, double height) {
+  Widget _buildScroll() {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          ImageSlideHasDot(width, width * 0.82),
-          _buildStoreInfo(width, height),
-          Divider(
-            thickness: 1.5,
-            color: const Color(0xffeeeeee),
-            indent: 22,
-            endIndent: 22,
-          ),
-          _buildProductInfo(width, height),
-          _buildProductRecommend(width, height),
-        ],
+      child: Container(
+        color: const Color(0xffffffff),
+        child: Column(
+          children: [
+            ImageSlideHasDot(),
+            SizedBox(height: 10 * Scale.height),
+            _buildShortProductInfo(),
+            SizedBox(height: 14 * Scale.height),
+            _buildProductInfo(),
+            _buildDivider(),
+            _buildSatisfaction(),
+            _buildDivider(),
+            _buildSampleReivew(),
+            _buildProductRecommend(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStoreInfo(double width, double height) {
-    return Padding(
-      padding: EdgeInsets.only(top: 24, left: 22, bottom: 20),
-      child: Row(
-        children: [
-          Container(
-            width: width * 0.13,
-            height: width * 0.13,
-            child: ClipRRect(
-              child: Image.asset(widget.product.image),
-              borderRadius: BorderRadius.all(
-                Radius.circular(12),
-              ),
+  Widget _buildShortProductInfo() {
+    return Center(
+      child: Container(
+        width: 391 * Scale.width,
+        height: 122 * Scale.height,
+        decoration: BoxDecoration(
+          color: const Color(0xffffffff),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0x14000000),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: Offset(0, 3), // changes position of shadow
             ),
-          ),
-          SizedBox(width: width * 0.039),
-          Column(
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(
+              left: 16 * Scale.width,
+              right: 16 * Scale.width,
+              top: 20 * Scale.height),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "${widget.product.store}",
-                style: textStyle(const Color(0xff333333), FontWeight.w700,
-                    "NotoSansKR", 16.0),
-              ),
-              SizedBox(height: 6),
               Row(
+                children: [],
+              ),
+              Text(
+                "${widget.product.name}",
+                style: textStyle(const Color(0xff333333), FontWeight.w500,
+                    "NotoSansKR", 18.sp),
+              ),
+              SizedBox(height: 3 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SvgPicture.asset("assets/images/svg/location.svg"),
-                  SizedBox(width: width * 0.01),
                   Text(
-                    "${widget.product.location}",
-                    style: textStyle(const Color(0xff999999), FontWeight.w400,
-                        "NotoSansKR", 14.0),
+                    setPriceFormat(widget.product.price),
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 20.sp),
+                  ),
+                  Row(
+                    children: [
+                      _buildRatingBar(14),
+                      SizedBox(width: 3 * Scale.width),
+                      Text(
+                        "(17)",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w500, "NotoSansKR", 13.0),
+                      )
+                    ],
                   ),
                 ],
-              )
+              ),
             ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProductInfo(double width, double height) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //대표적인 정보
-          _buildProductRepresentativeInfo(width, height),
-          _buildDivider(),
-          SizedBox(height: 14),
-          _buildProductDetailInfo(width, "색상", "블랙 그레이 오트 바이올렛"),
-          SizedBox(height: 14),
-          _buildProductDetailInfo(width, "사이즈", "FREE"),
-          SizedBox(height: 14),
-          _buildProductDetailInfo(width, "혼용률", "해당 없음"),
-          SizedBox(height: 14),
-          _buildProductDetailInfo(width, "제조국", "대한민국"),
-          SizedBox(height: 14),
-          _buildProductDetailInfo(width, "상품등록정보", "2021년 8월 등록"),
-          SizedBox(height: 20),
-          _buildDivider(),
-          SizedBox(height: 30),
-          _buildProductDescription(width, height),
-          SizedBox(height: 30),
-          _buildDivider(),
-          SizedBox(height: 30),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProductRepresentativeInfo(double width, double height) {
-    return Padding(
-      padding: EdgeInsets.only(left: width * 0.053),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${widget.product.category} > ${widget.product.subCategory}",
-            style: textStyle(
-                const Color(0xffbbbbbb), FontWeight.w400, "NotoSansKR", 13.0),
           ),
-          SizedBox(height: 8),
-          Text(
-            "${widget.product.name}",
-            style: textStyle(
-                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 20.0),
-          ),
-          SizedBox(height: 4),
-          Text(setPriceFormat(widget.product.price),
-              style: textStyle(const Color(0xff333333), FontWeight.w700,
-                  "NotoSansKR", 18.0)),
-          SizedBox(height: 10),
-          // Row(
-          //   children: [
-          //     RatingBarIndicator(
-          //       rating: 5, // 상품 평점
-          //       itemCount: 5,
-          //       itemSize: width * 0.035,
-          //       itemBuilder: (context, index) => Icon(
-          //         Icons.star,
-          //         color: const Color(0xffffbe3f),
-          //       ),
-          //     ),
-          //     SizedBox(width: width * 0.015),
-          //     Text(
-          //       "4.5",
-          //       style: textStyle(const Color(0xff333333), FontWeight.w500,
-          //           "NotoSansKR", 13.0),
-          //     )
-          //   ],
-          // ),
-          // SizedBox(height: 10),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildProductDetailInfo(double width, String subject, String content) {
+  Widget _buildProductInfo() {
+    return Column(
+      children: [
+        _buildProductCardByColor(),
+        SizedBox(height: 24 * Scale.height),
+        _buildHashTag(),
+        SizedBox(height: 32 * Scale.height),
+        _buildDetailInfoButton(),
+      ],
+    );
+  }
+
+  Widget _buildProductCardByColor() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.053),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("$subject"),
-          Text("$content"),
-        ],
+      padding: EdgeInsets.only(left: 22 * Scale.width),
+      child: Container(
+        width: 414 * Scale.width,
+        height: 140 * Scale.height,
+        child: ListView.builder(
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              child: Column(
+                children: [
+                  Card(
+                    child: new Container(
+                      width: 70 * Scale.width,
+                      height: 90 * Scale.height,
+                      child: new Text('Product\n Image'),
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                  Text(
+                    "color",
+                    style: textStyle(Color.fromRGBO(153, 153, 153, 1),
+                        FontWeight.w500, "NotoSansKR", 14.0),
+                  )
+                ],
+              ),
+            );
+          },
+          scrollDirection: Axis.horizontal,
+        ),
       ),
     );
   }
 
-  Widget _buildProductDescription(double width, double height) {
+  Widget _buildHashTag() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.053),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: width * 0.007,
-                height: 18,
+      padding: EdgeInsets.only(left: 22 * Scale.width),
+      child: Container(
+        height: 30 * Scale.height,
+        child: ListView.builder(
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: EdgeInsets.only(right: 4 * Scale.width),
+              child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xff333333),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  color: Color.fromRGBO(234, 237, 240, 1),
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+                    child: Text("#" + "HashTag ",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w500, "NotoSansKR", 13.sp)),
+                  ),
                 ),
               ),
-              SizedBox(width: width * 0.017),
-              Text("상품 상세설명",
-                  style: const TextStyle(
-                      color: const Color(0xff333333),
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "NotoSansKR",
-                      fontStyle: FontStyle.normal,
-                      fontSize: 18.0),
-                  textAlign: TextAlign.left)
-            ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            "굳세게 인간의 같이 끝에 것이 품고 불어 사라지지 바로 석가는 설레는 가슴에 이것이다.\n 발휘하기 동력은 우리 바로 무한한 간에 칼이다. 스며들어 풍부하게 찾아다녀도, 설레는 그들에게 있는가? 풍부하게 가장 뼈 얼음과 예가 때에, 못할 커다란 이는 봄바람이다. 악이며, 힘차게 보내는 청춘의 있으랴? 가는 되려니와, 못할 노년에게서 봄바람을 청춘의 우리의 관현악이며, 것이다.",
-            style: const TextStyle(
-                color: const Color(0xff555555),
-                fontWeight: FontWeight.w400,
-                fontFamily: "NotoSansKR",
-                fontStyle: FontStyle.normal,
-                height: 1.6,
-                fontSize: 16.0),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 100,
-          ),
-        ],
+            );
+          },
+          scrollDirection: Axis.horizontal,
+        ),
       ),
     );
   }
 
-  Widget _buildProductRecommend(double width, double height) {
+  Widget _buildDetailInfoButton() {
+    return Center(
+      child: OutlinedButton(
+        child: Text("상품 상세 펼치기",
+            style: TextStyle(color: Color(0xff555555), fontSize: 16.sp)),
+        style: ButtonStyle(
+          side: MaterialStateProperty.all(
+            BorderSide(color: const Color(0xffeaedf0), width: 1),
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14.r),
+            ),
+          ),
+          fixedSize: MaterialStateProperty.all<Size>(
+              Size(370 * Scale.width, 44 * Scale.height)),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(const Color(0xfffafafa)),
+        ),
+        onPressed: () {},
+      ),
+    );
+  }
+
+  Widget _buildSatisfaction() {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 22 * Scale.width,
+          right: 22 * Scale.width,
+          top: 25 * Scale.height),
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "구매 만족도",
+              style: textStyle(const Color(0xff333333), FontWeight.w500,
+                  "NotoSansKR", 18.sp),
+            ),
+            SizedBox(height: 12 * Scale.height),
+            Container(
+              height: 55 * Scale.height,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: const Color(0xfff9fcff),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14 * Scale.width),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildRatingBar(24),
+                    RichText(
+                      text: TextSpan(
+                        text: "4.8",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w700, "NotoSansKR", 24.sp),
+                        children: [
+                          TextSpan(
+                            text: " / 5",
+                            style: textStyle(const Color(0xffcccccc),
+                                FontWeight.w700, "NotoSansKR", 24.sp),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 14 * Scale.height),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("사이즈",
+                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+                Text("딱 맞았어요(71%)",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 14.sp)),
+              ],
+            ),
+            SizedBox(height: 6 * Scale.height),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("색감",
+                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+                Text("화면과 같아요(87%)",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 14.sp)),
+              ],
+            ),
+            SizedBox(height: 6 * Scale.height),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("퀄리티",
+                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+                Text("괜찮아요(87%)",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 14.sp)),
+              ],
+            ),
+            SizedBox(height: 20 * Scale.height),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSampleReivew() {
+    return Column(
+      children: [
+        SizedBox(height: 25 * Scale.height),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: "리뷰",
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
+                      "NotoSansKR", 18.sp),
+                  children: [
+                    TextSpan(
+                      text: "(999+))",
+                      style: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                          "NotoSansKR", 16.sp),
+                    ),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  text: "포토 리뷰만 보기",
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
+                      "NotoSansKR", 14.sp),
+                  children: [
+                    TextSpan(
+                      text: " (999+)",
+                      style: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                          "NotoSansKR", 14.sp),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16 * Scale.height),
+        Container(
+          width: 414 * Scale.width,
+          height: 44 * Scale.height,
+          child: TabBar(
+            controller: _controller,
+            tabs: [
+              Container(
+                color: const Color(0xfff8f9fb),
+                child: Text("베스트",
+                    style: textStyle(const Color(0xff999999), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+              ),
+              Container(
+                color: const Color(0xfff8f9fb),
+                child: Text("별점높은순",
+                    style: textStyle(const Color(0xff999999), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+              ),
+              Container(
+                color: const Color(0xfff8f9fb),
+                child: Text("별점낮은순",
+                    style: textStyle(const Color(0xff999999), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+              ),
+              Container(
+                color: const Color(0xfff8f9fb),
+                child: Text("최신순",
+                    style: textStyle(const Color(0xff999999), FontWeight.w400,
+                        "NotoSansKR", 14.sp)),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          width: 414 * Scale.width,
+          height: 50,
+          child: TabBarView(
+            controller: _controller,
+            children: [
+              Container(height: 15, child: Text("1")),
+              Container(height: 15, child: Text("1")),
+              Container(height: 15, child: Text("1")),
+              Container(height: 15, child: Text("1")),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductRecommend() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.053),
+          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
           child: Text("여기 마켓의\n다른상품은 어때요?",
               style: textStyle(const Color(0xff333333), FontWeight.w500,
                   "NotoSansKR", 18.0)),
@@ -281,15 +473,15 @@ class _ProductDetailState extends State<ProductDetail> {
             scrollDirection: Axis.horizontal,
             // 컨테이너들을 ListView의 자식들로 추가
             children: <Widget>[
-              SizedBox(width: width * 0.053),
+              SizedBox(width: 22 * Scale.width),
               ProductRecommentCard(widget.product),
-              SizedBox(width: width * 0.053),
+              SizedBox(width: 22 * Scale.width),
               ProductRecommentCard(widget.product),
-              SizedBox(width: width * 0.053),
+              SizedBox(width: 22 * Scale.width),
               ProductRecommentCard(widget.product),
-              SizedBox(width: width * 0.053),
+              SizedBox(width: 22 * Scale.width),
               ProductRecommentCard(widget.product),
-              SizedBox(width: width * 0.053),
+              SizedBox(width: 22 * Scale.width),
               ProductRecommentCard(widget.product),
             ],
           ),
@@ -299,7 +491,7 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-  Widget _buildBottomNaviagationBar(double width, double height) {
+  Widget _buildBottomNaviagationBar() {
     return Container(
       height: 80,
       decoration: BoxDecoration(
@@ -313,7 +505,7 @@ class _ProductDetailState extends State<ProductDetail> {
       child: Row(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: width * 0.053),
+            padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
             child: InkWell(
               child: Container(
                   width: 52,
@@ -343,12 +535,12 @@ class _ProductDetailState extends State<ProductDetail> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                fixedSize:
-                    MaterialStateProperty.all<Size>(Size(width * 0.348, 52)),
+                fixedSize: MaterialStateProperty.all<Size>(
+                    Size(144 * Scale.width, 52)),
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
               ),
               onPressed: () {}),
-          SizedBox(width: width * 0.019),
+          SizedBox(width: 8 * Scale.width),
           TextButton(
               child: Text("구매하기",
                   style: textStyle(const Color(0xffffffff), FontWeight.w500,
@@ -359,8 +551,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                fixedSize:
-                    MaterialStateProperty.all<Size>(Size(width * 0.348, 52)),
+                fixedSize: MaterialStateProperty.all<Size>(
+                    Size(144 * Scale.width, 52)),
                 backgroundColor:
                     MaterialStateProperty.all<Color>(const Color(0xffec5363)),
               ),
@@ -368,6 +560,18 @@ class _ProductDetailState extends State<ProductDetail> {
                 Vibrate.feedback(VIBRATETYPE);
               }),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRatingBar(int size) {
+    return RatingBarIndicator(
+      rating: 4.8, // 상품 평점
+      itemCount: 5,
+      itemSize: size * Scale.width,
+      itemBuilder: (context, index) => Icon(
+        Icons.star,
+        color: const Color(0xffffbe3f),
       ),
     );
   }

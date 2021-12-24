@@ -1,11 +1,14 @@
+import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/SearchImage.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/myPage.dart';
+import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/chatting_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/deepyHomeAppbar.dart';
 import 'package:cloth_collection/widget/appbar/imageSearch_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/myPage_Appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'chatting/chatting.dart';
@@ -22,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+
   FocusNode focusNode = FocusNode();
   ScrollController scrollController = ScrollController();
   late List<Widget> selectedPage;
@@ -47,6 +51,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    DBHelper().db;
     selectedPage = [
       DeepyHome(scrollController),
       SearchImage(),
@@ -92,34 +97,34 @@ class _HomePageState extends State<HomePage> {
         BottomNavigationBarItem(
           label: "홈",
           icon: Padding(
-            padding: EdgeInsets.only(bottom: 5),
+            padding: EdgeInsets.only(bottom: 5 * Scale.height),
             child: SvgPicture.asset(currentIconUrl[HOME]),
           ),
         ),
         BottomNavigationBarItem(
           label: "이미지검색",
           icon: Padding(
-            padding: EdgeInsets.only(bottom: 5),
+            padding: EdgeInsets.only(bottom: 5 * Scale.height),
             child: SvgPicture.asset(currentIconUrl[SEARCH]),
           ),
         ),
         BottomNavigationBarItem(
           label: "채팅",
           icon: Padding(
-            padding: EdgeInsets.only(bottom: 5),
+            padding: EdgeInsets.only(bottom: 5 * Scale.height),
             child: SvgPicture.asset(currentIconUrl[CHAT]),
           ),
         ),
         BottomNavigationBarItem(
           label: "마이페이지",
           icon: Padding(
-            padding: EdgeInsets.only(bottom: 5),
+            padding: EdgeInsets.only(bottom: 5 * Scale.height),
             child: SvgPicture.asset(currentIconUrl[MYPAGE]),
           ),
         ),
       ],
       showUnselectedLabels: true,
-      selectedFontSize: 12.0,
+      selectedFontSize: 12.sp,
       selectedItemColor: const Color(0xffec5363),
       onTap: _onItemTapped,
       currentIndex: _currentIndex,

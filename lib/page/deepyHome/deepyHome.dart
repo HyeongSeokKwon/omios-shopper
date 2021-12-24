@@ -24,8 +24,6 @@ class _DeepyHomeState extends State<DeepyHome> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -35,11 +33,11 @@ class _DeepyHomeState extends State<DeepyHome> {
           controller: widget.scrollController,
           child: Column(
             children: [
-              ImageSlideHasNum(width, width * 0.62),
-              SizedBox(height: height * 0.026),
-              _buildRecommendComment(width),
-              SizedBox(height: height * 0.019),
-              _buildProduct(width, height),
+              ImageSlideHasNum(),
+              SizedBox(height: 30 * Scale.height),
+              _buildRecommendComment(),
+              SizedBox(height: 22 * Scale.height),
+              _buildProduct(),
             ],
           ),
         ),
@@ -47,11 +45,11 @@ class _DeepyHomeState extends State<DeepyHome> {
     );
   }
 
-  Widget _buildRecommendComment(double width) {
+  Widget _buildRecommendComment() {
     String id = "Deepy";
     String recommendText = "님!\n쇼핑몰에 이 상품은 어때요?";
     return Padding(
-      padding: EdgeInsets.only(left: width * 0.053),
+      padding: EdgeInsets.only(left: 22 * Scale.width),
       child: Container(
         alignment: Alignment.centerLeft,
         child: RichText(
@@ -72,7 +70,7 @@ class _DeepyHomeState extends State<DeepyHome> {
     );
   }
 
-  Widget _buildProduct(double width, double height) {
+  Widget _buildProduct() {
     return Container(
       child: Column(
         children: [
@@ -82,16 +80,16 @@ class _DeepyHomeState extends State<DeepyHome> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ProductCard(products[0]),
-                  SizedBox(width: width * 0.043),
+                  SizedBox(width: 18 * Scale.width),
                   ProductCard((products[1])),
                 ],
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: 34 * Scale.height),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ProductCard((products[2])),
-                  SizedBox(width: width * 0.043),
+                  SizedBox(width: 18 * Scale.width),
                   ProductCard((products[3])),
                 ],
               ),

@@ -1,21 +1,23 @@
 import 'package:cloth_collection/controller/loginController.dart';
+import 'package:cloth_collection/http/httpService.dart';
 import 'package:cloth_collection/page/home.dart';
+import 'package:cloth_collection/page/signUp/signUp.dart';
 import 'package:cloth_collection/util/util.dart';
-import 'package:cloth_collection/widget/frequently_used_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
+  final _formkey = GlobalKey<FormState>();
   String autoLoginIcon = "assets/images/svg/login.svg";
   String autoUnLoginIcon = "assets/images/svg/unlogin.svg";
   LoginController loginController = LoginController();
@@ -25,7 +27,11 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    HttpService.getToken();
+
     loginController.init();
+    //loginController.autoLogin();
+
     getVibratePermission();
   }
 
@@ -37,8 +43,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    Scale.setScale(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -51,19 +56,19 @@ class _LoginState extends State<Login> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
-              _buildMainText(width, height),
+              _buildMainText(),
               Column(
                 children: [
-                  SizedBox(height: height * 0.056),
-                  _buildTextfield("아이디", width, height),
-                  SizedBox(height: height * 0.018),
-                  _buildTextfield("비밀번호", width, height),
-                  _buildAutoLogin(width, height),
-                  _buildLoginButton(width, height),
-                  SizedBox(height: height * 0.022),
+                  SizedBox(height: 50 * Scale.height),
+                  _buildLoginField(),
+                  SizedBox(height: 16 * Scale.height),
+                  _buildAutoLogin(),
+                  SizedBox(height: 26 * Scale.height),
+                  _buildLoginButton(),
+                  SizedBox(height: 20 * Scale.height),
                   _buildFindArea(),
-                  SizedBox(height: height * 0.212),
-                  _buildSignInButton(width, height)
+                  SizedBox(height: 190 * Scale.height),
+                  _buildSignInButton()
                 ],
               ),
             ],
@@ -73,140 +78,220 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildMainText(double width, double height) {
+  Widget _buildMainText() {
     return Padding(
-      padding: EdgeInsets.only(top: height * 0.123, left: width * 0.053),
+      padding: EdgeInsets.only(top: 110 * Scale.height, left: 22 * Scale.width),
       child: Container(
         child: Text("지금 당신의 쇼핑몰을\n책임지는 시간\nDeepy",
-            style: textStyle(const Color(0xff333333), FontWeight.w700,
-                "NotoSansKR", 28.0.sp)),
+            style: textStyle(
+                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 28.sp)),
       ),
     );
   }
 
-  Widget _buildTextfield(String type, width, height) {
-    final TextEditingController textController =
-        type == "아이디" ? idTextController : pwdTextController;
-
-    return Container(
-      alignment: Alignment.center,
-      width: width * 0.894,
-      height: height * 0.079,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(14.r)),
-        border: Border.all(color: const Color(0xffcccccc), width: 1.w),
-        color: const Color(0xffffffff),
+  Widget _buildLoginField() {
+    return Form(
+      key: _formkey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
+        children: [
+          _buildIdField(),
+          SizedBox(height: 16 * Scale.height),
+          _buildPasswordField(),
+        ],
       ),
-      child: Padding(
-        padding: EdgeInsets.only(left: width * 0.038),
-        child: Stack(
-          children: [
-            TextFormField(
+    );
+  }
+
+  Widget _buildIdField() {
+    final TextEditingController textController = idTextController;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 22.0 * Scale.width),
+      child: Stack(
+        children: [
+          Container(
+            height: 71.0 * Scale.height,
+            child: TextFormField(
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
               ],
-              onChanged: (value) {
+              validator: (text) {
+                if (text!.trim().isNotEmpty && text.trim().length < 4) {
+                  return "아이디는 4글자 이상 입력해주세요";
+                } else
+                  return null;
+              },
+              onChanged: (text) {
                 setState(() {});
               },
               textInputAction: TextInputAction.next,
               maxLength: 30,
               controller: textController,
-              obscureText: type == "아이디" ? false : true,
               decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: "$type",
-                  counterText: '',
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelStyle: TextStyle(
+                labelText: "아이디",
+                counterText: "",
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                labelStyle: TextStyle(
+                  color: const Color(0xff666666),
+                  height: 0.6,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: "NotoSansKR",
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14.sp,
+                ),
+                suffixIcon: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.clear,
                     color: const Color(0xff666666),
-                    height: 0.6,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
-                    fontStyle: FontStyle.normal,
-                    fontSize: 14.sp,
+                    size: 20.0 * Scale.width,
                   ),
-                  hintText: ("$type를 입력하세요"),
-                  hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                      "NotoSansKR", 16.sp)),
+                  onPressed: () => textController.clear(),
+                ),
+                hintText: ("아이디를 입력하세요"),
+                hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                    "NotoSansKR", 16.sp),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+              ),
               textAlign: TextAlign.left,
-              onFieldSubmitted: (value) {
-                if (type == "비밀번호") {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                }
-              },
             ),
-            textController.text.length > 0
-                ? Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                        icon: new Icon(
-                          Icons.clear,
-                          color: const Color(0xffcccccc),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            textController.clear();
-                          });
-                        }),
-                  )
-                : Container(
-                    height: 0.0,
-                  ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildAutoLogin(double width, double height) {
+  Widget _buildPasswordField() {
+    final TextEditingController textController = pwdTextController;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 22.0 * Scale.width),
+      child: Stack(
+        children: [
+          Container(
+            height: 71.0 * Scale.height,
+            child: TextFormField(
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+              ],
+              validator: (text) {
+                if (text!.trim().isNotEmpty && text.trim().length < 4) {
+                  return "비밀번호는 6글자 이상 입력해주세요";
+                } else
+                  return null;
+              },
+              textInputAction: TextInputAction.next,
+              maxLength: 30,
+              controller: textController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: "비밀번호",
+                counterText: "",
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                labelStyle: TextStyle(
+                  color: const Color(0xff666666),
+                  height: 0.6,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: "NotoSansKR",
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14.sp,
+                ),
+                suffixIcon: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    Icons.clear,
+                    color: const Color(0xff666666),
+                    size: 20.0 * Scale.width,
+                  ),
+                  onPressed: () => textController.clear(),
+                ),
+                hintText: ("비밀번호를 입력하세요"),
+                hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                    "NotoSansKR", 16.sp),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderSide:
+                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                ),
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAutoLogin() {
     return Container(
-      height: height * 0.069,
+      height: 20 * Scale.height,
       child: Padding(
-        padding: EdgeInsets.only(left: width * 0.053),
+        padding: EdgeInsets.only(left: 22.0 * Scale.width),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 자동로그인
             Container(
-              width: width * 0.065,
+              width: 24 * Scale.width,
               child: GetBuilder<LoginController>(
                 id: "autoLogin",
                 init: loginController,
-                builder: (_) => FutureBuilder(
-                  future: SharedPreferences.getInstance(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        return InkWell(
-                          child: Row(
-                            children: [
-                              Container(
-                                width: width * 0.043,
-                                height: width * 0.043,
-                                child: SvgPicture.asset(
-                                  loginController.isChecked
-                                      ? autoLoginIcon
-                                      : autoUnLoginIcon,
-                                ),
-                              ),
-                              SizedBox(width: width * 0.014),
-                            ],
-                          ),
-                          onTap: () {
-                            loginController.checkedAutoLogin();
-                          },
-                        );
-                      } else
-                        return progressBar();
-                    } else
-                      return progressBar();
+                builder: (_) => GestureDetector(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 18 * Scale.width,
+                        height: 20 * Scale.height,
+                        child: SvgPicture.asset(
+                          loginController.isAutoLoginChecked == true
+                              ? autoLoginIcon
+                              : autoUnLoginIcon,
+                        ),
+                      ),
+                      SizedBox(width: 6 * Scale.width),
+                    ],
+                  ),
+                  onTap: () {
+                    loginController.checkedAutoLogin();
                   },
                 ),
               ),
             ),
             InkWell(
               child: Container(
-                height: height * 0.6,
+                height: 20 * Scale.height,
                 child: Center(
                   child: Text(
                     "자동로그인",
@@ -225,10 +310,13 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildLoginButton(double width, double height) {
+  Widget _buildLoginButton() {
+    bool isLoginSuccess;
+
     return Center(
       child: TextButton(
-        child: Text("로그인", style: TextStyle(color: Colors.white)),
+        child:
+            Text("로그인", style: TextStyle(color: Colors.white, fontSize: 16.sp)),
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
@@ -236,13 +324,23 @@ class _LoginState extends State<Login> {
             ),
           ),
           fixedSize: MaterialStateProperty.all<Size>(
-              Size(width * 0.894, height * 0.067)),
+              Size(370 * Scale.width, 60 * Scale.height)),
           backgroundColor:
               MaterialStateProperty.all<Color>(const Color(0xffec5363)),
         ),
-        onPressed: () {
-          loginController.getLoginInfo(
+        onPressed: () async {
+          isLoginSuccess = await loginController.loginButtonPressed(
               idTextController.text, pwdTextController.text);
+
+          if (isLoginSuccess) {
+            Get.to(() => HomePage());
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Id,PW 재확인  + ${loginController.errorMessage}"),
+              ),
+            );
+          }
         },
       ),
     );
@@ -254,9 +352,9 @@ class _LoginState extends State<Login> {
       children: [
         _buildFindPrivacy("아이디 찾기"),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          padding: EdgeInsets.symmetric(horizontal: 10 * Scale.width),
           child: Container(
-            height: 15.h,
+            height: 15 * Scale.height,
             child: VerticalDivider(
               color: const Color(0xff999999),
             ),
@@ -282,7 +380,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildSignInButton(double width, double height) {
+  Widget _buildSignInButton() {
     return Center(
       child: TextButton(
         child: Text(
@@ -298,52 +396,13 @@ class _LoginState extends State<Login> {
             ),
           ),
           fixedSize: MaterialStateProperty.all<Size>(
-            Size(width * 0.894, height * 0.063),
+            Size(370 * Scale.width, 56 * Scale.height),
           ),
         ),
         onPressed: () {
-          Get.to(() => HomePage());
+          Get.to(() => SignUp());
         },
       ),
     );
   }
 }
-
-// class SearchTextFieldState extends State<SearchTextField> {
-//   final TextEditingController _textController = new TextEditingController();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     return new Row(
-//       children: <Widget>[
-//         new Expanded(
-//           child: new Stack(
-//               alignment: const Alignment(1.0, 1.0),
-//               children: <Widget>[
-//                 new TextField(
-//                   decoration: InputDecoration(hintText: 'Search'),
-//                   onChanged: (text) {
-//                     setState(() {
-//                       print(text);
-//                     });
-//                   },
-//                   controller: _textController,
-//                 ),
-//                 _textController.text.length > 0
-//                     ? new IconButton(
-//                         icon: new Icon(Icons.clear),
-//                         onPressed: () {
-//                           setState(() {
-//                             _textController.clear();
-//                           });
-//                         })
-//                     : new Container(
-//                         height: 0.0,
-//                       )
-//               ]),
-//         ),
-//       ],
-//     );
-//   }
-// }

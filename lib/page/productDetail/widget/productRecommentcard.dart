@@ -10,8 +10,6 @@ class ProductRecommentCard extends StatelessWidget {
   ProductRecommentCard(this.product);
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
         Vibrate.feedback(VIBRATETYPE);
@@ -20,18 +18,18 @@ class ProductRecommentCard extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
-            _buildProductImage(width, height),
-            _buildProductInfo(width, height),
+            _buildProductImage(),
+            _buildProductInfo(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProductImage(double width, double height) {
+  Widget _buildProductImage() {
     return Container(
-      width: width * 0.377,
-      height: width * 0.377 * (500 / 375),
+      width: 156 * Scale.width,
+      height: 156 * Scale.width * (500 / 375),
       child: ClipRRect(
         child: Image.asset("${product.image}", fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(8.0),
@@ -44,13 +42,13 @@ class ProductRecommentCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProductInfo(double width, double height) {
+  Widget _buildProductInfo() {
     return Container(
-      width: width * 0.377,
+      width: 156 * Scale.width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: height * 0.01),
+          SizedBox(height: 9 * Scale.height),
           Text(
             "${product.name}",
             style: textStyle(
@@ -58,13 +56,13 @@ class ProductRecommentCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: height * 0.003),
+          SizedBox(height: 27 * Scale.height),
           Text(
             setPriceFormat(product.price),
             style: textStyle(
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 16.0),
           ),
-          SizedBox(height: height * 0.003),
+          SizedBox(height: 27 * Scale.height),
         ],
       ),
     );

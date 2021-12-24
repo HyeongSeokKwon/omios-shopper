@@ -8,22 +8,34 @@ class ChattingAppbar extends StatelessWidget with PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
     return AppBar(
       automaticallyImplyLeading: false,
       elevation: 0,
-      title: Container(
-        child: Text("채팅",
-            style: textStyle(
-                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 20.0)),
+      leadingWidth: width * 0.3,
+      leading: Container(
+        child: Center(
+          child: Row(
+            children: [
+              SizedBox(width: width * 0.053),
+              Text("채팅",
+                  style: textStyle(const Color(0xff333333), FontWeight.w700,
+                      "NotoSansKR", 22.0)),
+            ],
+          ),
+        ),
       ),
       actions: [
-        GestureDetector(
-          child: SvgPicture.asset(
-            "assets/images/svg/search.svg",
+        Padding(
+          padding: EdgeInsets.only(right: width * 0.053),
+          child: GestureDetector(
+            child: SvgPicture.asset(
+              "assets/images/svg/search.svg",
+            ),
+            onTap: () {
+              Vibrate.feedback(VIBRATETYPE);
+            },
           ),
-          onTap: () {
-            Vibrate.feedback(VIBRATETYPE);
-          },
         ),
       ],
     );

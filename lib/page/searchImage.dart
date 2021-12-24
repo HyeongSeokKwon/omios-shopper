@@ -18,33 +18,30 @@ class _SearchImageState extends State<SearchImage> {
 
   @override
   Widget build(BuildContext context) {
-    @override
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Container(
       color: const Color(0xffffffff),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMainText(width, height),
-            _buildImageArea(width, height),
+            _buildMainText(),
+            _buildImageArea(),
             ElevatedButton(
                 onPressed: () {
                   controller.deleteImage();
                 },
                 child: Text("삭제")),
-            _buildUploadButton(width, height),
+            _buildUploadButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMainText(double width, double height) {
+  Widget _buildMainText() {
     return Padding(
       padding: EdgeInsets.only(
-          top: height * 0.045, bottom: height * 0.025, left: width * 0.053),
+          top: 40 * Scale.height, bottom: 22 * Scale.height, left: 22 * 0.053),
       child: Container(
         child: RichText(
           text: TextSpan(
@@ -64,17 +61,17 @@ class _SearchImageState extends State<SearchImage> {
     );
   }
 
-  Widget _buildImageArea(double width, double height) {
+  Widget _buildImageArea() {
     return Center(
       child: InkWell(
         child: Container(
-          width: width * 0.894,
-          height: height * 0.55,
+          width: 370 * Scale.width,
+          height: 492 * Scale.height,
           decoration: BoxDecoration(
             color: const Color(0xfffafafa),
             borderRadius: BorderRadius.all(Radius.circular(20.r)),
           ),
-          child: _buildOpenImage(width, height),
+          child: _buildOpenImage(),
         ),
         onTap: () {
           showPicker(context);
@@ -83,65 +80,66 @@ class _SearchImageState extends State<SearchImage> {
     );
   }
 
-  Widget _buildUploadButton(double width, double height) {
+  Widget _buildUploadButton() {
     return Padding(
-      padding: EdgeInsets.only(top: height * 0.029),
+      padding: EdgeInsets.only(top: 26 * Scale.height),
       child: Center(
-        child: TextButton(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset("$upLoadButtonIcon"),
-              SizedBox(width: 5.w),
-              GetBuilder<UploadImageController>(
-                builder: (_) => Text(
-                  controller.uploadImage ==
-                          SvgPicture.asset("$upLoadButtonIcon")
-                      ? "검색하기"
-                      : "이미지 업로드",
+        child: GetBuilder<UploadImageController>(
+          builder: (_) => TextButton(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("$upLoadButtonIcon"),
+                SizedBox(width: 5.w),
+                Text(
+                  controller.isSelectedImage() == false ? "이미지 업로드" : "검색하기",
                   style: textStyle(
                       Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
                 ),
-              ),
-            ],
-          ),
-          style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14.r),
-              ),
+              ],
             ),
-            fixedSize: MaterialStateProperty.all<Size>(
-                Size(width * 0.894, height * 0.067)),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(
+                  Size(370 * Scale.width, 60 * Scale.height)),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+            ),
+            onPressed: () {
+              if (!controller.isSelectedImage()) {
+                showPicker(context);
+              } else {
+                controller.convert2BytesCode();
+              }
+            },
           ),
-          onPressed: () {
-            if (controller.uploadImage == null) {
-              showPicker(context);
-            }
-          },
         ),
       ),
     );
   }
 
-  Widget _buildOpenImage(double width, double height) {
+  Widget _buildOpenImage() {
     return GetBuilder<UploadImageController>(
       builder: (_) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: Container(
-              height: height * 0.55,
-              child: controller.uploadImage,
+              height: 268 * Scale.height,
+              child: controller.isSelectedImage() == false
+                  ? controller.uploadIcon
+                  : controller.uploadImage,
             ),
           ),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       controller.cropImage();
-          //     },
-          //     child: Text("자르기")),
+          ElevatedButton(
+              onPressed: () {
+                controller.cropImage();
+              },
+              child: Text("자르기")),
         ],
       ),
     );
