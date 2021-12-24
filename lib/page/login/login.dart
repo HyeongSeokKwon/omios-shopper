@@ -27,7 +27,6 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    HttpService.getToken();
 
     loginController.init();
     //loginController.autoLogin();
@@ -52,26 +51,28 @@ class _LoginState extends State<Login> {
         resizeToAvoidBottomInset: false,
         body: Container(
           color: const Color(0xffffffff),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
-              _buildMainText(),
-              Column(
-                children: [
-                  SizedBox(height: 50 * Scale.height),
-                  _buildLoginField(),
-                  SizedBox(height: 16 * Scale.height),
-                  _buildAutoLogin(),
-                  SizedBox(height: 26 * Scale.height),
-                  _buildLoginButton(),
-                  SizedBox(height: 20 * Scale.height),
-                  _buildFindArea(),
-                  SizedBox(height: 190 * Scale.height),
-                  _buildSignInButton()
-                ],
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
+                _buildMainText(),
+                Column(
+                  children: [
+                    SizedBox(height: 50 * Scale.height),
+                    _buildLoginField(),
+                    SizedBox(height: 16 * Scale.height),
+                    _buildAutoLogin(),
+                    SizedBox(height: 26 * Scale.height),
+                    _buildLoginButton(),
+                    SizedBox(height: 20 * Scale.height),
+                    _buildFindArea(),
+                    SizedBox(height: 190 * Scale.height),
+                    _buildSignInButton()
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -109,8 +110,8 @@ class _LoginState extends State<Login> {
       padding: EdgeInsets.symmetric(horizontal: 22.0 * Scale.width),
       child: Stack(
         children: [
-          Container(
-            height: 71.0 * Scale.height,
+          SizedBox(
+            // height: 71.0 * Scale.height,
             child: TextFormField(
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
@@ -128,8 +129,15 @@ class _LoginState extends State<Login> {
               maxLength: 30,
               controller: textController,
               decoration: InputDecoration(
-                labelText: "아이디",
+                isDense: true,
+                contentPadding: EdgeInsets.fromLTRB(
+                  10 * Scale.width,
+                  22 * Scale.height,
+                  10 * Scale.width,
+                  22 * Scale.height,
+                ),
                 counterText: "",
+                labelText: "아이디",
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
                 labelStyle: TextStyle(
                   color: const Color(0xff666666),
@@ -187,7 +195,6 @@ class _LoginState extends State<Login> {
       child: Stack(
         children: [
           Container(
-            height: 71.0 * Scale.height,
             child: TextFormField(
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
@@ -206,6 +213,13 @@ class _LoginState extends State<Login> {
                 labelText: "비밀번호",
                 counterText: "",
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
+                isDense: true,
+                contentPadding: EdgeInsets.fromLTRB(
+                  10 * Scale.width,
+                  22 * Scale.height,
+                  10 * Scale.width,
+                  22 * Scale.height,
+                ),
                 labelStyle: TextStyle(
                   color: const Color(0xff666666),
                   height: 0.6,
@@ -329,16 +343,27 @@ class _LoginState extends State<Login> {
               MaterialStateProperty.all<Color>(const Color(0xffec5363)),
         ),
         onPressed: () async {
-          isLoginSuccess = await loginController.loginButtonPressed(
-              idTextController.text, pwdTextController.text);
+          try {
+            isLoginSuccess = await loginController.loginButtonPressed(
+                idTextController.text, pwdTextController.text);
 
-          if (isLoginSuccess) {
-            Get.to(() => HomePage());
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Id,PW 재확인  + ${loginController.errorMessage}"),
-              ),
+            if (isLoginSuccess) {
+              Get.to(() => HomePage());
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Id,PW 재확인"),
+                ),
+              );
+            }
+          } catch (e) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text(e.toString()),
+                );
+              },
             );
           }
         },
@@ -381,27 +406,30 @@ class _LoginState extends State<Login> {
   }
 
   Widget _buildSignInButton() {
-    return Center(
-      child: TextButton(
-        child: Text(
-          "지금 회원가입하기!",
-          style: textStyle(
-              const Color(0xff666666), FontWeight.w500, "NotoSansKR", 16.sp),
-        ),
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14.r),
-              side: BorderSide(color: const Color(0xffe2e2e2)),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12 * Scale.height),
+      child: Center(
+        child: TextButton(
+          child: Text(
+            "지금 회원가입하기!",
+            style: textStyle(
+                const Color(0xff666666), FontWeight.w500, "NotoSansKR", 16.sp),
+          ),
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14.r),
+                side: BorderSide(color: const Color(0xffe2e2e2)),
+              ),
+            ),
+            fixedSize: MaterialStateProperty.all<Size>(
+              Size(370 * Scale.width, 56 * Scale.height),
             ),
           ),
-          fixedSize: MaterialStateProperty.all<Size>(
-            Size(370 * Scale.width, 56 * Scale.height),
-          ),
+          onPressed: () {
+            Get.to(() => SignUp());
+          },
         ),
-        onPressed: () {
-          Get.to(() => SignUp());
-        },
       ),
     );
   }
