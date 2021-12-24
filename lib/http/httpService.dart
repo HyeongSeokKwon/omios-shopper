@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloth_collection/model/loginModel.dart';
-import 'package:cloth_collection/util/util.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,8 +83,11 @@ class HttpService {
     response = await http.get(Uri.parse(baseUrl + additionalUrl),
         headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
     print("get response>>>>>>>>>>>>>>>>>>>");
+    var a = jsonDecode(response.body);
+    print(a['message']);
+    print(a['message'].runtimeType);
     responseBody = utf8.decode(response.bodyBytes);
-    // print(jsonDecode(responseBody));
+    print(jsonDecode(responseBody));
     // print(jsonDecode(responseBody).runtimeType);
     return jsonDecode(responseBody);
   }
