@@ -58,11 +58,12 @@ class LoginController extends GetxController {
   }
 
   Future<bool> loginRequest() async {
+    var responseData;
     loginRequestModel = LoginRequestModel(userId, userPwd);
+
     try {
       loginResponse = await httpservice.httpPost(
           '/user/token/', loginRequestModel.toJson());
-
       //만약 ID PW가 틀리면 =>
       if (loginResponse['detail'] ==
           "No active account found with the given credentials") {
@@ -70,8 +71,9 @@ class LoginController extends GetxController {
       }
       //만약 ID PW가 맞으면=>
       else {
-        httpservice.setAccessToken(loginResponse['access']);
-        httpservice.setRefreshToken(loginResponse['refresh']);
+        responseData = loginResponse['data'];
+        httpservice.setAccessToken(responseData['access']);
+        httpservice.setRefreshToken(responseData['refresh']);
         return true;
       }
     } catch (e) {
