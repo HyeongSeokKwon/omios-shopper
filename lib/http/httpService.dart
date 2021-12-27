@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cloth_collection/model/loginModel.dart';
-import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,11 +26,14 @@ class HttpService {
       case 200:
         var responseJson = json.decode(response.body);
         return responseJson;
-      case 401:
+      case 201:
         var responseJson = json.decode(response.body);
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());
+      case 401:
+        var responseJson = json.decode(response.body);
+        return responseJson;
       case 403:
         throw UnauthorisedException(response.body.toString());
       case 500:
@@ -87,11 +88,12 @@ class HttpService {
           Uri.parse(baseUrl + '/user/token/refresh/'), // refresh token 으로 재발급
           headers: {"Content-Type": "application/json; charset=UTF-8"},
           body: json.encode(
-            {"refresh": refreshToken},
+            {
+              "data": {"refresh": refreshToken}
+            },
           ),
         );
         responseJson = _response(response);
-
         setAccessToken(responseJson['access']);
         setRefreshToken(responseJson['refresh']);
       }
@@ -103,12 +105,15 @@ class HttpService {
     var responseBody;
     var responseJson;
     updateToken();
-
-    response = await http.get(Uri.parse(baseUrl + additionalUrl),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
-    responseBody = utf8.decode(response.bodyBytes);
-    responseJson = _response(responseBody);
-    return responseJson;
+    try {
+      response = await http.get(Uri.parse(baseUrl + additionalUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
+      responseBody = utf8.decode(response.bodyBytes);
+      responseJson = _response(responseBody);
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException('연결된 인터넷이 없습니다.');
+    }
   }
 
   Future<dynamic> httpPost(String addtionalUrl, var body) async {
@@ -118,72 +123,20 @@ class HttpService {
       updateToken();
     }
 
-    response = await http.post(Uri.parse(baseUrl + addtionalUrl),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
-        body: body);
     try {
+      response = await http.post(Uri.parse(baseUrl + addtionalUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+          body: body);
+
       responseJson = _response(response);
+      print(responseJson);
       return responseJson;
     } on SocketException {
-      throw FetchDataException('No internet Connection');
+      throw FetchDataException('연결된 인터넷이 없습니다.');
     }
-
-    // return response;
   }
 
   Future<dynamic> httpPatch(String addtionalUrl) async {}
 
   Future<dynamic> httpDelete(String addtionalUrl) async {}
-}
-
-class LoginHttp {
-  Future<LoginResponseModel?> login(LoginRequestModel requestModel) async {
-    var url = 'http://13.209.244.41'; //API
-    var response;
-    LoginResponseModel? loginResponse;
-
-    response = await http.post(Uri.parse(url + '/user/token/'), //토큰
-        body: requestModel.toJson());
-
-    var access_token = jsonDecode(response.body)['access'];
-    var refresh_token = jsonDecode(response.body)['refresh'];
-    // access_token, refresh_token의 payload 정보를 sqlite에 저장
-    // var c = Jwt.parseJwt(a['refresh']);
-    // var c = Jwt.parseJwt(a['access']);
-
-    print(access_token);
-    print(refresh_token);
-    print(access_token.runtimeType); //access_token은 String => Jwt.parse에서 파싱
-    response = await http.get(Uri.parse(url + '/user/shopper/'),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $access_token'});
-    print("isExpired : " + Jwt.isExpired(access_token).toString());
-    print(response.headers);
-    print(utf8.decode(response.bodyBytes));
-    print(Jwt.getExpiryDate(access_token)); //만료 날짜 타입 DateTime
-    print(Jwt.parseJwt(access_token));
-    print(Jwt.parseJwt(refresh_token));
-    print(jsonDecode(response.body));
-
-    // if (response.statusCode == 200) {
-    //   loginResponse = LoginResponseModel.fromJson(jsonDecode(response.data));
-    //   return loginResponse;
-    // }
-    //throw 'Request failed \n Status : ${response.statusCode}\n';
-    // try {
-    //   response = await http.post(Uri.parse(url), body: requestModel.toJson());
-    //   if (response.statusCode != 200)
-    //     throw HttpException('${response.statusCode}');
-    //   loginResponse = LoginResponseModel.fromJson(jsonDecode(response.data));
-    //   return loginResponse;
-    // } on SocketException {
-    //   print("no internect connection");
-    //   return null;
-    // } on HttpException {
-    //   print("Couldn't find the post");
-    //   return null;
-    // } on FormatException {
-    //   print("Bad response format");
-    //   return null;
-    // }
-  }
 }
