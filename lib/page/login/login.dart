@@ -1,5 +1,4 @@
 import 'package:cloth_collection/controller/loginController.dart';
-import 'package:cloth_collection/http/httpService.dart';
 import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/signUp/signUp.dart';
 import 'package:cloth_collection/util/util.dart';
@@ -85,7 +84,7 @@ class _LoginState extends State<Login> {
       child: Container(
         child: Text("지금 당신의 쇼핑몰을\n책임지는 시간\nDeepy",
             style: textStyle(
-                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 28.sp)),
+                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 28.0)),
       ),
     );
   }
@@ -145,7 +144,7 @@ class _LoginState extends State<Login> {
                   fontWeight: FontWeight.w400,
                   fontFamily: "NotoSansKR",
                   fontStyle: FontStyle.normal,
-                  fontSize: 14.sp,
+                  fontSize: 14 * Scale.height,
                 ),
                 suffixIcon: IconButton(
                   padding: EdgeInsets.zero,
@@ -158,7 +157,7 @@ class _LoginState extends State<Login> {
                 ),
                 hintText: ("아이디를 입력하세요"),
                 hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                    "NotoSansKR", 16.sp),
+                    "NotoSansKR", 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
                   borderSide:
@@ -226,7 +225,7 @@ class _LoginState extends State<Login> {
                   fontWeight: FontWeight.w400,
                   fontFamily: "NotoSansKR",
                   fontStyle: FontStyle.normal,
-                  fontSize: 14.sp,
+                  fontSize: 14 * Scale.height,
                 ),
                 suffixIcon: IconButton(
                   padding: EdgeInsets.zero,
@@ -239,7 +238,7 @@ class _LoginState extends State<Login> {
                 ),
                 hintText: ("비밀번호를 입력하세요"),
                 hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                    "NotoSansKR", 16.sp),
+                    "NotoSansKR", 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
                   borderSide:
@@ -310,7 +309,7 @@ class _LoginState extends State<Login> {
                   child: Text(
                     "자동로그인",
                     style: textStyle(const Color(0xff666666), FontWeight.w400,
-                        "NotoSansKR", 14.sp),
+                        "NotoSansKR", 14.0),
                   ),
                 ),
               ),
@@ -329,8 +328,9 @@ class _LoginState extends State<Login> {
 
     return Center(
       child: TextButton(
-        child:
-            Text("로그인", style: TextStyle(color: Colors.white, fontSize: 16.sp)),
+        child: Text("로그인",
+            style:
+                textStyle(Colors.white, FontWeight.w400, "NotoSansKR", 16.0)),
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
@@ -394,7 +394,7 @@ class _LoginState extends State<Login> {
     return InkWell(
       child: Text("$findTarget",
           style: textStyle(
-              const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.sp)),
+              const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0)),
       onTap: () {
         if (findTarget == "아이디 찾기") {
           //아이디 찾기에 따른 로직
@@ -413,7 +413,7 @@ class _LoginState extends State<Login> {
           child: Text(
             "지금 회원가입하기!",
             style: textStyle(
-                const Color(0xff666666), FontWeight.w500, "NotoSansKR", 16.sp),
+                const Color(0xff666666), FontWeight.w500, "NotoSansKR", 16.0),
           ),
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
