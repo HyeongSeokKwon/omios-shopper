@@ -109,6 +109,7 @@ class HttpService {
       response = await http.get(Uri.parse(baseUrl + additionalUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
       responseBody = utf8.decode(response.bodyBytes);
+      print(responseBody);
       responseJson = _response(responseBody);
       return responseJson;
     } on SocketException {

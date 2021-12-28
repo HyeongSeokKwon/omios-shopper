@@ -1,4 +1,5 @@
 import 'package:cloth_collection/controller/loginController.dart';
+import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/signUp/signUp.dart';
 import 'package:cloth_collection/util/util.dart';
@@ -396,6 +397,7 @@ class _LoginState extends State<Login> {
           style: textStyle(
               const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0)),
       onTap: () {
+        Get.to(HomePage());
         if (findTarget == "아이디 찾기") {
           //아이디 찾기에 따른 로직
         } else {

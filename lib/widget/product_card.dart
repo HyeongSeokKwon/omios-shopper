@@ -1,4 +1,4 @@
-import 'package:cloth_collection/data/product.dart';
+import 'package:cloth_collection/data/exampleProduct.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
