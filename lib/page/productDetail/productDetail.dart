@@ -1,5 +1,6 @@
+import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/data/product.dart';
+import 'package:cloth_collection/data/exampleProduct.dart';
 import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:get/get.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;
@@ -628,111 +630,20 @@ class _ProductDetailState extends State<ProductDetail>
             onPressed: () {
               Vibrate.feedback(VIBRATETYPE);
               showModalBottomSheet(
+                isDismissible: true,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 context: context,
-                builder: (context) {
-                  return DraggableScrollableSheet(
-                    initialChildSize: 0.5,
-                    minChildSize: 0.5,
-                    maxChildSize: 0.6,
-                    builder: (_, controller) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(25.0),
-                            topRight: const Radius.circular(25.0),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 25 * Scale.height,
-                                  bottom: 20 * Scale.height),
-                              child: TextButton(
-                                child: Text("옵션 선택하기",
-                                    style: textStyle(Color(0xff333333),
-                                        FontWeight.w500, "NotoSansKR", 16.0)),
-                                style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: const Color(0xffcccccc)),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  fixedSize: MaterialStateProperty.all<Size>(
-                                      Size(370 * Scale.width,
-                                          60 * Scale.height)),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          const Color(0xffffffff)),
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: ListView.builder(
-                                    controller: controller,
-                                    itemCount: 4,
-                                    itemBuilder: (_, index) {
-                                      return Column(
-                                        children: [
-                                          selectedProductBox(),
-                                          SizedBox(height: 8 * Scale.height),
-                                        ],
-                                      );
-                                    }),
-                              ),
-                            ),
-                            Column(
-                              children: [
-                                Row(children: []),
-                                Row(
-                                  children: [
-                                    TextButton(
-                                      child: Text("옵션 선택하기",
-                                          style: textStyle(
-                                              Color(0xff333333),
-                                              FontWeight.w500,
-                                              "NotoSansKR",
-                                              16.0)),
-                                      style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: const Color(0xffcccccc)),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        fixedSize:
-                                            MaterialStateProperty.all<Size>(
-                                                Size(370 * Scale.width,
-                                                    60 * Scale.height)),
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                const Color(0xffffffff)),
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
+                builder: (context) => DraggableScrollableSheet(
+                  expand: true,
+                  initialChildSize: 0.6,
+                  maxChildSize: 1.0,
+                  builder: (_, controller) {
+                    return BuyingBottomSheet();
+                  },
+                ),
               );
             },
           ),
@@ -740,94 +651,318 @@ class _ProductDetailState extends State<ProductDetail>
       ),
     );
   }
+}
 
-  Widget selectedProductBox() {
-    return Center(
-      child: Stack(
-        children: [
-          Container(
-            width: 370 * Scale.width,
-            height: 102 * Scale.height,
-            color: const Color(0xfffafafa),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14 * Scale.width),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 14 * Scale.height),
-                  Text(
-                    "Colors / Size",
-                    style: textStyle(const Color(0xff333333), FontWeight.w400,
-                        "NotoSansKR", 14.0),
+class BuyingBottomSheet extends StatefulWidget {
+  const BuyingBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  _BuyingBottomSheetState createState() => _BuyingBottomSheetState();
+}
+
+class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
+  ProductDetailController productDetailController = ProductDetailController();
+  int selectedShow = 1;
+  @override
+  void initState() {
+    super.initState();
+    productDetailController.initController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var bottomSheetView = [selectedOptionArea(), buyingBottomSheetArea()];
+    return Container(
+      child: bottomSheetView[selectedShow],
+    );
+  }
+
+  Widget selectedOptionArea() {
+    return Stack(children: [
+      Container(
+        width: 414 * Scale.width,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(25.0),
+            topRight: const Radius.circular(25.0),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    top: 25 * Scale.height, bottom: 30 * Scale.height),
+                child: Text("옵션 선택하기",
+                    style: textStyle(Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 18.0)),
+              ),
+              Expanded(
+                child: Center(
+                  child: ListView.builder(
+                      itemCount: 1,
+                      itemBuilder: (_, index) {
+                        return Column(
+                          children: [
+                            colorOptionButtonArea(),
+                            sizeOptionButtonArea(),
+                          ],
+                        );
+                      }),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 35 * Scale.height),
+                child: TextButton(
+                  child: Text("선택완료",
+                      style: textStyle(Color(0xff333333), FontWeight.w500,
+                          "NotoSansKR", 16.0)),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                            color: const Color(0xffcccccc), width: 1),
+                      ),
+                    ),
+                    fixedSize: MaterialStateProperty.all<Size>(
+                        Size(370 * Scale.width, 52 * Scale.height)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xfff0f5f9)),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8 * Scale.height),
-                    child: Text(
-                      "kinds of delivery",
-                      style: textStyle(const Color(0xff333333), FontWeight.w400,
-                          "NotoSansKR", 13.0),
+                  onPressed: () {
+                    selectedShow = 1;
+                    productDetailController.pushProduct();
+                    setState(() {});
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      Positioned(
+        top: 15 * Scale.width,
+        right: 15 * Scale.width,
+        child: GestureDetector(
+          child: SvgPicture.asset("assets/images/svg/closeProductDetail.svg",
+              width: 22 * Scale.width,
+              height: 22 * Scale.width,
+              fit: BoxFit.scaleDown),
+          onTap: () {
+            selectedShow = 1;
+            setState(() {});
+          },
+        ),
+      )
+    ]);
+  }
+
+  Widget colorOptionButtonArea() {
+    return Container(
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: GetBuilder<ProductDetailController>(
+              init: productDetailController,
+              builder: (_) => GestureDetector(
+                child: Container(
+                  width: 370 * Scale.width,
+                  height: 52 * Scale.height,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xffcccccc)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        productDetailController.selectedColorIndex == -1
+                            ? Text("색상 선택",
+                                style: textStyle(const Color(0xffcccccc),
+                                    FontWeight.w400, "NotoSansKR", 16.0))
+                            : Text(
+                                "${productDetailController.colorData[productDetailController.selectedColorIndex]}",
+                                style: textStyle(const Color(0xff333333),
+                                    FontWeight.w500, "NotoSansKR", 16.0)),
+                        SvgPicture.asset(
+                            productDetailController.isColorButtonClicked
+                                ? "assets/images/svg/dropUp.svg"
+                                : "assets/images/svg/dropdown.svg")
+                      ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                              child: SvgPicture.asset(
-                                  "assets/images/svg/minus.svg",
-                                  width: 18 * Scale.width,
-                                  height: 18,
-                                  fit: BoxFit.scaleDown),
-                              onTap: () {}),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8 * Scale.width),
-                            child: Text(
-                              "count",
-                              style: textStyle(const Color(0xff444444),
-                                  FontWeight.w400, "NotoSansKR", 14.0),
-                            ),
-                          ),
-                          GestureDetector(
-                              child: SvgPicture.asset(
-                                  "assets/images/svg/plus.svg",
-                                  width: 18 * Scale.width,
-                                  height: 18,
-                                  fit: BoxFit.scaleDown),
-                              onTap: () {})
-                        ],
-                      ),
-                      Text(
-                        "Price",
-                        style: textStyle(Color(0xff333333), FontWeight.w500,
-                            "NotoSansKR", 16.0),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
+                onTap: () {
+                  productDetailController.clickedColorButton();
+                },
               ),
             ),
           ),
-          Positioned(
-            top: 12 * Scale.width,
-            right: 12 * Scale.width,
-            child: SvgPicture.asset("assets/images/svg/productCancel.svg"),
+          GetBuilder<ProductDetailController>(
+            init: productDetailController,
+            builder: (_) => ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: productDetailController.colorCount,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 8 * Scale.height),
+                  child: GestureDetector(
+                    child: Container(
+                      width: 370 * Scale.width,
+                      height: 52 * Scale.height,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color:
+                            productDetailController.selectedColorIndex == index
+                                ? Color(0xffebf7f1)
+                                : Color(0xfffafafa),
+                      ),
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 14 * Scale.width),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "${productDetailController.colorData[index]}",
+                              style: textStyle(Color(0xff333333),
+                                  FontWeight.w500, "NotoSansKR", 16.0),
+                            ),
+                            SvgPicture.asset(
+                                productDetailController.selectedColorIndex ==
+                                        index
+                                    ? "assets/images/svg/termaccept.svg"
+                                    : "assets/images/svg/termcheck.svg",
+                                width: 20 * Scale.width,
+                                height: 20 * Scale.width,
+                                fit: BoxFit.scaleDown)
+                          ],
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      productDetailController.selectColor(index);
+                    },
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget buyInfoBottomSheetArea(BuildContext context) {
+  Widget sizeOptionButtonArea() {
     return Container(
-      height: 533 * Scale.height,
+        child: Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 8.0),
+          child: GetBuilder<ProductDetailController>(
+            init: productDetailController,
+            builder: (_) => GestureDetector(
+              child: Container(
+                width: 370 * Scale.width,
+                height: 52 * Scale.height,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xffcccccc)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      productDetailController.selectedSizeIndex == -1
+                          ? Text("사이즈 선택",
+                              style: textStyle(const Color(0xffcccccc),
+                                  FontWeight.w400, "NotoSansKR", 16.0))
+                          : Text(
+                              "${productDetailController.sizeData[productDetailController.selectedSizeIndex]}",
+                              style: textStyle(const Color(0xff333333),
+                                  FontWeight.w500, "NotoSansKR", 16.0)),
+                      SvgPicture.asset(
+                          productDetailController.isSizeButtonClicked
+                              ? "assets/images/svg/dropUp.svg"
+                              : "assets/images/svg/dropdown.svg")
+                    ],
+                  ),
+                ),
+              ),
+              onTap: () {
+                productDetailController.clickedSizeButton();
+              },
+            ),
+          ),
+        ),
+        GetBuilder<ProductDetailController>(
+          init: productDetailController,
+          builder: (_) => ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: productDetailController.sizeCount,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 8 * Scale.height),
+                child: GestureDetector(
+                  child: Container(
+                    width: 370 * Scale.width,
+                    height: 52 * Scale.height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: productDetailController.selectedSizeIndex == index
+                          ? Color(0xffebf7f1)
+                          : Color(0xfffafafa),
+                    ),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14 * Scale.width),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "${productDetailController.sizeData[index]}",
+                            style: textStyle(Color(0xff333333), FontWeight.w500,
+                                "NotoSansKR", 16.0),
+                          ),
+                          SvgPicture.asset(
+                              productDetailController.selectedSizeIndex == index
+                                  ? "assets/images/svg/termaccept.svg"
+                                  : "assets/images/svg/termcheck.svg",
+                              width: 20 * Scale.width,
+                              height: 20 * Scale.width,
+                              fit: BoxFit.scaleDown)
+                        ],
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    productDetailController.selectSize(index);
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ));
+  }
+
+  Widget buyingBottomSheetArea() {
+    return Container(
       decoration: BoxDecoration(
-        color: const Color(0xffffffff),
-        borderRadius: new BorderRadius.only(
-          topLeft: const Radius.circular(20.0),
-          topRight: const Radius.circular(20.0),
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(25.0),
+          topRight: const Radius.circular(25.0),
         ),
       ),
       child: Column(
@@ -851,24 +986,244 @@ class _ProductDetailState extends State<ProductDetail>
                 backgroundColor:
                     MaterialStateProperty.all<Color>(const Color(0xffffffff)),
               ),
-              onPressed: () {},
+              onPressed: () {
+                selectedShow = 0;
+                setState(() {});
+              },
             ),
           ),
-          ListView(
-            children: [
-              selectedProductBox(),
-              selectedProductBox(),
-              selectedProductBox(),
-              selectedProductBox(),
-            ],
-          )
+          GetBuilder<ProductDetailController>(
+              init: productDetailController,
+              builder: (_) {
+                return Expanded(
+                  child: Center(
+                    child: ListView.builder(
+                        itemCount: productDetailController.productCart.length,
+                        itemBuilder: (_, index) {
+                          return Column(
+                            children: [
+                              selectedProductBox(index),
+                              SizedBox(height: 8 * Scale.height),
+                            ],
+                          );
+                        }),
+                  ),
+                );
+              }),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: 13 * Scale.height, bottom: 26 * Scale.height),
+                  child: GetBuilder<ProductDetailController>(
+                      init: productDetailController,
+                      builder: (_) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                "${productDetailController.productCart.length}개 상품 금액",
+                                style: textStyle(const Color(0xff999999),
+                                    FontWeight.w400, "NotoSansKR", 14.0)),
+                            Text(
+                                "${setPriceFormat(productDetailController.totalPrice)}",
+                                style: textStyle(const Color(0xffec5363),
+                                    FontWeight.w400, "NotoSansKR", 16.0))
+                          ],
+                        );
+                      }),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 35 * Scale.height),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          SizedBox(height: 10 * Scale.height),
+                          TextButton(
+                            child: Text("장바구니",
+                                style: textStyle(Color(0xff333333),
+                                    FontWeight.w500, "NotoSansKR", 16.0)),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              fixedSize: MaterialStateProperty.all<Size>(
+                                  Size(118 * Scale.width, 52 * Scale.height)),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xfff0f5f9)),
+                            ),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 8 * Scale.width),
+                      Column(
+                        children: [
+                          SizedBox(height: 10 * Scale.height),
+                          TextButton(
+                            child: Text("바로구매",
+                                style: textStyle(const Color(0xffffffff),
+                                    FontWeight.w500, "NotoSansKR", 16.0)),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              fixedSize: MaterialStateProperty.all<Size>(
+                                  Size(118 * Scale.width, 52 * Scale.height)),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xff333333)),
+                            ),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 8 * Scale.width),
+                      Stack(
+                        children: [
+                          Column(
+                            children: [
+                              Container(height: 10 * Scale.height),
+                              TextButton(
+                                child: Text("0원 배송",
+                                    style: textStyle(const Color(0xffffffff),
+                                        FontWeight.w500, "NotoSansKR", 16.0)),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  fixedSize: MaterialStateProperty.all<Size>(
+                                      Size(118 * Scale.width,
+                                          52 * Scale.height)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          const Color(0xffec5363)),
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                              top: -5 * Scale.height,
+                              left: -5 * Scale.width,
+                              child: SvgPicture.asset(
+                                  "assets/images/svg/crown.svg")),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildDivider() {
-    return Divider(
-        thickness: 7, indent: 0, endIndent: 0, color: Colors.grey[100]);
+  Widget selectedProductBox(int index) {
+    return Center(
+      child: Stack(
+        children: [
+          Container(
+            width: 370 * Scale.width,
+            height: 102 * Scale.height,
+            color: const Color(0xfffafafa),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14 * Scale.width),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 14 * Scale.height),
+                  Text(
+                    "${productDetailController.productCart[index].color} / ${productDetailController.productCart[index].size}",
+                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                        "NotoSansKR", 14.0),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8 * Scale.height),
+                    child: Text(
+                      "kinds of delivery",
+                      style: textStyle(const Color(0xff333333), FontWeight.w400,
+                          "NotoSansKR", 13.0),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                              child: SvgPicture.asset(
+                                  "assets/images/svg/minus.svg",
+                                  width: 18 * Scale.width,
+                                  height: 18,
+                                  fit: BoxFit.scaleDown),
+                              onTap: () {
+                                productDetailController
+                                    .substractProductCount(index);
+                              }),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8 * Scale.width),
+                            child: Text(
+                              "${productDetailController.productCart[index].count}",
+                              style: textStyle(const Color(0xff444444),
+                                  FontWeight.w400, "NotoSansKR", 14.0),
+                            ),
+                          ),
+                          GestureDetector(
+                              child: SvgPicture.asset(
+                                  "assets/images/svg/plus.svg",
+                                  width: 18 * Scale.width,
+                                  height: 18,
+                                  fit: BoxFit.scaleDown),
+                              onTap: () {
+                                productDetailController.addProductCount(index);
+                              }),
+                        ],
+                      ),
+                      Text(
+                        "${setPriceFormat(productDetailController.productCart[index].count * productDetailController.productCart[index].price)}",
+                        style: textStyle(Color(0xff333333), FontWeight.w500,
+                            "NotoSansKR", 16.0),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 12 * Scale.width,
+            right: 12 * Scale.width,
+            child: GestureDetector(
+                child: SvgPicture.asset("assets/images/svg/productCancel.svg"),
+                onTap: () {
+                  productDetailController.popProduct(index);
+                }),
+          ),
+        ],
+      ),
+    );
   }
+}
+
+Widget _buildDivider() {
+  return Divider(
+      thickness: 7, indent: 0, endIndent: 0, color: Colors.grey[100]);
 }
