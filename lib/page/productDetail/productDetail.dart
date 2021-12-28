@@ -38,10 +38,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
+    return SafeArea(
       child: Scaffold(
         appBar: _buildAppBar(),
         extendBodyBehindAppBar: true,
@@ -59,7 +56,7 @@ class _ProductDetailState extends State<ProductDetail>
         children: <Widget>[
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.chevron_left, size: 35.0),
+            icon: SvgPicture.asset("assets/images/svg/moveToBack.svg"),
           ),
         ],
       ),
@@ -68,7 +65,7 @@ class _ProductDetailState extends State<ProductDetail>
           padding: EdgeInsets.only(right: 22 * Scale.width),
           child: GestureDetector(
             onTap: () {},
-            child: SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
+            child: SvgPicture.asset("assets/images/svg/cart.svg"),
           ),
         )
       ],
