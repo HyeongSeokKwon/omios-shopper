@@ -74,7 +74,9 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: _buildBottomNaviagationBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.to(() => SearchImage());
+        },
         backgroundColor: const Color(0xffec5363),
         child: SvgPicture.asset("assets/images/svg/imgaeSearch.svg"),
       ),
@@ -140,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                         SvgPicture.asset(controller.currentIconUrl[CHAT]),
                         SizedBox(height: 6 * Scale.height),
                         Text(
-                          "채팅",
+                          "피드",
                           style: textStyle(const Color(0xffcccccc),
                               FontWeight.w400, "NotoSansKR", 12.0),
                         )
