@@ -1,8 +1,6 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const MAINCOLOR = Color.fromRGBO(176, 140, 217, 100);
 const VIBRATETYPE = FeedbackType.light;
@@ -35,6 +33,6 @@ TextStyle textStyle(
     fontWeight: fontWeight,
     fontStyle: FontStyle.normal,
     fontFamily: fontFamily,
-    fontSize: fontSize,
+    fontSize: fontSize * Scale.height,
   );
 }

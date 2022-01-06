@@ -1,10 +1,7 @@
-import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/data/product.dart';
-import 'package:cloth_collection/database/db.dart';
+import 'package:cloth_collection/data/exampleProduct.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';

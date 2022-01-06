@@ -1,8 +1,11 @@
+import 'package:cloth_collection/controller/homeController.dart';
 import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/SearchImage.dart';
+import 'package:cloth_collection/page/category/category.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/myPage.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/appbar/category_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/chatting_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/deepyHomeAppbar.dart';
 import 'package:cloth_collection/widget/appbar/imageSearch_Appbar.dart';
@@ -10,11 +13,12 @@ import 'package:cloth_collection/widget/appbar/myPage_Appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 import 'chatting/chatting.dart';
 
 const int HOME = 0;
-const int SEARCH = 1;
+const int CATEGORY = 1;
 const int CHAT = 2;
 const int MYPAGE = 3;
 
@@ -25,110 +29,153 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-
+  HomeController homeController = HomeController();
   FocusNode focusNode = FocusNode();
-  ScrollController scrollController = ScrollController();
   late List<Widget> selectedPage;
-  List<String> currentIconUrl = [
-    "assets/images/svg/homeTapped.svg",
-    "assets/images/svg/searchImage.svg",
-    "assets/images/svg/chat.svg",
-    "assets/images/svg/myPage.svg"
-  ];
-  List<String> navigationIconUrl = [
-    "assets/images/svg/home.svg",
-    "assets/images/svg/searchImage.svg",
-    "assets/images/svg/chat.svg",
-    "assets/images/svg/myPage.svg"
-  ];
-  List<String> navigationOnTapIconUrl = [
-    "assets/images/svg/homeTapped.svg",
-    "assets/images/svg/searchImageTapped.svg",
-    "assets/images/svg/chatTapped.svg",
-    "assets/images/svg/myPageTapped.svg"
+
+  List<PreferredSizeWidget> appBar = [
+    DeepyHomeAppbar(),
+    CategoryAppbar(),
+    ChattingAppbar(),
+    MypageAppbar(),
+    ImageSearchAppbar(),
   ];
 
   @override
   void initState() {
     super.initState();
     DBHelper().db;
+    homeController.scrollController = ScrollController();
     selectedPage = [
-      DeepyHome(scrollController),
-      SearchImage(),
+      DeepyHome(homeController.scrollController),
+      Category(),
       Chatting(),
       MyPage(),
+      SearchImage(),
     ];
-  }
-
-  void _onItemTapped(int index) {
-    if (_currentIndex != index) {
-      setState(() {
-        currentIconUrl[_currentIndex] = navigationIconUrl[_currentIndex];
-        _currentIndex = index;
-        currentIconUrl[_currentIndex] = navigationOnTapIconUrl[_currentIndex];
-      });
-    }
-    if (index == HOME) {
-      if (scrollController.hasClients) {
-        scrollController.animateTo(0.0,
-            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<PreferredSizeWidget> appBar = [
-      DeepyHomeAppbar(),
-      ImageSearchAppbar(),
-      ChattingAppbar(),
-      MypageAppbar()
-    ];
     return Scaffold(
-      appBar: appBar[_currentIndex],
-      body: selectedPage[_currentIndex],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70),
+        child: GetBuilder<HomeController>(
+            init: homeController,
+            builder: (controller) {
+              return appBar[homeController.currentIndex];
+            }),
+      ),
+      body: GetBuilder<HomeController>(
+          init: homeController,
+          builder: (controller) {
+            return selectedPage[homeController.currentIndex];
+          }),
       bottomNavigationBar: _buildBottomNaviagationBar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.to(() => SearchImage());
+        },
+        backgroundColor: const Color(0xffec5363),
+        child: SvgPicture.asset("assets/images/svg/imgaeSearch.svg"),
+      ),
     );
   }
 
   Widget _buildBottomNaviagationBar() {
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-          label: "홈",
-          icon: Padding(
-            padding: EdgeInsets.only(bottom: 5 * Scale.height),
-            child: SvgPicture.asset(currentIconUrl[HOME]),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "이미지검색",
-          icon: Padding(
-            padding: EdgeInsets.only(bottom: 5 * Scale.height),
-            child: SvgPicture.asset(currentIconUrl[SEARCH]),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "채팅",
-          icon: Padding(
-            padding: EdgeInsets.only(bottom: 5 * Scale.height),
-            child: SvgPicture.asset(currentIconUrl[CHAT]),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "마이페이지",
-          icon: Padding(
-            padding: EdgeInsets.only(bottom: 5 * Scale.height),
-            child: SvgPicture.asset(currentIconUrl[MYPAGE]),
-          ),
-        ),
-      ],
-      showUnselectedLabels: true,
-      selectedFontSize: 12.sp,
-      selectedItemColor: const Color(0xffec5363),
-      onTap: _onItemTapped,
-      currentIndex: _currentIndex,
-      type: BottomNavigationBarType.fixed,
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(30.0),
+        topRight: Radius.circular(30.0),
+      ),
+      child: GetBuilder<HomeController>(
+          init: homeController,
+          builder: (controller) {
+            return BottomNavigationBar(
+              backgroundColor: const Color(0xffffffff),
+              selectedLabelStyle: TextStyle(fontSize: 0),
+              unselectedLabelStyle: TextStyle(fontSize: 0),
+              items: [
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: Padding(
+                    padding: EdgeInsets.only(top: 5 * Scale.height),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(controller.currentIconUrl[HOME]),
+                        SizedBox(height: 6 * Scale.height),
+                        Text(
+                          "홈",
+                          style: textStyle(const Color(0xffcccccc),
+                              FontWeight.w400, "NotoSansKR", 12.0),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: Padding(
+                    padding: EdgeInsets.only(
+                        top: 5 * Scale.height, right: 50 * Scale.width),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(controller.currentIconUrl[CATEGORY]),
+                        SizedBox(height: 6 * Scale.height),
+                        Text(
+                          "카테고리",
+                          style: textStyle(const Color(0xffcccccc),
+                              FontWeight.w400, "NotoSansKR", 12.0),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: Padding(
+                    padding: EdgeInsets.only(
+                        top: 5 * Scale.height, left: 50 * Scale.width),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(controller.currentIconUrl[CHAT]),
+                        SizedBox(height: 6 * Scale.height),
+                        Text(
+                          "피드",
+                          style: textStyle(const Color(0xffcccccc),
+                              FontWeight.w400, "NotoSansKR", 12.0),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: Padding(
+                    padding: EdgeInsets.only(top: 5 * Scale.height),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(controller.currentIconUrl[MYPAGE]),
+                        SizedBox(height: 6 * Scale.height),
+                        Text(
+                          "마이페이지",
+                          style: textStyle(const Color(0xffcccccc),
+                              FontWeight.w400, "NotoSansKR", 12.0),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              selectedFontSize: 12.sp,
+              onTap: homeController.onItemTapped,
+              currentIndex: _currentIndex,
+              type: BottomNavigationBarType.fixed,
+            );
+          }),
     );
   }
 }

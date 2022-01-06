@@ -1,5 +1,7 @@
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class MypageAppbar extends StatelessWidget with PreferredSizeWidget {
   @override
@@ -8,6 +10,7 @@ class MypageAppbar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return AppBar(
+      backgroundColor: const Color(0xffffffff),
       automaticallyImplyLeading: false,
       elevation: 0,
       leadingWidth: width * 0.3,
@@ -23,6 +26,28 @@ class MypageAppbar extends StatelessWidget with PreferredSizeWidget {
           ),
         ),
       ),
+      actions: [
+        Padding(
+          padding: EdgeInsets.only(right: width * 0.053),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Vibrate.feedback(VIBRATETYPE);
+                },
+                child: SvgPicture.asset("assets/images/svg/search.svg"),
+              ),
+              SizedBox(width: width * 0.053),
+              GestureDetector(
+                onTap: () {
+                  Vibrate.feedback(VIBRATETYPE);
+                },
+                child: SvgPicture.asset("assets/images/svg/cart.svg"),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -13,6 +13,9 @@ class SignUpController extends GetxController {
   bool isAgreeFirstTerms = false;
   bool isAgreeSecondTerms = false;
   bool isSatisfy = false;
+
+  HttpService httpservice = HttpService();
+
   void resetIsDuplicationCheck() {
     isDuplicationCheck = "default";
     update();
@@ -22,7 +25,7 @@ class SignUpController extends GetxController {
     var response;
     RegExp regex = RegExp(r'^[a-zA-Z0-9]+$');
     if (regex.hasMatch(id) && id.length >= 4) {
-      response = await HttpService.httpGet("/user/unique/username/$id/");
+      response = await httpservice.httpGet("/user/unique/username/$id/");
       if (response['message'])
         isDuplicationCheck = "accept";
       else

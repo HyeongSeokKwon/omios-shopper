@@ -27,6 +27,7 @@ class UploadImageController extends GetxController {
       uploadImage = Image.file(
         File(pickedFile!.path),
       );
+      print(uploadImage.runtimeType);
     }
 
     update();
@@ -82,7 +83,7 @@ class UploadImageController extends GetxController {
         androidUiSettings: AndroidUiSettings(
           toolbarTitle: null,
           toolbarColor: Colors.transparent,
-          statusBarColor: Colors.transparent,
+          //statusBarColor: Colors.transparent,
           toolbarWidgetColor: Colors.transparent,
           backgroundColor: Colors.transparent,
           activeControlsWidgetColor: Colors.transparent,
