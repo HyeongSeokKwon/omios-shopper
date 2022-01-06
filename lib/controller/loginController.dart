@@ -60,10 +60,10 @@ class LoginController extends GetxController {
     loginRequestModel = LoginRequestModel(userId, userPwd);
 
     try {
-      loginResponse = await httpservice.httpPost(
-          '/user/token/', loginRequestModel.toJson());
+      loginResponse =
+          await httpservice.httpPost('/token/', loginRequestModel.toJson());
       //만약 ID PW가 틀리면 =>
-      if (loginResponse['detail'] ==
+      if (loginResponse['message'] ==
           "No active account found with the given credentials") {
         return false;
       }
