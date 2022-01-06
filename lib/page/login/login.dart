@@ -353,7 +353,7 @@ class _LoginState extends State<Login> {
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Id,PW 재확인"),
+                  content: Text("아이디,패스워드를 확인해주세요"),
                 ),
               );
             }
