@@ -311,7 +311,7 @@ class _ProductDetailState extends State<ProductDetail>
                   ),
                   GestureDetector(
                     child: SvgPicture.asset(
-                      "assets/images/svg/closeProductDetail.svg",
+                      "assets/images/svg/close.svg",
                       width: 22 * Scale.width,
                       height: 22 * Scale.width,
                       fit: BoxFit.scaleDown,
@@ -744,7 +744,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
         top: 15 * Scale.width,
         right: 15 * Scale.width,
         child: GestureDetector(
-          child: SvgPicture.asset("assets/images/svg/closeProductDetail.svg",
+          child: SvgPicture.asset("assets/images/svg/close.svg",
               width: 22 * Scale.width,
               height: 22 * Scale.width,
               fit: BoxFit.scaleDown),

@@ -27,6 +27,7 @@ class UploadImageController extends GetxController {
       uploadImage = Image.file(
         File(pickedFile!.path),
       );
+      print(uploadImage.runtimeType);
     }
 
     update();
