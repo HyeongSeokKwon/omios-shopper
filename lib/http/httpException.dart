@@ -11,7 +11,7 @@ class CustomApiException implements Exception {
 }
 
 class FetchDataException extends CustomApiException {
-  FetchDataException(message) : super(message, 'Failed to get data :\n');
+  FetchDataException(message) : super(message, '');
 }
 
 class BadRequestException extends CustomApiException {
