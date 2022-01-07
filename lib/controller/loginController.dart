@@ -62,6 +62,7 @@ class LoginController extends GetxController {
     try {
       loginResponse =
           await httpservice.httpPost('/token/', loginRequestModel.toJson());
+      print(loginResponse);
       //만약 ID PW가 틀리면 =>
       if (loginResponse['message'] ==
           "No active account found with the given credentials") {

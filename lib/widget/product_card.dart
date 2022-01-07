@@ -22,7 +22,6 @@ class ProductCard extends StatelessWidget {
         child: Column(
           children: [
             _buildProductImage(),
-            SizedBox(height: 12 * Scale.height),
             _buildProductInfo(),
           ],
         ),
