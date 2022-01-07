@@ -625,20 +625,32 @@ class _ProductDetailState extends State<ProductDetail>
             ),
             onPressed: () {
               Vibrate.feedback(VIBRATETYPE);
-              showModalBottomSheet(
-                isDismissible: true,
+              showModalBottomSheet<void>(
+                isDismissible: false,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 context: context,
-                builder: (context) => DraggableScrollableSheet(
-                  expand: true,
-                  initialChildSize: 0.6,
-                  maxChildSize: 1.0,
-                  builder: (_, controller) {
-                    return BuyingBottomSheet();
-                  },
+                builder: (context) => Stack(
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                          width: 414 * Scale.width,
+                          height: 896 * Scale.height,
+                          color: Colors.transparent),
+                      onTap: Navigator.of(context).pop,
+                    ),
+                    Positioned(
+                      child: DraggableScrollableSheet(
+                        initialChildSize: 0.6,
+                        maxChildSize: 1.0,
+                        builder: (_, controller) {
+                          return BuyingBottomSheet();
+                        },
+                      ),
+                    )
+                  ],
                 ),
               );
             },
@@ -699,15 +711,16 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
               Expanded(
                 child: Center(
                   child: ListView.builder(
-                      itemCount: 1,
-                      itemBuilder: (_, index) {
-                        return Column(
-                          children: [
-                            colorOptionButtonArea(),
-                            sizeOptionButtonArea(),
-                          ],
-                        );
-                      }),
+                    itemCount: 1,
+                    itemBuilder: (_, index) {
+                      return Column(
+                        children: [
+                          colorOptionButtonArea(),
+                          sizeOptionButtonArea(),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
               Padding(
@@ -750,6 +763,8 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
               fit: BoxFit.scaleDown),
           onTap: () {
             selectedShow = 1;
+            productDetailController.selectedSizeIndex = -1;
+            productDetailController.selectedColorIndex = -1;
             setState(() {});
           },
         ),
