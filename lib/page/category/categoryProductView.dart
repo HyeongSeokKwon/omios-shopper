@@ -107,20 +107,26 @@ class _CategoryProductViewState extends State<CategoryProductView>
                     preferredSize: Size.fromHeight(100 * Scale.height),
                     child: Column(
                       children: [
-                        TabBar(
-                          isScrollable: true,
-                          indicator: UnderlineTabIndicator(
-                              borderSide: BorderSide(width: 2.0),
-                              insets: EdgeInsets.symmetric(horizontal: 16.0)),
-                          tabs: tabs,
-                          labelStyle: textStyle(const Color(0xff333333),
-                              FontWeight.w400, "NotoSansKR", 16.0),
-                          unselectedLabelStyle: textStyle(
-                              const Color(0xffcccccc),
-                              FontWeight.w400,
-                              "NotoSansKR",
-                              16.0),
-                        ),
+                        FutureBuilder(
+                            initialData: getCategoryList(),
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              return TabBar(
+                                isScrollable: true,
+                                indicator: UnderlineTabIndicator(
+                                    borderSide: BorderSide(width: 2.0),
+                                    insets:
+                                        EdgeInsets.symmetric(horizontal: 16.0)),
+                                tabs: tabs,
+                                labelStyle: textStyle(const Color(0xff333333),
+                                    FontWeight.w400, "NotoSansKR", 16.0),
+                                unselectedLabelStyle: textStyle(
+                                    const Color(0xffcccccc),
+                                    FontWeight.w400,
+                                    "NotoSansKR",
+                                    16.0),
+                              );
+                            }),
                         filterBarArea(),
                       ],
                     ),
@@ -172,13 +178,26 @@ class _CategoryProductViewState extends State<CategoryProductView>
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           context: context,
-          builder: (_) => DraggableScrollableSheet(
-            expand: true,
-            initialChildSize: 0.7,
-            maxChildSize: 1.0,
-            builder: (_, controller) {
-              return optionArea();
-            },
+          builder: (_) => Stack(
+            children: [
+              GestureDetector(
+                child: Container(
+                    width: 414 * Scale.width,
+                    height: 896 * Scale.height,
+                    color: Colors.transparent),
+                onTap: Navigator.of(context).pop,
+              ),
+              Positioned(
+                child: DraggableScrollableSheet(
+                  expand: true,
+                  initialChildSize: 0.7,
+                  maxChildSize: 1.0,
+                  builder: (_, controller) {
+                    return optionArea();
+                  },
+                ),
+              )
+            ],
           ),
         );
       },
