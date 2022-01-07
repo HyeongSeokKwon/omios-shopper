@@ -15,6 +15,7 @@ import 'httpException.dart';
 // 2. refresh token 만료 확인
 // 3-1. refresh token이 만료가 되었으면, 로그아웃
 // 3-2. refresh token이 만료가 안되었으면, refresh token 이용해서 token 발급
+
 class HttpService {
   static var refreshToken;
   static var accessToken;
@@ -37,6 +38,7 @@ class HttpService {
       case 403:
         throw UnauthorisedException(response.body.toString());
       case 500:
+        throw UnauthorisedException(response.body.toString());
       default:
         throw FetchDataException(
             'Error occured while Communication with Server with StatusCode:${response.statusCode}');
@@ -85,32 +87,34 @@ class HttpService {
       if (!isRefreshExpired()) {
         // refresh token 만료 되지 않았으면
         var response = await http.post(
-          Uri.parse(baseUrl + '/user/token/refresh/'), // refresh token 으로 재발급
+          Uri.parse(baseUrl + '/token/refresh/'), // refresh token 으로 재발급
           headers: {"Content-Type": "application/json; charset=UTF-8"},
           body: json.encode(
-            {
-              "data": {"refresh": refreshToken}
-            },
+            {"refresh": refreshToken},
           ),
         );
+        print("<" + response.body + ">");
         responseJson = _response(response);
         setAccessToken(responseJson['access']);
         setRefreshToken(responseJson['refresh']);
       }
+    } else {
+      print("access token is valid");
     }
   }
 
   Future<dynamic> httpGet(String additionalUrl) async {
     var response;
-    var responseBody;
     var responseJson;
-    updateToken();
     try {
+      updateToken();
       response = await http.get(Uri.parse(baseUrl + additionalUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
-      responseBody = utf8.decode(response.bodyBytes);
-      print(responseBody);
-      responseJson = _response(responseBody);
+
+      //responseBody = utf8.decode(response.bodyBytes);
+
+      print(response);
+      responseJson = _response(response);
       return responseJson;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');
@@ -120,7 +124,8 @@ class HttpService {
   Future<dynamic> httpPost(String addtionalUrl, var body) async {
     var response;
     var responseJson;
-    if (addtionalUrl != "/user/token/") {
+
+    if (addtionalUrl != "/token/") {
       updateToken();
     }
 

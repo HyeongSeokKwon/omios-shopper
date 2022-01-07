@@ -73,8 +73,20 @@ class ProductDetailController extends GetxController {
           count: 1,
           price: 10000);
 
+      for (int i = 0; i < productCart.length; i++) {
+        if (productCart[i].size == sizeData[selectedSizeIndex] &&
+            productCart[i].color == colorData[selectedColorIndex]) {
+          productCart[i].count++;
+          totalPrice = totalPrice + orderProduct.price;
+          update();
+          return;
+        }
+      }
       productCart.add(orderProduct);
+
       totalPrice = totalPrice + orderProduct.price;
+      selectedColorIndex = -1;
+      selectedSizeIndex = -1;
       update();
     }
   }

@@ -79,3 +79,22 @@ List<Product> getProduct() {
   }
   return temporaryProductList;
 }
+
+Future<List<Product>> getProducts() async {
+  List<Product> temporaryProductList = [];
+  for (var product in temporaryProduct) {
+    temporaryProductList.add(
+      Product(
+        product['productCode'],
+        product['image'],
+        product['name'],
+        product['store'],
+        product['location'],
+        product['price'],
+        product['category'],
+        product['subcategory'],
+      ),
+    );
+  }
+  return temporaryProductList;
+}

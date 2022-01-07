@@ -63,35 +63,51 @@ class _ReviewBoxState extends State<ReviewBox> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "체형 정보",
-              style: textStyle(
-                  const Color(0xff999999), FontWeight.w500, "NotoSansKR", 14.0),
+            Row(
+              children: [
+                Container(
+                  width: 55 * Scale.width,
+                  child: Text(
+                    "체형 정보",
+                    style: textStyle(const Color(0xff999999), FontWeight.w500,
+                        "NotoSansKR", 14.0),
+                  ),
+                ),
+                SizedBox(width: 47 * Scale.width),
+                reviewerInfo("158cm | 47kg | 상의 44 | 하의 23 | 발 245"),
+              ],
             ),
             SizedBox(height: 5 * Scale.height),
-            Text(
-              "선택옵션",
-              style: textStyle(
-                  const Color(0xff999999), FontWeight.w500, "NotoSansKR", 14.0),
+            Row(
+              children: [
+                Container(
+                  width: 55 * Scale.width,
+                  child: Text(
+                    "선택옵션",
+                    style: textStyle(const Color(0xff999999), FontWeight.w500,
+                        "NotoSansKR", 14.0),
+                  ),
+                ),
+                SizedBox(width: 47 * Scale.width),
+                reviewerInfo("연베이지"),
+              ],
             ),
             SizedBox(height: 5 * Scale.height),
-            Text(
-              "한줄평",
-              style: textStyle(
-                  const Color(0xff999999), FontWeight.w500, "NotoSansKR", 14.0),
-              overflow: TextOverflow.visible,
+            Row(
+              children: [
+                Container(
+                  width: 55 * Scale.width,
+                  child: Text(
+                    "한줄평",
+                    style: textStyle(const Color(0xff999999), FontWeight.w500,
+                        "NotoSansKR", 14.0),
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+                SizedBox(width: 47 * Scale.width),
+                reviewerInfo("색감 화면과 같아요, 퀄리티 아주 좋아요,사이즈 딱 맞아요"),
+              ],
             ),
-          ],
-        ),
-        SizedBox(width: 47 * Scale.width),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            reviewerInfo("158cm | 47kg | 상의 44 | 하의 23 | 발 245"),
-            SizedBox(height: 5 * Scale.height),
-            reviewerInfo("연베이지"),
-            SizedBox(height: 5 * Scale.height),
-            reviewerInfo("색감 화면과 같아요, 퀄리티 아주 좋아요,사이즈 딱 맞아요"),
           ],
         ),
       ],
@@ -104,7 +120,7 @@ class _ReviewBoxState extends State<ReviewBox> {
             const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0),
         maxLines: 2,
         softWrap: false,
-        overflow: TextOverflow.fade);
+        overflow: TextOverflow.visible);
   }
 
   Widget reviewPhotoArea() {

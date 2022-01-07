@@ -61,15 +61,14 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
                 },
-                child: SvgPicture.asset("assets/images/svg/alarm.svg"),
+                child: SvgPicture.asset("assets/images/svg/search.svg"),
               ),
               SizedBox(width: width * 0.053),
               GestureDetector(
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
                 },
-                child:
-                    SvgPicture.asset("assets/images/svg/shopping_basket.svg"),
+                child: SvgPicture.asset("assets/images/svg/cart.svg"),
               ),
             ],
           ),

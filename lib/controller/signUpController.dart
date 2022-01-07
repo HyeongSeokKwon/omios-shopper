@@ -25,8 +25,9 @@ class SignUpController extends GetxController {
     var response;
     RegExp regex = RegExp(r'^[a-zA-Z0-9]+$');
     if (regex.hasMatch(id) && id.length >= 4) {
-      response = await httpservice.httpGet("/user/unique/username/$id/");
-      if (response['message'])
+      response = await httpservice.httpGet("/user/unique/?username=$id");
+      print(response);
+      if (response['data']['is_unique'])
         isDuplicationCheck = "accept";
       else
         isDuplicationCheck = "deny";

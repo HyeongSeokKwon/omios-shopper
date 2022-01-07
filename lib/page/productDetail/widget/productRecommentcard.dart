@@ -56,7 +56,7 @@ class ProductRecommentCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 27 * Scale.height),
+          SizedBox(height: 10 * Scale.height),
           Text(
             setPriceFormat(product.price),
             style: textStyle(
