@@ -32,7 +32,7 @@ class ProductCard extends StatelessWidget {
   Widget _buildProductImage() {
     return Container(
       width: 176 * Scale.width,
-      height: 176 * Scale.width * (500 / 375),
+      height: 176 * Scale.width * (4 / 3),
       child: ClipRRect(
         child: Image.asset("${product.image}", fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(8.0),

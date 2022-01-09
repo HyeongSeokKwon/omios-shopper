@@ -23,7 +23,7 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
     ];
     return Container(
       width: 414 * Scale.width,
-      height: 340 * Scale.height,
+      height: (1.2) * 414 * Scale.width,
       child: Stack(
         children: [
           PageView.builder(
