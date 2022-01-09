@@ -11,7 +11,13 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white, // navigation bar color
+          systemNavigationBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.transparent, // status bar color
+          statusBarIconBrightness: Brightness.dark),
+    );
     return ScreenUtilInit(
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
