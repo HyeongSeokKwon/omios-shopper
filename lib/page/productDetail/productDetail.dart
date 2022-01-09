@@ -8,6 +8,7 @@ import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/rating_bar.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
@@ -25,54 +26,77 @@ class _ProductDetailState extends State<ProductDetail>
     with SingleTickerProviderStateMixin {
   final DBHelper _dbHelper = DBHelper();
   final RecentViewController recentViewController = RecentViewController();
+  final ProductDetailController productDetailController =
+      ProductDetailController();
+  final PageController pageController = PageController();
   late TabController _controller;
+
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 4, vsync: this);
+
+    productDetailController.initController();
     recentViewController.dataInit(_dbHelper);
     recentViewController.insertRecentView(
         widget.product.productCode, _dbHelper);
+    pageController.addListener(() {
+      productDetailController.changeOffset(pageController.offset);
+    });
+  }
+
+  @override
+  void dispose() {
+    recentViewController.dispose();
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        extendBodyBehindAppBar: true,
-        body: SingleChildScrollView(child: _buildScroll()),
-        bottomNavigationBar: _buildBottomNaviagationBar(),
-      ),
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(65 * Scale.height),
+          child: _buildAppBar()),
+      extendBodyBehindAppBar: true,
+      body: SingleChildScrollView(
+          controller: pageController, child: _buildScroll()),
+      bottomNavigationBar: _buildBottomNaviagationBar(),
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: SvgPicture.asset("assets/images/svg/moveToBack.svg"),
-          ),
-        ],
-      ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 22 * Scale.width),
-          child: GestureDetector(
-            onTap: () {},
-            child: SvgPicture.asset("assets/images/svg/cart.svg"),
-          ),
-        )
-      ],
-      titleSpacing: 0.0,
-      automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
-      elevation: 0.0,
-    );
+  Widget _buildAppBar() {
+    return GetBuilder<ProductDetailController>(
+        init: productDetailController,
+        builder: (controller) {
+          return AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: SvgPicture.asset("assets/images/svg/moveToBack.svg"),
+                ),
+              ],
+            ),
+            actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 22 * Scale.width),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: SvgPicture.asset(
+                    "assets/images/svg/cart.svg",
+                  ),
+                ),
+              )
+            ],
+            titleSpacing: 0.0,
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.white.withOpacity(controller.opacity),
+            elevation: 0.0,
+          );
+        });
   }
 
   Widget _buildScroll() {
@@ -646,7 +670,9 @@ class _ProductDetailState extends State<ProductDetail>
                         initialChildSize: 0.6,
                         maxChildSize: 1.0,
                         builder: (_, controller) {
-                          return BuyingBottomSheet();
+                          return BuyingBottomSheet(
+                            productDetailController: productDetailController,
+                          );
                         },
                       ),
                     )
@@ -662,19 +688,19 @@ class _ProductDetailState extends State<ProductDetail>
 }
 
 class BuyingBottomSheet extends StatefulWidget {
-  const BuyingBottomSheet({Key? key}) : super(key: key);
+  final ProductDetailController productDetailController;
+  BuyingBottomSheet({required this.productDetailController});
 
   @override
   _BuyingBottomSheetState createState() => _BuyingBottomSheetState();
 }
 
 class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
-  ProductDetailController productDetailController = ProductDetailController();
   int selectedShow = 1;
   @override
   void initState() {
     super.initState();
-    productDetailController.initController();
+    widget.productDetailController.initController();
   }
 
   @override
@@ -744,7 +770,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                   ),
                   onPressed: () {
                     selectedShow = 1;
-                    productDetailController.pushProduct();
+                    widget.productDetailController.pushProduct();
                     setState(() {});
                   },
                 ),
@@ -763,8 +789,8 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
               fit: BoxFit.scaleDown),
           onTap: () {
             selectedShow = 1;
-            productDetailController.selectedSizeIndex = -1;
-            productDetailController.selectedColorIndex = -1;
+            widget.productDetailController.selectedSizeIndex = -1;
+            widget.productDetailController.selectedColorIndex = -1;
             setState(() {});
           },
         ),
@@ -779,8 +805,8 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
           Padding(
             padding: EdgeInsets.only(bottom: 8.0),
             child: GetBuilder<ProductDetailController>(
-              init: productDetailController,
-              builder: (_) => GestureDetector(
+              init: widget.productDetailController,
+              builder: (controller) => GestureDetector(
                 child: Container(
                   width: 370 * Scale.width,
                   height: 52 * Scale.height,
@@ -793,34 +819,33 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        productDetailController.selectedColorIndex == -1
+                        controller.selectedColorIndex == -1
                             ? Text("색상 선택",
                                 style: textStyle(const Color(0xffcccccc),
                                     FontWeight.w400, "NotoSansKR", 16.0))
                             : Text(
-                                "${productDetailController.colorData[productDetailController.selectedColorIndex]}",
+                                "${controller.colorData[controller.selectedColorIndex]}",
                                 style: textStyle(const Color(0xff333333),
                                     FontWeight.w500, "NotoSansKR", 16.0)),
-                        SvgPicture.asset(
-                            productDetailController.isColorButtonClicked
-                                ? "assets/images/svg/dropUp.svg"
-                                : "assets/images/svg/dropdown.svg")
+                        SvgPicture.asset(controller.isColorButtonClicked
+                            ? "assets/images/svg/dropUp.svg"
+                            : "assets/images/svg/dropdown.svg")
                       ],
                     ),
                   ),
                 ),
                 onTap: () {
-                  productDetailController.clickedColorButton();
+                  controller.clickedColorButton();
                 },
               ),
             ),
           ),
           GetBuilder<ProductDetailController>(
-            init: productDetailController,
-            builder: (_) => ListView.builder(
+            init: widget.productDetailController,
+            builder: (controller) => ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: productDetailController.colorCount,
+              itemCount: controller.colorCount,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: 8 * Scale.height),
@@ -830,10 +855,9 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                       height: 52 * Scale.height,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color:
-                            productDetailController.selectedColorIndex == index
-                                ? Color(0xffebf7f1)
-                                : Color(0xfffafafa),
+                        color: controller.selectedColorIndex == index
+                            ? Color(0xffebf7f1)
+                            : Color(0xfffafafa),
                       ),
                       child: Padding(
                         padding:
@@ -842,13 +866,12 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "${productDetailController.colorData[index]}",
+                              "${controller.colorData[index]}",
                               style: textStyle(Color(0xff333333),
                                   FontWeight.w500, "NotoSansKR", 16.0),
                             ),
                             SvgPicture.asset(
-                                productDetailController.selectedColorIndex ==
-                                        index
+                                controller.selectedColorIndex == index
                                     ? "assets/images/svg/termaccept.svg"
                                     : "assets/images/svg/termcheck.svg",
                                 width: 20 * Scale.width,
@@ -859,7 +882,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                       ),
                     ),
                     onTap: () {
-                      productDetailController.selectColor(index);
+                      controller.selectColor(index);
                     },
                   ),
                 );
@@ -878,8 +901,8 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
         Padding(
           padding: EdgeInsets.only(bottom: 8.0),
           child: GetBuilder<ProductDetailController>(
-            init: productDetailController,
-            builder: (_) => GestureDetector(
+            init: widget.productDetailController,
+            builder: (controller) => GestureDetector(
               child: Container(
                 width: 370 * Scale.width,
                 height: 52 * Scale.height,
@@ -892,34 +915,33 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      productDetailController.selectedSizeIndex == -1
+                      controller.selectedSizeIndex == -1
                           ? Text("사이즈 선택",
                               style: textStyle(const Color(0xffcccccc),
                                   FontWeight.w400, "NotoSansKR", 16.0))
                           : Text(
-                              "${productDetailController.sizeData[productDetailController.selectedSizeIndex]}",
+                              "${controller.sizeData[controller.selectedSizeIndex]}",
                               style: textStyle(const Color(0xff333333),
                                   FontWeight.w500, "NotoSansKR", 16.0)),
-                      SvgPicture.asset(
-                          productDetailController.isSizeButtonClicked
-                              ? "assets/images/svg/dropUp.svg"
-                              : "assets/images/svg/dropdown.svg")
+                      SvgPicture.asset(controller.isSizeButtonClicked
+                          ? "assets/images/svg/dropUp.svg"
+                          : "assets/images/svg/dropdown.svg")
                     ],
                   ),
                 ),
               ),
               onTap: () {
-                productDetailController.clickedSizeButton();
+                controller.clickedSizeButton();
               },
             ),
           ),
         ),
         GetBuilder<ProductDetailController>(
-          init: productDetailController,
-          builder: (_) => ListView.builder(
+          init: widget.productDetailController,
+          builder: (controller) => ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: productDetailController.sizeCount,
+            itemCount: controller.sizeCount,
             itemBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.only(bottom: 8 * Scale.height),
@@ -929,7 +951,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                     height: 52 * Scale.height,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: productDetailController.selectedSizeIndex == index
+                      color: controller.selectedSizeIndex == index
                           ? Color(0xffebf7f1)
                           : Color(0xfffafafa),
                     ),
@@ -940,12 +962,12 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "${productDetailController.sizeData[index]}",
+                            "${controller.sizeData[index]}",
                             style: textStyle(Color(0xff333333), FontWeight.w500,
                                 "NotoSansKR", 16.0),
                           ),
                           SvgPicture.asset(
-                              productDetailController.selectedSizeIndex == index
+                              controller.selectedSizeIndex == index
                                   ? "assets/images/svg/termaccept.svg"
                                   : "assets/images/svg/termcheck.svg",
                               width: 20 * Scale.width,
@@ -956,7 +978,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                     ),
                   ),
                   onTap: () {
-                    productDetailController.selectSize(index);
+                    controller.selectSize(index);
                   },
                 ),
               );
@@ -1004,12 +1026,12 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
             ),
           ),
           GetBuilder<ProductDetailController>(
-              init: productDetailController,
-              builder: (_) {
+              init: widget.productDetailController,
+              builder: (controller) {
                 return Expanded(
                   child: Center(
                     child: ListView.builder(
-                        itemCount: productDetailController.productCart.length,
+                        itemCount: controller.productCart.length,
                         itemBuilder: (_, index) {
                           return Column(
                             children: [
@@ -1030,17 +1052,15 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                   padding: EdgeInsets.only(
                       top: 13 * Scale.height, bottom: 26 * Scale.height),
                   child: GetBuilder<ProductDetailController>(
-                      init: productDetailController,
-                      builder: (_) {
+                      init: widget.productDetailController,
+                      builder: (controller) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                                "${productDetailController.productCart.length}개 상품 금액",
+                            Text("${controller.productCart.length}개 상품 금액",
                                 style: textStyle(const Color(0xff999999),
                                     FontWeight.w400, "NotoSansKR", 14.0)),
-                            Text(
-                                "${setPriceFormat(productDetailController.totalPrice)}",
+                            Text("${setPriceFormat(controller.totalPrice)}",
                                 style: textStyle(const Color(0xffec5363),
                                     FontWeight.w400, "NotoSansKR", 16.0))
                           ],
@@ -1160,7 +1180,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                 children: [
                   SizedBox(height: 14 * Scale.height),
                   Text(
-                    "${productDetailController.productCart[index].color} / ${productDetailController.productCart[index].size}",
+                    "${widget.productDetailController.productCart[index].color} / ${widget.productDetailController.productCart[index].size}",
                     style: textStyle(const Color(0xff333333), FontWeight.w400,
                         "NotoSansKR", 14.0),
                   ),
@@ -1185,14 +1205,14 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                                   height: 18,
                                   fit: BoxFit.scaleDown),
                               onTap: () {
-                                productDetailController
+                                widget.productDetailController
                                     .substractProductCount(index);
                               }),
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 8 * Scale.width),
                             child: Text(
-                              "${productDetailController.productCart[index].count}",
+                              "${widget.productDetailController.productCart[index].count}",
                               style: textStyle(const Color(0xff444444),
                                   FontWeight.w400, "NotoSansKR", 14.0),
                             ),
@@ -1204,12 +1224,13 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                                   height: 18,
                                   fit: BoxFit.scaleDown),
                               onTap: () {
-                                productDetailController.addProductCount(index);
+                                widget.productDetailController
+                                    .addProductCount(index);
                               }),
                         ],
                       ),
                       Text(
-                        "${setPriceFormat(productDetailController.productCart[index].count * productDetailController.productCart[index].price)}",
+                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].price)}",
                         style: textStyle(Color(0xff333333), FontWeight.w500,
                             "NotoSansKR", 16.0),
                       ),
@@ -1225,7 +1246,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
             child: GestureDetector(
                 child: SvgPicture.asset("assets/images/svg/productCancel.svg"),
                 onTap: () {
-                  productDetailController.popProduct(index);
+                  widget.productDetailController.popProduct(index);
                 }),
           ),
         ],
