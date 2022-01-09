@@ -51,8 +51,8 @@ class _CategoryState extends State<Category> {
               width: 81 * Scale.width, height: 81 * Scale.width),
           SizedBox(height: 3.8 * Scale.height),
           Text("${categoryMap[index]["name"]}",
-              style: textStyle(const Color(0xff333333), FontWeight.w400,
-                  "NotoSansKR", 13.0)),
+              style: textStyle(const Color(0xff333333), FontWeight.w500,
+                  "NotoSansKR", 14.0)),
         ],
       ),
       onTap: () {

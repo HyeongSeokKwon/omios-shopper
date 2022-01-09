@@ -130,8 +130,8 @@ class _ProductDetailState extends State<ProductDetail>
               ),
               Text(
                 "${widget.product.name}",
-                style: textStyle(const Color(0xff333333), FontWeight.w500,
-                    "NotoSansKR", 18.0),
+                style: textStyle(const Color(0xff555555), FontWeight.w500,
+                    "NotoSansKR", 16.0),
               ),
               SizedBox(height: 3 * Scale.height),
               Row(
@@ -139,7 +139,7 @@ class _ProductDetailState extends State<ProductDetail>
                 children: [
                   Text(
                     setPriceFormat(widget.product.price),
-                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                    style: textStyle(const Color(0xff333333), FontWeight.w700,
                         "NotoSansKR", 20.0),
                   ),
                   Row(
@@ -230,8 +230,8 @@ class _ProductDetailState extends State<ProductDetail>
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
                     child: Text("#" + "HashTag ",
-                        style: textStyle(const Color(0xff333333),
-                            FontWeight.w500, "NotoSansKR", 13.0)),
+                        style: textStyle(const Color(0xff0090ff),
+                            FontWeight.w400, "NotoSansKR", 13.0)),
                   ),
                 ),
               ),
@@ -250,7 +250,7 @@ class _ProductDetailState extends State<ProductDetail>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "상품 상세 펼치기",
+              "상품 상세 펼치기 ",
               style: textStyle(
                   Color(0xff555555), FontWeight.w400, "NotoSansKR", 16.0),
             ),
