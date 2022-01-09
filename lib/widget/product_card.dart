@@ -55,7 +55,7 @@ class ProductCard extends StatelessWidget {
           Text(
             "${product.name}",
             style: textStyle(
-                const Color(0xff333333), FontWeight.w400, "NotoSansKR", 14.0),
+                const Color(0xff999999), FontWeight.w400, "NotoSansKR", 12.0),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -63,22 +63,9 @@ class ProductCard extends StatelessWidget {
           Text(
             setPriceFormat(product.price),
             style: textStyle(
-                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 16.0),
+                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 17.0),
           ),
           SizedBox(height: 4 * Scale.height),
-          Row(
-            children: [
-              SvgPicture.asset("assets/images/svg/location.svg"),
-              SizedBox(width: 4 * Scale.width),
-              Text(
-                "${product.location}",
-                style: textStyle(const Color(0xff999999), FontWeight.w400,
-                    "NotoSansKR", 12.0),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
         ],
       ),
     );
