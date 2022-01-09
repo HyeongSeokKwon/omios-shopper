@@ -64,6 +64,7 @@ class _ReviewBoxState extends State<ReviewBox> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 55 * Scale.width,
@@ -79,6 +80,7 @@ class _ReviewBoxState extends State<ReviewBox> {
             ),
             SizedBox(height: 5 * Scale.height),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 55 * Scale.width,
@@ -94,6 +96,7 @@ class _ReviewBoxState extends State<ReviewBox> {
             ),
             SizedBox(height: 5 * Scale.height),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 55 * Scale.width,
@@ -101,11 +104,12 @@ class _ReviewBoxState extends State<ReviewBox> {
                     "한줄평",
                     style: textStyle(const Color(0xff999999), FontWeight.w500,
                         "NotoSansKR", 14.0),
-                    overflow: TextOverflow.visible,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 SizedBox(width: 47 * Scale.width),
-                reviewerInfo("색감 화면과 같아요, 퀄리티 아주 좋아요,사이즈 딱 맞아요"),
+                reviewerInfo(
+                    "색감 화면과 같아요, 퀄리티 아주 좋아요,사이즈 딱 맞아요~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"),
               ],
             ),
           ],
@@ -115,12 +119,14 @@ class _ReviewBoxState extends State<ReviewBox> {
   }
 
   Widget reviewerInfo(String info) {
-    return Text("$info",
-        style: textStyle(
-            const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0),
-        maxLines: 2,
-        softWrap: false,
-        overflow: TextOverflow.visible);
+    return Container(
+      constraints: BoxConstraints(maxWidth: 260 * Scale.width),
+      child: Text("$info",
+          style: textStyle(
+              const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0),
+          maxLines: 5,
+          overflow: TextOverflow.ellipsis),
+    );
   }
 
   Widget reviewPhotoArea() {
