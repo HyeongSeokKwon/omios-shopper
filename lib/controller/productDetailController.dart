@@ -1,4 +1,5 @@
 import 'package:cloth_collection/model/orderProduct.dart';
+import 'package:cloth_collection/util/util.dart';
 import 'package:get/get.dart';
 
 class ProductDetailController extends GetxController {
@@ -15,6 +16,18 @@ class ProductDetailController extends GetxController {
   var sizeData = ["S", "M", "L"];
 
   List<OrderProduct> productCart = [];
+  double opacity = 0;
+
+  void changeOffset(double pageControllerOffset) {
+    double standard = 496 * Scale.height;
+    if (pageControllerOffset > standard) {
+      pageControllerOffset = standard;
+    } else if (pageControllerOffset < 0) {
+      pageControllerOffset = 0;
+    }
+    opacity = pageControllerOffset / standard;
+    update();
+  }
 
   void initController() {
     //selectColorArray = List.generate(colorData.length, (index) => false);
