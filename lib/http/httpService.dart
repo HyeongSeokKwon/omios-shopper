@@ -25,15 +25,16 @@ class HttpService {
   dynamic _response(http.Response response) {
     switch (response.statusCode) {
       case 200:
-        var responseJson = json.decode(response.body);
+        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
         return responseJson;
       case 201:
-        var responseJson = json.decode(response.body);
+        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());
       case 401:
-        var responseJson = json.decode(response.body);
+        var responseJson = utf8.decode(response.bodyBytes);
         return responseJson;
       case 403:
         throw UnauthorisedException(response.body.toString());
@@ -95,8 +96,8 @@ class HttpService {
         );
         print("<" + response.body + ">");
         responseJson = _response(response);
-        setAccessToken(responseJson['access']);
-        setRefreshToken(responseJson['refresh']);
+        setAccessToken(responseJson['data']['access']);
+        setRefreshToken(responseJson['data']['refresh']);
       }
     } else {
       print("access token is valid");
@@ -113,8 +114,8 @@ class HttpService {
 
       //responseBody = utf8.decode(response.bodyBytes);
 
-      print(response);
       responseJson = _response(response);
+
       return responseJson;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');
