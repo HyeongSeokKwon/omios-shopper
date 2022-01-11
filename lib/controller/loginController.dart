@@ -71,6 +71,7 @@ class LoginController extends GetxController {
       //만약 ID PW가 맞으면=>
       else {
         responseData = loginResponse['data'];
+        print(responseData['access']);
         httpservice.setAccessToken(responseData['access']);
         httpservice.setRefreshToken(responseData['refresh']);
         return true;
