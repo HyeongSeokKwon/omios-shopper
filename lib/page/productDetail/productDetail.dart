@@ -1,14 +1,13 @@
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/data/exampleProduct.dart';
 import 'package:cloth_collection/database/db.dart';
+import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/rating_bar.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
@@ -38,8 +37,7 @@ class _ProductDetailState extends State<ProductDetail>
 
     productDetailController.initController();
     recentViewController.dataInit(_dbHelper);
-    recentViewController.insertRecentView(
-        widget.product.productCode, _dbHelper);
+    recentViewController.insertRecentView(widget.product.code, _dbHelper);
     pageController.addListener(() {
       productDetailController.changeOffset(pageController.offset);
     });
