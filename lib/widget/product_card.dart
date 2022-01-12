@@ -1,14 +1,14 @@
-import 'package:cloth_collection/data/exampleProduct.dart';
+import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  ProductCard(this.product);
+  final double imageWidth;
+  ProductCard({required this.product, required this.imageWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +31,10 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildProductImage() {
     return Container(
-      width: 176 * Scale.width,
-      height: 176 * Scale.width * (4 / 3),
+      width: imageWidth,
+      height: imageWidth * (4 / 3),
       child: ClipRRect(
-        child: Image.asset("${product.image}", fit: BoxFit.cover),
+        child: Image.asset("${product.imageUrl}", fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(8.0),
       ),
       decoration: BoxDecoration(
@@ -47,7 +47,7 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildProductInfo() {
     return Container(
-      width: 176 * Scale.width,
+      width: imageWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
