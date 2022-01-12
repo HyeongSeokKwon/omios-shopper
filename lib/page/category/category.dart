@@ -12,19 +12,6 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> {
   CategoryController categoryController = CategoryController();
-  // List<Map<String, String>> categoryUrl = [
-  //   {"image": "assets/images/svg/outerCategory.svg"},
-  //   {"image": "assets/images/svg/topCategory.svg"},
-  //   {"image": "assets/images/svg/onepieceCategory.svg"},
-  //   {"image": "assets/images/svg/bottomCategory.svg"},
-  //   {"image": "assets/images/svg/skirtCategory.svg"},
-  //   {"image": "assets/images/svg/trainingCategory.svg"},
-  //   {"image": "assets/images/svg/beachwearCategory.svg"},
-  //   {"image": "assets/images/svg/lingerieCategory.svg"},
-  //   {"image": "assets/images/svg/shoesCategory.svg"},
-  //   {"image": "assets/images/svg/accessoriesCategory.svg"},
-  //   {"image": "assets/images/svg/bagCategory.svg"}
-  // ];
   @override
   void initState() {
     super.initState();

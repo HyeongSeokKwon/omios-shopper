@@ -1,36 +1,25 @@
 import 'package:cloth_collection/controller/categoryController.dart';
+import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/data/exampleProduct.dart';
+import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 class CategoryProductView extends StatefulWidget {
-  const CategoryProductView({Key? key}) : super(key: key);
-
+  final CategoryController categoryController;
+  CategoryProductView({Key? key, required this.categoryController})
+      : super(key: key);
   @override
   _CategoryProductViewState createState() => _CategoryProductViewState();
 }
 
 class _CategoryProductViewState extends State<CategoryProductView>
     with SingleTickerProviderStateMixin {
-  CategoryController categoryController = CategoryController();
   late TabController optionTabController;
-  List<dynamic> colorList = [
-    {"color": "블랙", "image": "assets/images/svg/black.svg"},
-    {"color": "화이트", "image": "assets/images/svg/white.svg"},
-    {"color": "브라운", "image": "assets/images/svg/brown.svg"},
-    {"color": "베이지", "image": "assets/images/svg/beige.svg"},
-    {"color": "남색", "image": "assets/images/svg/indigo.svg"},
-    {"color": "네이비", "image": "assets/images/svg/navy.svg"},
-    {"color": "옐로우", "image": "assets/images/svg/yellow.svg"},
-    {"color": "레드", "image": "assets/images/svg/red.svg"},
-    {"color": "초록", "image": "assets/images/svg/green.svg"},
-    {"color": "블루", "image": "assets/images/svg/blue.svg"},
-    {"color": "카키", "image": "assets/images/svg/khaki.svg"},
-    {"color": "핑크", "image": "assets/images/svg/pink.svg"},
-  ];
   @override
   void initState() {
     super.initState();
@@ -46,98 +35,98 @@ class _CategoryProductViewState extends State<CategoryProductView>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getCategoryList(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            List<Tab> tabs = [];
-            for (int i = 0; i < snapshot.data.length; i++) {
-              tabs.add(Tab(text: snapshot.data[i]));
-            }
-            return DefaultTabController(
-              length: snapshot.data.length,
-              child: Scaffold(
-                appBar: AppBar(
-                  backgroundColor: Colors.white,
-                  automaticallyImplyLeading: false,
-                  elevation: 0,
-                  title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: SvgPicture.asset(
-                          "assets/images/svg/moveToBack.svg",
-                          width: 10 * Scale.width,
-                          height: 20 * Scale.height,
-                          fit: BoxFit.scaleDown,
-                        ),
-                      ),
-                      SizedBox(width: 14 * Scale.width),
-                      Text("Categoryname",
-                          style: textStyle(const Color(0xff333333),
-                              FontWeight.w700, "NotoSansKR", 22.0)),
-                    ],
-                  ),
-                  actions: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 22 * Scale.width),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Vibrate.feedback(VIBRATETYPE);
-                              print(getCategoryList());
-                            },
-                            child: SvgPicture.asset(
-                                "assets/images/svg/search.svg"),
-                          ),
-                          SizedBox(width: 22 * Scale.width),
-                          GestureDetector(
-                            onTap: () {
-                              Vibrate.feedback(VIBRATETYPE);
-                            },
-                            child:
-                                SvgPicture.asset("assets/images/svg/cart.svg"),
-                          ),
-                        ],
+      future: widget.categoryController
+          .getSubCategory(widget.categoryController.mainCategory.id),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          List<Tab> tabs = [];
+          List<Widget> tabBarViewList = [];
+          for (int i = 0; i <= snapshot.data.length; i++) {
+            i == 0
+                ? tabs.add(Tab(text: '전체'))
+                : tabs.add(Tab(text: snapshot.data[i - 1]['name']));
+            tabBarViewList.add(ProductViewArea(
+                categoryController: widget.categoryController,
+                mainCategoryId: widget.categoryController.mainCategory.id,
+                subCategoryId: i));
+          }
+          return DefaultTabController(
+            length: snapshot.data.length + 1,
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                automaticallyImplyLeading: false,
+                elevation: 0,
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: SvgPicture.asset(
+                        "assets/images/svg/moveToBack.svg",
+                        width: 10 * Scale.width,
+                        height: 20 * Scale.height,
+                        fit: BoxFit.scaleDown,
                       ),
                     ),
+                    SizedBox(width: 14 * Scale.width),
+                    Text("${widget.categoryController.mainCategory.name}",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w700, "NotoSansKR", 22.0)),
                   ],
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(100 * Scale.height),
-                    child: Column(
+                ),
+                actions: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 22 * Scale.width),
+                    child: Row(
                       children: [
-                        FutureBuilder(
-                            initialData: getCategoryList(),
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              return TabBar(
-                                isScrollable: true,
-                                indicator: UnderlineTabIndicator(
-                                    borderSide: BorderSide(width: 2.0),
-                                    insets:
-                                        EdgeInsets.symmetric(horizontal: 16.0)),
-                                tabs: tabs,
-                                labelStyle: textStyle(const Color(0xff333333),
-                                    FontWeight.w400, "NotoSansKR", 16.0),
-                                unselectedLabelStyle: textStyle(
-                                    const Color(0xffcccccc),
-                                    FontWeight.w400,
-                                    "NotoSansKR",
-                                    16.0),
-                              );
-                            }),
-                        filterBarArea(),
+                        GestureDetector(
+                          onTap: () {
+                            Vibrate.feedback(VIBRATETYPE);
+                            print(getCategoryList());
+                          },
+                          child:
+                              SvgPicture.asset("assets/images/svg/search.svg"),
+                        ),
+                        SizedBox(width: 22 * Scale.width),
+                        GestureDetector(
+                          onTap: () {
+                            Vibrate.feedback(VIBRATETYPE);
+                          },
+                          child: SvgPicture.asset("assets/images/svg/cart.svg"),
+                        ),
                       ],
                     ),
                   ),
+                ],
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(100 * Scale.height),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TabBar(
+                        isScrollable: true,
+                        indicator: UnderlineTabIndicator(
+                            borderSide: BorderSide(width: 2.0),
+                            insets: EdgeInsets.symmetric(horizontal: 16.0)),
+                        tabs: tabs,
+                        labelStyle: textStyle(const Color(0xff333333),
+                            FontWeight.w400, "NotoSansKR", 16.0),
+                        unselectedLabelStyle: textStyle(const Color(0xffcccccc),
+                            FontWeight.w400, "NotoSansKR", 16.0),
+                      ),
+                      filterBarArea(),
+                    ],
+                  ),
                 ),
-                body: Container(),
               ),
-            );
-          }
-          return Container();
-        });
+              body: TabBarView(children: tabBarViewList),
+            ),
+          );
+        }
+        return Container();
+      },
+    );
   }
 
   Widget filterButton(String type) {
@@ -206,7 +195,7 @@ class _CategoryProductViewState extends State<CategoryProductView>
 
   Widget filterBarArea() {
     return GetBuilder<CategoryController>(
-        init: categoryController,
+        init: widget.categoryController,
         builder: (context) {
           return Container(
             height: 52 * Scale.height,
@@ -349,10 +338,10 @@ class _CategoryProductViewState extends State<CategoryProductView>
                         print(optionTabController.index);
                         switch (optionTabController.index) {
                           case 0:
-                            categoryController.refreshColorOption();
+                            widget.categoryController.refreshColorOption();
                             break;
                           case 1:
-                            categoryController.refreshPriceOption();
+                            widget.categoryController.refreshPriceOption();
                             break;
                           default:
                         }
@@ -402,57 +391,70 @@ class _CategoryProductViewState extends State<CategoryProductView>
 
   Widget colorOptionArea() {
     return Container(
-      child: GridView.builder(
-        padding: EdgeInsets.symmetric(vertical: 25 * Scale.height),
-        itemCount: 12,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 5,
-            mainAxisSpacing: 30 * Scale.height,
-            childAspectRatio: 0.8),
-        itemBuilder: (BuildContext context, int index) {
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  categoryController.selectColor(index);
+      child: FutureBuilder(
+          future: widget.categoryController.getColorImage(),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return GridView.builder(
+                padding: EdgeInsets.symmetric(vertical: 25 * Scale.height),
+                itemCount: snapshot.data.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    mainAxisSpacing: 30 * Scale.height,
+                    childAspectRatio: 0.8),
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          widget.categoryController.selectColor(index);
+                        },
+                        child: Stack(alignment: Alignment.center, children: [
+                          SvgPicture.network(
+                              "${snapshot.data[index]['image_url']}"),
+                          Positioned(
+                              child: GetBuilder<CategoryController>(
+                                  init: widget.categoryController,
+                                  builder: (controller) {
+                                    return SvgPicture.asset(
+                                      index != 1
+                                          ? "assets/images/svg/colorChecked.svg"
+                                          : "assets/images/svg/colorWhiteChecked.svg",
+                                      width:
+                                          controller.isColorSelected(index) ==
+                                                  false
+                                              ? 0
+                                              : 20,
+                                      height:
+                                          controller.isColorSelected(index) ==
+                                                  false
+                                              ? 0
+                                              : 20,
+                                    );
+                                  }))
+                        ]),
+                      ),
+                      SizedBox(height: 4 * Scale.height),
+                      Text(
+                        "${snapshot.data[index]['name']}",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w500, "NotoSansKR", 16.0),
+                      )
+                    ],
+                  );
                 },
-                child: Stack(alignment: Alignment.center, children: [
-                  SvgPicture.asset("${colorList[index]['image']}"),
-                  Positioned(
-                      child: GetBuilder<CategoryController>(
-                          init: categoryController,
-                          builder: (controller) {
-                            return SvgPicture.asset(
-                              index != 1
-                                  ? "assets/images/svg/colorChecked.svg"
-                                  : "assets/images/svg/colorWhiteChecked.svg",
-                              width: controller.isColorSelected(index) == false
-                                  ? 0
-                                  : 20,
-                              height: controller.isColorSelected(index) == false
-                                  ? 0
-                                  : 20,
-                            );
-                          }))
-                ]),
-              ),
-              SizedBox(height: 4 * Scale.height),
-              Text(
-                "${colorList[index]['color']}",
-                style: textStyle(const Color(0xff333333), FontWeight.w500,
-                    "NotoSansKR", 16.0),
-              )
-            ],
-          );
-        },
-      ),
+              );
+            } else {
+              return Container();
+            }
+          }),
     );
   }
 
   Widget priceOptionArea() {
     return Container(
       child: GetBuilder<CategoryController>(
-        init: categoryController,
+        init: widget.categoryController,
         builder: (controller) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,48 +506,105 @@ class _CategoryProductViewState extends State<CategoryProductView>
                   ),
                 ],
               ),
-              // Image.network(
-              //     "https://deepy.s3.ap-northeast-2.amazonaws.com/KakaoTalk_20220105_122519929.png",
-              //     width: 200,
-              //     height: 200),
             ],
           );
         },
       ),
     );
   }
+}
 
-  // Widget ageOptionArea() {
-  //   return Expanded(
-  //     child: GridView.builder(
-  //       padding: EdgeInsets.symmetric(
-  //           horizontal: 20 * Scale.width, vertical: 25 * Scale.height),
-  //       itemCount: 12,
-  //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //           crossAxisCount: 4,
-  //           mainAxisSpacing: 30 * Scale.height,
-  //           childAspectRatio: 0.8),
-  //       itemBuilder: (BuildContext context, int index) {
-  //         return SvgPicture.asset(colorList[index]);
-  //       },
-  //     ),
-  //   );
-  // }
+class ProductViewArea extends StatefulWidget {
+  final CategoryController categoryController;
+  final int mainCategoryId;
+  final int subCategoryId;
+  ProductViewArea(
+      {Key? key,
+      required this.categoryController,
+      required this.mainCategoryId,
+      required this.subCategoryId})
+      : super(key: key);
 
-  // Widget styleOptionArea() {
-  //   return Expanded(
-  //     child: GridView.builder(
-  //       padding: EdgeInsets.symmetric(
-  //           horizontal: 20 * Scale.width, vertical: 25 * Scale.height),
-  //       itemCount: 12,
-  //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //           crossAxisCount: 4,
-  //           mainAxisSpacing: 30 * Scale.height,
-  //           childAspectRatio: 0.8),
-  //       itemBuilder: (BuildContext context, int index) {
-  //         return SvgPicture.asset(colorList[index]);
-  //       },
-  //     ),
-  //   );
-  // }
+  @override
+  _ProductViewAreaState createState() => _ProductViewAreaState();
+}
+
+class _ProductViewAreaState extends State<ProductViewArea> {
+  ProductController productController = ProductController();
+  ScrollController scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    if (widget.subCategoryId == 0) {
+      productController.getMainCategoryProducts(widget.mainCategoryId);
+    } else {
+      productController.getSubCategoryProducts(
+          widget.mainCategoryId, widget.subCategoryId);
+    }
+    scrollController.addListener(() {
+      if (scrollController.offset ==
+              scrollController.position.maxScrollExtent &&
+          productController.nextDataLink != "") {
+        productController.getSubCategoryProducts(
+            widget.mainCategoryId, widget.subCategoryId);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<ProductController>(
+        init: productController,
+        builder: (controller) {
+          if (!controller.isLoading) {
+            return GridView.builder(
+              controller: scrollController,
+              itemCount: controller.productData.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 0 * Scale.height,
+                  childAspectRatio: 0.65),
+              itemBuilder: (context, int index) {
+                return ProductCard(
+                    product: Product.fromJson(controller.productData[index]),
+                    imageWidth: 110 * Scale.width);
+              },
+            );
+          } else {
+            return Transform.scale(
+                scale: 0.1, child: CircularProgressIndicator());
+          }
+        });
+    // FutureBuilder(
+    //   future: widget.subCategoryId != 0
+    //       ? widget.categoryController
+    //           .getSubCategoryProduct(widget.subCategoryId)
+    //       : widget.categoryController.getAllProduct(),
+    //   builder: (context, AsyncSnapshot snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.done) {
+    //       if (snapshot.hasData && snapshot.data.length >= 1) {
+    //         return GridView.builder(
+    //           itemCount: snapshot.data.length,
+    //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //               crossAxisCount: 3,
+    //               mainAxisSpacing: 10 * Scale.height,
+    //               childAspectRatio: 0.65),
+    //           itemBuilder: (context, int index) {
+    //             return ProductCard(
+    //                 product: Product.fromJson(snapshot.data[index]),
+    //                 imageWidth: 110 * Scale.width);
+    //           },
+    //         );
+    //       } else if (snapshot.hasData && snapshot.data.length == 0) {
+    //         return Center(child: Text("상품이 존재하지 않습니다."));
+    //       } else {
+    //         return CircularProgressIndicator();
+    //       }
+    //     } else {
+    //       return Transform.scale(
+    //           scale: 0.1, child: CircularProgressIndicator());
+    //     }
+    //   },
+    // );
+  }
 }
