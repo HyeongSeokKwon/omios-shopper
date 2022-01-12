@@ -1,4 +1,5 @@
 import 'package:cloth_collection/data/exampleProduct.dart';
+import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:cloth_collection/widget/product_card.dart';
@@ -78,18 +79,22 @@ class _DeepyHomeState extends State<DeepyHome> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ProductCard(products[0]),
+                  ProductCard(
+                      product: products[0], imageWidth: 176 * Scale.width),
                   SizedBox(width: 18 * Scale.width),
-                  ProductCard((products[1])),
+                  ProductCard(
+                      product: products[1], imageWidth: 176 * Scale.width),
                 ],
               ),
               SizedBox(height: 34 * Scale.height),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ProductCard((products[2])),
+                  ProductCard(
+                      product: products[2], imageWidth: 176 * Scale.width),
                   SizedBox(width: 18 * Scale.width),
-                  ProductCard((products[3])),
+                  ProductCard(
+                      product: products[3], imageWidth: 176 * Scale.width),
                 ],
               ),
             ],
