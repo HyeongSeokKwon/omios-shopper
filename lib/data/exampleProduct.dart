@@ -1,16 +1,4 @@
-class Product {
-  String productCode;
-  String image;
-  String name;
-  String store;
-  String location;
-  String category;
-  String subCategory;
-  int price;
-
-  Product(this.productCode, this.image, this.name, this.store, this.location,
-      this.price, this.category, this.subCategory);
-}
+import 'package:cloth_collection/model/productModel.dart';
 
 List<String> tempCatogoryList = ["플랫/로퍼", "힐/펌프스", "웨지힐", "샌들/슬리퍼", "스니커즈"];
 
@@ -21,61 +9,53 @@ Future<dynamic> getCategoryList() async {
 
 List<Map> temporaryProduct = [
   {
-    'productCode': 'kk',
-    'image': "assets/images/임시상품1.png",
+    'id': 1,
+    'imageUrl': "assets/images/임시상품1.png",
+    'code': 'ke',
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
-    'store': "무신사 스토어",
-    'location': "서울 중구 장충단로 263",
-    'category': "상의",
-    'subcategory': "티셔츠",
-    'price': 26000
+    'price': 26000,
+    'subCategory': 7,
+    'wholeSaler': 9,
   },
   {
-    'productCode': 'kc',
-    'image': "assets/images/임시상품2.png",
+    'id': 2,
+    'imageUrl': "assets/images/임시상품2.png",
+    'code': 'kc',
     'name': "텍스처 라운드 정장 자켓",
-    'store': "무신사 스토어",
-    'location': "서울 중구 장충단로 263",
-    'category': "상의",
-    'subcategory': "아우터",
-    'price': 26000
+    'price': 26000,
+    'subCategory': 12,
+    'wholeSaler': 4,
   },
   {
-    'productCode': 'ka',
-    'image': "assets/images/임시상품3.png",
+    'id': 2,
+    'imageUrl': "assets/images/임시상품3.png",
+    'code': 'ka',
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
-    'location': "서울 중구 장충단로 263",
-    'store': "무신사 스토어",
-    'category': "상의",
-    'subcategory': "티셔츠",
-    'price': 8400
+    'price': 8400,
+    'subCategory': 2,
+    'wholeSaler': 1,
   },
   {
-    'productCode': 'ky',
-    'image': "assets/images/임시상품4.png",
+    'id': 4,
+    'imageUrl': "assets/images/임시상품4.png",
+    'code': 'ky',
     'name': "머슬 분또 잠바",
-    'location': "서울 중구 장충단로 263",
-    'store': "무신사 스토어",
-    'subcategory': "아우터",
-    'category': "상의",
-    'price': 8400
+    'price': 8400,
+    'subCategory': 3,
+    'wholeSaler': 1,
   }
 ];
 List<Product> getProduct() {
   List<Product> temporaryProductList = [];
   for (var product in temporaryProduct) {
-    temporaryProductList.add(
-      Product(
-        product['productCode'],
-        product['image'],
-        product['name'],
-        product['store'],
-        product['location'],
-        product['price'],
-        product['category'],
-        product['subcategory'],
-      ),
-    );
+    temporaryProductList.add(Product(
+        id: product['id'],
+        imageUrl: product['imageUrl'],
+        code: product['code'],
+        name: product['name'],
+        price: product['price'],
+        subCategory: product['subCategory'],
+        wholeSaler: product['wholeSaler']));
   }
   return temporaryProductList;
 }
@@ -85,14 +65,13 @@ Future<List<Product>> getProducts() async {
   for (var product in temporaryProduct) {
     temporaryProductList.add(
       Product(
-        product['productCode'],
-        product['image'],
-        product['name'],
-        product['store'],
-        product['location'],
-        product['price'],
-        product['category'],
-        product['subcategory'],
+        id: product['id'],
+        imageUrl: product['image_url'],
+        code: product['code'],
+        name: product['name'],
+        price: product['price'],
+        subCategory: product['subCategory'],
+        wholeSaler: product['wholesaler'],
       ),
     );
   }
