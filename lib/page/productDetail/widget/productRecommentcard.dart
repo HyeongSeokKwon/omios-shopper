@@ -1,4 +1,3 @@
-import 'package:cloth_collection/data/exampleProduct.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
