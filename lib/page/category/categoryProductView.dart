@@ -532,14 +532,11 @@ class _ProductViewAreaState extends State<ProductViewArea> {
   @override
   void initState() {
     super.initState();
-    print(productController.productData);
-    if (widget.subCategoryId == 0) {
-      productController.getMainCategoryProducts(widget.mainCategoryId);
-    } else {
-      productController.getSubCategoryProducts(
-          widget.mainCategoryId, widget.subCategoryId);
-    }
+
+    productController.initGetProducts(
+        widget.mainCategoryId, widget.subCategoryId); //첫 build시 데이터 초기화
     scrollController.addListener(() {
+      //subCategory 상품
       if (scrollController.offset ==
               scrollController.position.maxScrollExtent &&
           productController.nextDataLink != "") {
