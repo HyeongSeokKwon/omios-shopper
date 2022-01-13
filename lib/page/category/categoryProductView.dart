@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/data/exampleProduct.dart';
@@ -46,7 +48,6 @@ class _CategoryProductViewState extends State<CategoryProductView>
                 ? tabs.add(Tab(text: '전체'))
                 : tabs.add(Tab(text: snapshot.data[i - 1]['name']));
             tabBarViewList.add(ProductViewArea(
-                categoryController: widget.categoryController,
                 mainCategoryId: widget.categoryController.mainCategory.id,
                 subCategoryId: i));
           }
@@ -515,14 +516,10 @@ class _CategoryProductViewState extends State<CategoryProductView>
 }
 
 class ProductViewArea extends StatefulWidget {
-  final CategoryController categoryController;
   final int mainCategoryId;
   final int subCategoryId;
   ProductViewArea(
-      {Key? key,
-      required this.categoryController,
-      required this.mainCategoryId,
-      required this.subCategoryId})
+      {Key? key, required this.mainCategoryId, required this.subCategoryId})
       : super(key: key);
 
   @override
@@ -530,11 +527,12 @@ class ProductViewArea extends StatefulWidget {
 }
 
 class _ProductViewAreaState extends State<ProductViewArea> {
-  ProductController productController = ProductController();
+  final productController = Get.put<ProductController>(ProductController());
   ScrollController scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
+    print(productController.productData);
     if (widget.subCategoryId == 0) {
       productController.getMainCategoryProducts(widget.mainCategoryId);
     } else {
@@ -552,29 +550,37 @@ class _ProductViewAreaState extends State<ProductViewArea> {
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GetBuilder<ProductController>(
-        init: productController,
-        builder: (controller) {
-          if (!controller.isLoading) {
-            return GridView.builder(
-              controller: scrollController,
-              itemCount: controller.productData.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 0 * Scale.height,
-                  childAspectRatio: 0.65),
-              itemBuilder: (context, int index) {
-                return ProductCard(
-                    product: Product.fromJson(controller.productData[index]),
-                    imageWidth: 110 * Scale.width);
-              },
-            );
-          } else {
-            return Transform.scale(
-                scale: 0.1, child: CircularProgressIndicator());
-          }
-        });
+      init: productController,
+      global: false,
+      builder: (controller) {
+        if (!controller.isLoading) {
+          return GridView.builder(
+            controller: scrollController,
+            itemCount: controller.productData.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 0 * Scale.height,
+                childAspectRatio: 0.65),
+            itemBuilder: (context, int index) {
+              return ProductCard(
+                  product: Product.fromJson(controller.productData[index]),
+                  imageWidth: 110 * Scale.width);
+            },
+          );
+        } else {
+          return Transform.scale(
+              scale: 0.1, child: CircularProgressIndicator());
+        }
+      },
+    );
     // FutureBuilder(
     //   future: widget.subCategoryId != 0
     //       ? widget.categoryController
