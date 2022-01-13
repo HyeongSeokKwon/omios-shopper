@@ -21,6 +21,7 @@ class CategoryController extends GetxController {
 
   Future<List<dynamic>> getCategory() async {
     var response = await httpService.httpGet("/product/main-category/");
+    print(response);
     return response['data'];
   }
 
