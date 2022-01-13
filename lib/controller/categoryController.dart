@@ -20,22 +20,35 @@ class CategoryController extends GetxController {
   late Future<List<Category>> categoryList;
 
   Future<List<dynamic>> getCategory() async {
-    var response = await httpService.httpGet("/category/");
+    var response = await httpService.httpGet("/product/main-category/");
     return response['data'];
   }
 
   Future<List<dynamic>> getSubCategory(int mainCategoryId) async {
+    var response = await httpService
+        .httpGet("/product/main-category/$mainCategoryId/sub-category/");
+
+    return response['data']['sub_category'];
+  }
+
+  Future<List<dynamic>> getAllProduct() async {
     var response =
-        await httpService.httpGet("/category/$mainCategoryId/subcategory/");
-    print("getsubCategory");
-    print(response['data']);
+        await httpService.httpGet("/product/?main_category=${mainCategory.id}");
 
-    var responses = await httpService.httpGet("/product/");
-    print("mainCategory");
-    print(responses);
-    // print(responses);
+    return response['data']['results'];
+  }
 
-    return response['data']['subcategory'];
+  Future<List<dynamic>> getSubCategoryProduct(int subCategoryId) async {
+    var response =
+        await httpService.httpGet("/product/?sub_category=$subCategoryId");
+
+    return response['data']['results'];
+  }
+
+  Future<List<dynamic>> getColorImage() async {
+    var response = await httpService.httpGet("/product/color/");
+
+    return response['data'];
   }
 
   void selectMainCategory(Map<String, dynamic> mainCategoryInfo) {
