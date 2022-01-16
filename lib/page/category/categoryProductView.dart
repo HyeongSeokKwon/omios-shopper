@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/data/exampleProduct.dart';
@@ -21,19 +19,6 @@ class CategoryProductView extends StatefulWidget {
 
 class _CategoryProductViewState extends State<CategoryProductView>
     with SingleTickerProviderStateMixin {
-  late TabController optionTabController;
-  @override
-  void initState() {
-    super.initState();
-    optionTabController = TabController(length: 4, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    optionTabController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -48,8 +33,9 @@ class _CategoryProductViewState extends State<CategoryProductView>
                 ? tabs.add(Tab(text: '전체'))
                 : tabs.add(Tab(text: snapshot.data[i - 1]['name']));
             tabBarViewList.add(ProductViewArea(
-                mainCategoryId: widget.categoryController.mainCategory.id,
-                subCategoryId: i));
+              subCategoryId: i,
+              categoryController: widget.categoryController,
+            ));
           }
           return DefaultTabController(
             length: snapshot.data.length + 1,
@@ -101,22 +87,24 @@ class _CategoryProductViewState extends State<CategoryProductView>
                   ),
                 ],
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(100 * Scale.height),
+                  preferredSize: Size.fromHeight(40 * Scale.height),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TabBar(
-                        isScrollable: true,
-                        indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(width: 2.0),
-                            insets: EdgeInsets.symmetric(horizontal: 16.0)),
-                        tabs: tabs,
-                        labelStyle: textStyle(const Color(0xff333333),
-                            FontWeight.w400, "NotoSansKR", 16.0),
-                        unselectedLabelStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.0),
-                      ),
-                      filterBarArea(),
+                          isScrollable: true,
+                          indicator: UnderlineTabIndicator(
+                              borderSide: BorderSide(width: 2.0),
+                              insets: EdgeInsets.symmetric(horizontal: 16.0)),
+                          tabs: tabs,
+                          labelStyle: textStyle(const Color(0xff333333),
+                              FontWeight.w400, "NotoSansKR", 16.0),
+                          unselectedLabelStyle: textStyle(
+                              const Color(0xffcccccc),
+                              FontWeight.w400,
+                              "NotoSansKR",
+                              16.0),
+                          onTap: (index) {}),
                     ],
                   ),
                 ),
@@ -127,6 +115,97 @@ class _CategoryProductViewState extends State<CategoryProductView>
         }
         return Container();
       },
+    );
+  }
+}
+
+class ProductViewArea extends StatefulWidget {
+  final int subCategoryId;
+  final CategoryController categoryController;
+  ProductViewArea(
+      {Key? key, required this.subCategoryId, required this.categoryController})
+      : super(key: key);
+
+  @override
+  _ProductViewAreaState createState() => _ProductViewAreaState();
+}
+
+class _ProductViewAreaState extends State<ProductViewArea>
+    with SingleTickerProviderStateMixin {
+  ScrollController scrollController = ScrollController();
+  ProductController productController =
+      Get.put<ProductController>(ProductController());
+  late TabController optionTabController;
+  @override
+  void initState() {
+    super.initState();
+
+    optionTabController = TabController(length: 4, vsync: this);
+    productController.initGetProducts(widget.categoryController.mainCategory.id,
+        widget.subCategoryId); //첫 build시 데이터 초기화
+    scrollController.addListener(() {
+      //subCategory 상품
+      if (scrollController.offset ==
+              scrollController.position.maxScrollExtent &&
+          productController.nextDataLink != "") {
+        productController.getSubCategoryProducts(
+            widget.categoryController.mainCategory.id, widget.subCategoryId);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    optionTabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        filterBarArea(),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () => productController.initGetProducts(
+                widget.categoryController.mainCategory.id,
+                widget.subCategoryId),
+            color: Colors.black,
+            child: GetBuilder<ProductController>(
+              init: productController,
+              global: false,
+              builder: (controller) {
+                if (!controller.isLoading) {
+                  if (controller.productData != []) {
+                    return Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                      child: GridView.builder(
+                        controller: scrollController,
+                        itemCount: controller.productData.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, childAspectRatio: 0.6),
+                        itemBuilder: (context, int index) {
+                          return ProductCard(
+                              product: Product.fromJson(
+                                  controller.productData[index]),
+                              imageWidth: 170 * Scale.width);
+                        },
+                      ),
+                    );
+                  } else {
+                    return Text("nodata");
+                  }
+                } else {
+                  return Transform.scale(
+                      scale: 0.1, child: CircularProgressIndicator());
+                }
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -337,15 +416,6 @@ class _CategoryProductViewState extends State<CategoryProductView>
                       onPressed: () {
                         print("click");
                         print(optionTabController.index);
-                        switch (optionTabController.index) {
-                          case 0:
-                            widget.categoryController.refreshColorOption();
-                            break;
-                          case 1:
-                            widget.categoryController.refreshPriceOption();
-                            break;
-                          default:
-                        }
                       },
                     ),
                     SizedBox(width: 8 * Scale.width),
@@ -365,7 +435,11 @@ class _CategoryProductViewState extends State<CategoryProductView>
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xffec5363)),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        productController.searchClicked(
+                            widget.categoryController.mainCategory.id);
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ],
                 ),
@@ -408,14 +482,14 @@ class _CategoryProductViewState extends State<CategoryProductView>
                     children: [
                       GestureDetector(
                         onTap: () {
-                          widget.categoryController.selectColor(index);
+                          productController.selectColor(index);
                         },
                         child: Stack(alignment: Alignment.center, children: [
                           SvgPicture.network(
                               "${snapshot.data[index]['image_url']}"),
                           Positioned(
-                              child: GetBuilder<CategoryController>(
-                                  init: widget.categoryController,
+                              child: GetBuilder<ProductController>(
+                                  init: productController,
                                   builder: (controller) {
                                     return SvgPicture.asset(
                                       index != 1
@@ -454,8 +528,9 @@ class _CategoryProductViewState extends State<CategoryProductView>
 
   Widget priceOptionArea() {
     return Container(
-      child: GetBuilder<CategoryController>(
-        init: widget.categoryController,
+      child: GetBuilder<ProductController>(
+        id: "priceOption",
+        init: productController,
         builder: (controller) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -512,102 +587,5 @@ class _CategoryProductViewState extends State<CategoryProductView>
         },
       ),
     );
-  }
-}
-
-class ProductViewArea extends StatefulWidget {
-  final int mainCategoryId;
-  final int subCategoryId;
-  ProductViewArea(
-      {Key? key, required this.mainCategoryId, required this.subCategoryId})
-      : super(key: key);
-
-  @override
-  _ProductViewAreaState createState() => _ProductViewAreaState();
-}
-
-class _ProductViewAreaState extends State<ProductViewArea> {
-  final productController = Get.put<ProductController>(ProductController());
-  ScrollController scrollController = ScrollController();
-  @override
-  void initState() {
-    super.initState();
-
-    productController.initGetProducts(
-        widget.mainCategoryId, widget.subCategoryId); //첫 build시 데이터 초기화
-    scrollController.addListener(() {
-      //subCategory 상품
-      if (scrollController.offset ==
-              scrollController.position.maxScrollExtent &&
-          productController.nextDataLink != "") {
-        productController.getSubCategoryProducts(
-            widget.mainCategoryId, widget.subCategoryId);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GetBuilder<ProductController>(
-      init: productController,
-      global: false,
-      builder: (controller) {
-        if (!controller.isLoading) {
-          return GridView.builder(
-            controller: scrollController,
-            itemCount: controller.productData.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 0 * Scale.height,
-                childAspectRatio: 0.65),
-            itemBuilder: (context, int index) {
-              return ProductCard(
-                  product: Product.fromJson(controller.productData[index]),
-                  imageWidth: 110 * Scale.width);
-            },
-          );
-        } else {
-          return Transform.scale(
-              scale: 0.1, child: CircularProgressIndicator());
-        }
-      },
-    );
-    // FutureBuilder(
-    //   future: widget.subCategoryId != 0
-    //       ? widget.categoryController
-    //           .getSubCategoryProduct(widget.subCategoryId)
-    //       : widget.categoryController.getAllProduct(),
-    //   builder: (context, AsyncSnapshot snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.done) {
-    //       if (snapshot.hasData && snapshot.data.length >= 1) {
-    //         return GridView.builder(
-    //           itemCount: snapshot.data.length,
-    //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    //               crossAxisCount: 3,
-    //               mainAxisSpacing: 10 * Scale.height,
-    //               childAspectRatio: 0.65),
-    //           itemBuilder: (context, int index) {
-    //             return ProductCard(
-    //                 product: Product.fromJson(snapshot.data[index]),
-    //                 imageWidth: 110 * Scale.width);
-    //           },
-    //         );
-    //       } else if (snapshot.hasData && snapshot.data.length == 0) {
-    //         return Center(child: Text("상품이 존재하지 않습니다."));
-    //       } else {
-    //         return CircularProgressIndicator();
-    //       }
-    //     } else {
-    //       return Transform.scale(
-    //           scale: 0.1, child: CircularProgressIndicator());
-    //     }
-    //   },
-    // );
   }
 }
