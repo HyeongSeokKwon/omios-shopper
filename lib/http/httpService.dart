@@ -19,7 +19,8 @@ import 'httpException.dart';
 class HttpService {
   static var refreshToken;
   static var accessToken;
-  var baseUrl = 'http://13.209.244.41';
+  var addressUrl = 'http://13.209.244.41';
+  var addressUrlx = '13.209.244.41';
   late SharedPreferences pref;
 
   dynamic _response(http.Response response) {
@@ -88,7 +89,7 @@ class HttpService {
       if (!isRefreshExpired()) {
         // refresh token 만료 되지 않았으면
         var response = await http.post(
-          Uri.parse(baseUrl + '/token/refresh/'), // refresh token 으로 재발급
+          Uri.parse(addressUrl + '/token/refresh/'), // refresh token 으로 재발급
           headers: {"Content-Type": "application/json; charset=UTF-8"},
           body: json.encode(
             {"refresh": refreshToken},
@@ -104,12 +105,13 @@ class HttpService {
     }
   }
 
-  Future<dynamic> httpGet(String additionalUrl) async {
+  Future<dynamic> httpGet(String baseUrl,
+      [Map<String, String>? queryParams]) async {
     var response;
     var responseJson;
     try {
       updateToken();
-      response = await http.get(Uri.parse(baseUrl + additionalUrl),
+      response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
 
       //responseBody = utf8.decode(response.bodyBytes);
@@ -131,7 +133,7 @@ class HttpService {
     }
 
     try {
-      response = await http.post(Uri.parse(baseUrl + addtionalUrl),
+      response = await http.post(Uri.parse(addressUrl + addtionalUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
           body: body);
 

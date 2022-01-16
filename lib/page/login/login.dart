@@ -1,5 +1,4 @@
 import 'package:cloth_collection/controller/loginController.dart';
-import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/signUp/signUp.dart';
 import 'package:cloth_collection/util/util.dart';

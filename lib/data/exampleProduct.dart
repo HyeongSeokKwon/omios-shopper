@@ -3,7 +3,6 @@ import 'package:cloth_collection/model/productModel.dart';
 List<String> tempCatogoryList = ["플랫/로퍼", "힐/펌프스", "웨지힐", "샌들/슬리퍼", "스니커즈"];
 
 Future<dynamic> getCategoryList() async {
-  List list = tempCatogoryList;
   return tempCatogoryList;
 }
 
