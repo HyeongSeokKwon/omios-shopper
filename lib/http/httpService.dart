@@ -111,6 +111,7 @@ class HttpService {
     var responseJson;
     try {
       updateToken();
+      print(Uri.http(addressUrlx, baseUrl, queryParams));
       response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
 

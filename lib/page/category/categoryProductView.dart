@@ -148,14 +148,14 @@ class _ProductViewAreaState extends State<ProductViewArea>
       if (scrollController.offset ==
               scrollController.position.maxScrollExtent &&
           productController.nextDataLink != "") {
-        productController.getSubCategoryProducts(
-            widget.categoryController.mainCategory.id, widget.subCategoryId);
+        productController.getProducts();
       }
     });
   }
 
   @override
   void dispose() {
+    print("dispose");
     scrollController.dispose();
     optionTabController.dispose();
     super.dispose();
@@ -209,6 +209,108 @@ class _ProductViewAreaState extends State<ProductViewArea>
     );
   }
 
+  Widget sortButton() {
+    return GestureDetector(
+      child: Padding(
+        padding: EdgeInsets.only(right: 8 * Scale.width),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(445)),
+            border: Border.all(
+              color: Color(0xffcccccc),
+              width: 1,
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: 10 * Scale.width, vertical: 6 * Scale.height),
+            child: Row(
+              children: [
+                GetBuilder<ProductController>(
+                    init: productController,
+                    builder: (controller) {
+                      return Text(
+                        "${controller.sortTypes[controller.sortType]}",
+                        style: textStyle(const Color(0xff444444),
+                            FontWeight.w700, "NotoSansKR", 14.0),
+                      );
+                    }),
+                SvgPicture.asset(
+                  "assets/images/svg/dropdown.svg",
+                  width: 10 * Scale.width,
+                  height: 5 * Scale.height,
+                  fit: BoxFit.scaleDown,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      onTap: () {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          builder: (_) => Container(
+            height: 400 * Scale.height,
+            child: GetBuilder<ProductController>(
+              init: productController,
+              builder: (controller) {
+                return Center(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: controller.sortTypes.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20 * Scale.width,
+                            vertical: 10 * Scale.height),
+                        child: GestureDetector(
+                          child: Container(
+                            child: Text(
+                              "${controller.sortTypes[index]}",
+                              style: textStyle(
+                                  controller.sortType == index
+                                      ? Colors.black
+                                      : Colors.grey,
+                                  FontWeight.w700,
+                                  "NotosansKR",
+                                  20.0),
+                            ),
+                          ),
+                          onTap: () {
+                            scrollController.animateTo(
+                                scrollController.position.minScrollExtent,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeOut);
+                            controller.sortClicked(index);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                        child: Divider(color: Colors.grey[400]),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget filterButton(String type) {
     return GestureDetector(
       child: Padding(
@@ -226,9 +328,12 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 horizontal: 10 * Scale.width, vertical: 6 * Scale.height),
             child: Row(
               children: [
-                Text("$type ",
-                    style: textStyle(const Color(0xff444444), FontWeight.w400,
-                        "NotoSansKR", 14.0)),
+                Text(
+                  "$type",
+                  style: textStyle(const Color(0xff444444), FontWeight.w700,
+                      "NotoSansKR", 14.0),
+                ),
+                SizedBox(width: 6 * Scale.width),
                 SvgPicture.asset(
                   "assets/images/svg/dropdown.svg",
                   width: 10 * Scale.width,
@@ -262,7 +367,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                   initialChildSize: 0.7,
                   maxChildSize: 1.0,
                   builder: (_, controller) {
-                    return optionArea();
+                    return optionArea(type);
                   },
                 ),
               )
@@ -289,36 +394,43 @@ class _ProductViewAreaState extends State<ProductViewArea>
                   Padding(
                     padding: EdgeInsets.only(
                         right: 8 * Scale.width, left: 22 * Scale.width),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(445)),
-                        border: Border.all(
-                          color: Color(0xffcccccc),
-                          width: 1,
+                    child: GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(445)),
+                          border: Border.all(
+                            color: Color(0xffcccccc),
+                            width: 1,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10 * Scale.width,
+                            vertical: 6 * Scale.height,
+                          ),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                "assets/images/svg/refreshDark.svg",
+                                width: 10 * Scale.width,
+                                height: 10 * Scale.width,
+                                fit: BoxFit.scaleDown,
+                              ),
+                              Text("  초기화",
+                                  style: textStyle(const Color(0xff444444),
+                                      FontWeight.w700, "NotoSansKR", 14.0))
+                            ],
+                          ),
                         ),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10 * Scale.width,
-                          vertical: 6 * Scale.height,
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              "assets/images/svg/refreshDark.svg",
-                              width: 10 * Scale.width,
-                              height: 10 * Scale.width,
-                              fit: BoxFit.scaleDown,
-                            ),
-                            Text("  초기화",
-                                style: textStyle(const Color(0xff444444),
-                                    FontWeight.w400, "NotoSansKR", 14.0))
-                          ],
-                        ),
-                      ),
+                      onTap: () {
+                        productController.initGetProducts(
+                            widget.categoryController.mainCategory.id,
+                            widget.subCategoryId);
+                      },
                     ),
                   ),
-                  filterButton("추천순"),
+                  sortButton(),
                   filterButton("색상"),
                   filterButton("가격"),
                   filterButton("연령"),
@@ -330,7 +442,16 @@ class _ProductViewAreaState extends State<ProductViewArea>
         });
   }
 
-  Widget optionArea() {
+  Widget optionArea(String type) {
+    switch (type) {
+      case "색상":
+        optionTabController.index = 0;
+        break;
+      case "가격":
+        optionTabController.index = 1;
+        break;
+      default:
+    }
     return Stack(children: [
       Container(
         width: 414 * Scale.width,
@@ -436,8 +557,11 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             const Color(0xffec5363)),
                       ),
                       onPressed: () {
-                        productController.searchClicked(
-                            widget.categoryController.mainCategory.id);
+                        scrollController.animateTo(
+                            scrollController.position.minScrollExtent,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeOut);
+                        productController.searchClicked();
                         Navigator.of(context).pop();
                       },
                     ),
