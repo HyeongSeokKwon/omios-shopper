@@ -20,54 +20,43 @@ class ProductController extends GetxController {
   double endPrice = 99999.0;
   RangeValues priceRange = RangeValues(0.0, 100000.0);
   List<int> selectedColor = [];
-  int optionMode = 0;
+  int sortType = 0;
+  List<String> sortTypes = ["최신순", "가격 낮은순", "가격 높은순", "리뷰 많은순", "추천순"];
+
   late SearchOption searchOption;
   late int subCategoryId;
+  late int mainCategoryId;
 
   bool isLoading = false;
   Map<String, String> queryParams = {};
 
-  Future<void> initGetProducts(int mainCategoryId, int subCategoryID) async {
+  Future<void> initGetProducts(int mainCategoryID, int subCategoryID) async {
     var response;
     isLoading = true;
     subCategoryId = subCategoryID;
-
+    mainCategoryId = mainCategoryID;
+    queryParams = {};
     queryParams['main_category'] = '$mainCategoryId';
     if (subCategoryId != 0) {
       queryParams['sub_category'] = '$subCategoryId';
     }
+
     response = await httpService.httpGet("product", queryParams);
     productData = response["data"]["results"];
     prevDataLink = response["data"]["previous"];
     nextDataLink = response["data"]["next"];
     isLoading = false;
 
-    print(productData);
     update();
-  }
-
-  void getMainCategoryProducts(int mainCategoryId) {
-    queryParams = {};
-    queryParams['main_category'] = '$mainCategoryId';
-
-    getProducts();
-  }
-
-  void getSubCategoryProducts(int mainCategoryId, int subCategoryId) {
-    queryParams = {};
-    queryParams['main_category'] = '$mainCategoryId';
-    queryParams['sub_category'] = '$subCategoryId';
-
-    getProducts();
   }
 
   void getProducts() async {
     var response;
     isLoading = true;
     if (nextDataLink != null) {
-      queryParams['page'] = nextDataLink!.substring(nextDataLink!.length - 1);
+      var page = "page";
+      queryParams['page'] = "${nextDataLink![nextDataLink!.indexOf(page) + 5]}";
       response = await httpService.httpGet("product", queryParams);
-      print(response);
     } else {
       return;
     }
@@ -110,30 +99,63 @@ class ProductController extends GetxController {
       selectedColor.add(colorIndex);
       update();
     }
-    print(selectedColor);
   }
 
-  void searchClicked(int mainCategoryId) async {
+  void searchClicked() async {
     var response;
     searchOption = SearchOption(color: selectedColor, priceRange: priceRange);
     int startPrice = searchOption.priceRange.start.toInt();
     int endPrice = searchOption.priceRange.end.toInt();
-    productData = [];
     queryParams = {};
 
     queryParams['main_category'] = '$mainCategoryId';
     queryParams['minprice'] = '$startPrice';
     queryParams['maxprice'] = '$endPrice';
+    queryParams['sort'] = 'price_asc';
 
     if (subCategoryId != 0) {
       queryParams['sub_category'] = '$subCategoryId';
     }
 
+    isLoading = true;
     response = await httpService.httpGet("product", queryParams);
-    print(response);
+    isLoading = false;
+
     prevDataLink = response['data']['previous'];
     nextDataLink = response['data']['next'];
-    productData = productData + response['data']['results'];
+    productData = response['data']['results'];
+    update();
+  }
+
+  void sortClicked(int index) async {
+    var response;
+    queryParams = {};
+    sortType = index;
+
+    queryParams['main_category'] = '$mainCategoryId';
+    if (subCategoryId != 0) {
+      queryParams['sub_category'] = '$subCategoryId';
+    }
+    switch (index) {
+      case 0:
+        queryParams['sort'] = 'created';
+        break;
+      case 1:
+        queryParams['sort'] = 'price_asc';
+        break;
+      case 2:
+        queryParams['sort'] = 'price_dsc';
+        break;
+      default:
+    }
+
+    isLoading = true;
+    response = await httpService.httpGet("product", queryParams);
+    isLoading = false;
+
+    prevDataLink = response['data']['previous'];
+    nextDataLink = response['data']['next'];
+    productData = response['data']['results'];
     update();
   }
 }
