@@ -22,9 +22,8 @@ Future<Database> initDB() async {
     path,
     version: 1,
     onCreate: (db, version) async {
-      print("onCreate");
       await db.execute(
-        'CREATE TABLE IF NOT EXISTS RECENTVIEW(productCode VARCHAR(15) PRIMARY KEY NOT NULL,time DATETIME)',
+        'CREATE TABLE IF NOT EXISTS RECENTVIEW(productId INTEGER PRIMARY KEY NOT NULL,time DATETIME)',
       );
     },
   );
@@ -38,10 +37,10 @@ Future<List<dynamic>> getRecentView(Future<Database> db) async {
   return maps;
 }
 
-Future<void> setRecentView(Future<Database> db, String productCode) async {
+Future<void> setRecentView(Future<Database> db, int productId) async {
   Database database = await db;
   await database.rawQuery(
-    'INSERT INTO RECENTVIEW VALUES("$productCode",CURRENT_TIMESTAMP)',
+    'INSERT INTO RECENTVIEW VALUES($productId,CURRENT_TIMESTAMP)',
   );
   final List<Map<String, dynamic>> maps = await database.rawQuery(
     'SELECT * FROM RECENTVIEW ORDER BY time DESC',
@@ -49,16 +48,16 @@ Future<void> setRecentView(Future<Database> db, String productCode) async {
   print(maps.toString());
 }
 
-void deleteRecent(Future<Database> db, String productCode) async {
+void deleteRecent(Future<Database> db, int productId) async {
   Database database = await db;
   await database.rawQuery(
-    'DELETE FROM RECENTVIEW WHERE productCode="$productCode"',
+    'DELETE FROM RECENTVIEW WHERE productId=$productId',
   );
 }
 
 void deleteOldestRecent(Future<Database> db) async {
   Database database = await db;
   await database.rawQuery(
-    'DELETE FROM RECENTVIEW WHERE productCode=(SELECT productCode FROM RECENTVIEW LIMIT 1,1)',
+    'DELETE FROM RECENTVIEW WHERE productId=(SELECT productId FROM RECENTVIEW LIMIT 1,1)',
   );
 }
