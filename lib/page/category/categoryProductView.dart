@@ -70,7 +70,6 @@ class _CategoryProductViewState extends State<CategoryProductView>
                         GestureDetector(
                           onTap: () {
                             Vibrate.feedback(VIBRATETYPE);
-                            print(getCategoryList());
                           },
                           child:
                               SvgPicture.asset("assets/images/svg/search.svg"),

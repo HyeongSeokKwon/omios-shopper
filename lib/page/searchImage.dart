@@ -18,9 +18,9 @@ class _SearchImageState extends State<SearchImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xffffffff),
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Container(
+        color: const Color(0xffffffff),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

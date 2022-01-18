@@ -36,8 +36,10 @@ class _ProductDetailState extends State<ProductDetail>
     _controller = TabController(length: 4, vsync: this);
 
     productDetailController.initController();
-    recentViewController.dataInit(_dbHelper);
-    recentViewController.insertRecentView(widget.product.code, _dbHelper);
+    recentViewController.dataInit();
+    recentViewController.insertRecentView(
+      widget.product.id,
+    );
     pageController.addListener(() {
       productDetailController.changeOffset(pageController.offset);
     });

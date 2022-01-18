@@ -14,11 +14,12 @@ class UploadImageController extends GetxController {
 
   void convert2BytesCode() async {
     imageBytes = await pickedFile!.readAsBytes();
-    String base64Image = base64UrlEncode(imageBytes);
+    var base64Image = base64Encode(imageBytes);
     print("바이트코드 => " + base64Image);
   }
 
   void getImageFromPhoto() async {
+    // ignore: invalid_use_of_visible_for_testing_member
     pickedFile = await ImagePicker.platform.pickImage(
       source: ImageSource.camera,
       imageQuality: 50,
@@ -27,13 +28,16 @@ class UploadImageController extends GetxController {
       uploadImage = Image.file(
         File(pickedFile!.path),
       );
-      print(uploadImage.runtimeType);
     }
 
+    print(pickedFile.runtimeType);
+    convert2BytesCode();
     update();
   }
 
   void getImageFromGallery() async {
+    print(22);
+    // ignore: invalid_use_of_visible_for_testing_member
     pickedFile = await ImagePicker.platform
         .pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile != null) {
@@ -41,6 +45,7 @@ class UploadImageController extends GetxController {
         File(pickedFile!.path),
       );
     }
+    print(pickedFile.runtimeType);
     update();
   }
 

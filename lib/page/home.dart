@@ -74,9 +74,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: _buildBottomNaviagationBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(() => SearchImage());
-        },
+        onPressed: () {},
         backgroundColor: const Color(0xffec5363),
         child: SvgPicture.asset("assets/images/svg/imgaeSearch.svg"),
       ),
