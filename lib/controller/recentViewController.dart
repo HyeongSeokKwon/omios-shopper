@@ -1,13 +1,14 @@
 import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/http/httpService.dart';
-import 'package:cloth_collection/model/productModel.dart';
 import 'package:get/get.dart';
 
 class RecentViewController extends GetxController {
   var recentViewList = Future.value().obs;
   List<dynamic> recentViewProductList = [];
+  List<dynamic> selectProductList = [];
   DBHelper dbHelper = DBHelper();
   HttpService httpService = HttpService();
+  bool edit = false;
 
   void dataInit() {
     recentViewList.value = getRecentView(dbHelper.db);
@@ -38,7 +39,35 @@ class RecentViewController extends GetxController {
     recentViewList.value = getRecentView(dbHelper.db);
     for (var i in await recentViewList.value) {
       response = await httpService.httpGet('product/${i['productId']}');
-      recentViewProductList.add(response['data']);
+      recentViewProductList.add(response["data"]);
     }
+
+    update();
+  }
+
+  void editProductsClicked() {
+    edit = !edit;
+    update();
+  }
+
+  bool isSelected(int index) {
+    int productId = recentViewProductList[index]['id'];
+    if (selectProductList.contains(productId)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void productClicked(int index) {
+    int productId = recentViewProductList[index]['id'];
+
+    if (isSelected(index)) {
+      selectProductList.remove(productId);
+    } else {
+      selectProductList.add(productId);
+    }
+    update();
+    return;
   }
 }
