@@ -23,7 +23,6 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail>
     with SingleTickerProviderStateMixin {
-  final DBHelper _dbHelper = DBHelper();
   final RecentViewController recentViewController = RecentViewController();
   final ProductDetailController productDetailController =
       ProductDetailController();

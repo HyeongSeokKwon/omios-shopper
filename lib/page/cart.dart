@@ -1,10 +1,6 @@
-import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
-import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 
 class Cart extends StatelessWidget {
   const Cart({Key? key}) : super(key: key);
@@ -13,7 +9,7 @@ class Cart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
@@ -60,12 +56,6 @@ class Cart extends StatelessWidget {
                           text: "즉시배송",
                         ),
                       ),
-                      Container(
-                        width: 207 * Scale.width,
-                        child: Tab(
-                          text: "최근 본 상품",
-                        ),
-                      ),
                     ],
                     labelColor: const Color(0xffec5363),
                     unselectedLabelColor: const Color(0xffcccccc),
@@ -89,7 +79,6 @@ class Cart extends StatelessWidget {
       children: [
         productInCartArea(),
         productInCartArea(),
-        recentProductArea(),
       ],
     );
   }
@@ -238,32 +227,6 @@ class Cart extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget recentProductArea() {
-    RecentViewController recentViewController =
-        Get.put<RecentViewController>(RecentViewController());
-    recentViewController.getRecentViewProduct();
-    return Padding(
-      padding: EdgeInsets.only(top: 20 * Scale.height),
-      child: GetBuilder<RecentViewController>(
-        init: recentViewController,
-        builder: (controller) {
-          return GridView.builder(
-            shrinkWrap: false,
-            itemCount: controller.recentViewProductList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, childAspectRatio: 0.6),
-            itemBuilder: (context, int index) {
-              return ProductCard(
-                  product:
-                      Product.fromJson(controller.recentViewProductList[index]),
-                  imageWidth: 110 * Scale.width);
-            },
-          );
-        },
       ),
     );
   }

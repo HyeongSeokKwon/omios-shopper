@@ -1,6 +1,9 @@
+import 'package:cloth_collection/controller/recentViewController.dart';
+import 'package:cloth_collection/page/recentviewProduct.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class MyPage extends StatefulWidget {
   @override
@@ -127,6 +130,9 @@ class _MyPageState extends State<MyPage> {
                       "NotoSansKR", 14.0)),
             ],
           ),
+          onTap: () {
+            Get.to(() => RecentviewProduct());
+          },
         ),
       ],
     );

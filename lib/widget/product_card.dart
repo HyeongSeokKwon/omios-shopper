@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final double imageWidth;
+
   ProductCard({required this.product, required this.imageWidth});
 
   @override
