@@ -23,12 +23,12 @@ class LoginController extends GetxController {
 
     if (isAutoLoginChecked == null) {
       isAutoLoginChecked = false;
-      prefs.setBool('isChecked', isAutoLoginChecked);
+      await prefs.setBool('isChecked', isAutoLoginChecked);
     }
 
     if (httpservice.isRefreshExpired()) {
       // refresh token 만료되면 오토로그인 풀리게
-      prefs.setBool('isChecked', isAutoLoginChecked);
+      await prefs.setBool('isChecked', isAutoLoginChecked);
     }
     autoLogin();
     print(isAutoLoginChecked);
