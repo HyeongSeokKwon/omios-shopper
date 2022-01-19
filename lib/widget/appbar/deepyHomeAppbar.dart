@@ -13,6 +13,7 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
     double width = MediaQuery.of(context).size.width;
     return AppBar(
       //automaticallyImplyLeading: true,
+      toolbarHeight: 90 * Scale.height,
       elevation: 0,
       titleSpacing: 0,
       leadingWidth: 0,
@@ -20,29 +21,45 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 13.0),
         child: GestureDetector(
           onTap: () {},
-          child: Container(
-              width: 600,
-              height: 35,
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
+          child: Row(
+            children: [
+              Container(
+                child: Text(
+                  "Omios",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 23,
+                      fontWeight: FontWeight.w900),
                 ),
+                color: Colors.white,
               ),
-              child: Row(
-                children: [
-                  SizedBox(width: 10),
-                  Icon(
-                    Icons.search,
-                    size: 20,
-                    color: Colors.grey[500],
+              SizedBox(width: 10 * Scale.width),
+              Container(
+                  width: 220 * Scale.width,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15),
+                    ),
                   ),
-                  SizedBox(width: 5),
-                  Text("검색어를 입력하세요",
-                      style: textStyle(Colors.grey[500]!, FontWeight.w600,
-                          "NotoSansKR", 14.0)),
-                ],
-              )),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 10),
+                      Icon(
+                        Icons.search,
+                        size: 20,
+                        color: Colors.grey[500],
+                      ),
+                      SizedBox(width: 5),
+                      Text("검색어를 입력하세요",
+                          style: textStyle(Colors.grey[500]!, FontWeight.w600,
+                              "NotoSansKR", 14.0)),
+                    ],
+                  )),
+            ],
+          ),
         ),
       ),
       actions: <Widget>[
