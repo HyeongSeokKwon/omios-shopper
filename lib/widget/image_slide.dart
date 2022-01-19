@@ -110,7 +110,7 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
     ];
     return Container(
       width: 414 * Scale.width,
-      height: 300 * Scale.height,
+      height: 207 * Scale.width,
       child: Stack(
         children: [
           PageView.builder(
