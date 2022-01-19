@@ -16,9 +16,9 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
   @override
   Widget build(BuildContext context) {
     final List<Container> images = <Container>[
-      Container(color: Colors.red),
-      Container(color: Colors.blue),
-      Container(color: Colors.pink)
+      Container(child: Image.asset("assets/images/임시상품2.png")),
+      Container(child: Image.asset("assets/images/임시상품3.png")),
+      Container(child: Image.asset("assets/images/임시상품4.png")),
     ];
     return Container(
       width: 414 * Scale.width,
@@ -73,7 +73,7 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 3), (Timer timer) {
+    Timer.periodic(Duration(seconds: 4), (Timer timer) {
       if (_pageController.hasClients) {
         if (_currentPosition < 2) {
           _currentPosition = _currentPosition + 1;
@@ -81,7 +81,7 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
           _currentPosition = 0;
         }
         _pageController.animateToPage(_currentPosition.toInt(),
-            duration: Duration(milliseconds: 3), curve: Curves.easeInOut);
+            duration: Duration(milliseconds: 300000), curve: Curves.linear);
       }
     });
   }
@@ -89,13 +89,28 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
   @override
   Widget build(BuildContext context) {
     final List<Container> images = <Container>[
-      Container(color: Colors.purple[100]),
-      Container(color: Colors.purple[200]),
-      Container(color: Colors.purple[300]),
+      Container(
+          child: Image.asset(
+        "assets/images/배너1.png",
+        width: 414 * Scale.width,
+        fit: BoxFit.fill,
+      )),
+      Container(
+          child: Image.asset(
+        "assets/images/배너2.png",
+        width: 414 * Scale.width,
+        fit: BoxFit.fill,
+      )),
+      Container(
+          child: Image.asset(
+        "assets/images/배너3.png",
+        width: 414 * Scale.width,
+        fit: BoxFit.fill,
+      )),
     ];
     return Container(
       width: 414 * Scale.width,
-      height: 340 * Scale.height,
+      height: 300 * Scale.height,
       child: Stack(
         children: [
           PageView.builder(
