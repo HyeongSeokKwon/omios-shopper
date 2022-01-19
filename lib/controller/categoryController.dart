@@ -10,25 +10,31 @@ class Category {
 class CategoryController extends GetxController {
   Category mainCategory = Category(id: 1, name: "init");
 
-  HttpService httpService = HttpService();
+  HttpService httpservice = HttpService();
   late Future<List<Category>> categoryList;
+  var subCategoryList;
   Map<String, String> queryParams = {};
 
   Future<List<dynamic>> getCategory() async {
-    var response = await httpService.httpGet("product/main-category");
-    print(response);
+    var response =
+        await httpservice.httpGet("product/main-category").catchError((e) {
+      throw e;
+    });
     return response['data'];
   }
 
   Future<List<dynamic>> getSubCategory(int mainCategoryId) async {
-    var response = await httpService
-        .httpGet("product/main-category/$mainCategoryId/sub-category");
-
+    var response = await httpservice
+        .httpGet("product/main-category/$mainCategoryId/sub-category")
+        .catchError((e) {
+      throw e;
+    });
+    subCategoryList = response['data']['sub_category'];
     return response['data']['sub_category'];
   }
 
   Future<List<dynamic>> getColorImage() async {
-    var response = await httpService.httpGet("product/color");
+    var response = await httpservice.httpGet("product/color");
 
     return response['data'];
   }

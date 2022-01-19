@@ -2,7 +2,6 @@ import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
-import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';

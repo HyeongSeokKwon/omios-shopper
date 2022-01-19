@@ -22,7 +22,16 @@ class _CategoryState extends State<Category> {
     return Container(
       color: const Color(0xffffffff),
       child: FutureBuilder(
-        future: categoryController.getCategory(),
+        future: categoryController.getCategory().catchError((e) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text(e.toString()),
+              );
+            },
+          );
+        }),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
@@ -38,10 +47,11 @@ class _CategoryState extends State<Category> {
                   return categoryIconArea(snapshot.data[index]);
                 },
               );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
           }
           return Center(
             child: CircularProgressIndicator(),
@@ -65,9 +75,9 @@ class _CategoryState extends State<Category> {
       ),
       onTap: () {
         categoryController.selectMainCategory(category);
-        Get.to(CategoryProductView(
-          categoryController: categoryController,
-        ));
+        Get.to(() => CategoryProductView(
+              categoryController: categoryController,
+            ));
       },
     );
   }

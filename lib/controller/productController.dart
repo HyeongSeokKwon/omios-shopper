@@ -10,7 +10,7 @@ class SearchOption {
 }
 
 class ProductController extends GetxController {
-  HttpService httpService = HttpService();
+  HttpService httpservice = HttpService();
   List<dynamic> productData = [];
 
   String? prevDataLink = "";
@@ -30,9 +30,9 @@ class ProductController extends GetxController {
   bool isLoading = false;
   Map<String, String> queryParams = {};
 
-  Future<void> initGetProducts(int mainCategoryID, int subCategoryID) async {
+  Future<dynamic> initGetProducts(int mainCategoryID, int subCategoryID) async {
     var response;
-    isLoading = true;
+
     subCategoryId = subCategoryID;
     mainCategoryId = mainCategoryID;
     queryParams = {};
@@ -41,22 +41,31 @@ class ProductController extends GetxController {
       queryParams['sub_category'] = '$subCategoryId';
     }
 
-    response = await httpService.httpGet("product", queryParams);
+    response =
+        await httpservice.httpGet("product", queryParams).catchError((e) {
+      throw e;
+    });
+
     productData = response["data"]["results"];
     prevDataLink = response["data"]["previous"];
     nextDataLink = response["data"]["next"];
-    isLoading = false;
-
+    print(response);
+    print(response['data']['results']);
     update();
+    return response['data']['results'];
   }
 
-  void getProducts() async {
+  Future<void> getProducts() async {
     var response;
     isLoading = true;
     if (nextDataLink != null) {
       var page = "page";
       queryParams['page'] = "${nextDataLink![nextDataLink!.indexOf(page) + 5]}";
-      response = await httpService.httpGet("product", queryParams);
+
+      response =
+          await httpservice.httpGet("product", queryParams).catchError((e) {
+        throw e;
+      });
     } else {
       return;
     }
@@ -64,7 +73,7 @@ class ProductController extends GetxController {
     prevDataLink = response['data']['previous'];
     nextDataLink = response['data']['next'];
     productData = productData + response['data']['results'];
-
+    print(productData);
     isLoading = false;
     update();
   }
@@ -101,7 +110,7 @@ class ProductController extends GetxController {
     }
   }
 
-  void searchClicked() async {
+  Future<void> searchClicked() async {
     var response;
     searchOption = SearchOption(color: selectedColor, priceRange: priceRange);
     int startPrice = searchOption.priceRange.start.toInt();
@@ -118,7 +127,10 @@ class ProductController extends GetxController {
     }
 
     isLoading = true;
-    response = await httpService.httpGet("product", queryParams);
+    response =
+        await httpservice.httpGet("product", queryParams).catchError((e) {
+      throw e;
+    });
     isLoading = false;
 
     prevDataLink = response['data']['previous'];
@@ -127,7 +139,7 @@ class ProductController extends GetxController {
     update();
   }
 
-  void sortClicked(int index) async {
+  Future<void> sortClicked(int index) async {
     var response;
     queryParams = {};
     sortType = index;
@@ -150,7 +162,10 @@ class ProductController extends GetxController {
     }
 
     isLoading = true;
-    response = await httpService.httpGet("product", queryParams);
+    response =
+        await httpservice.httpGet("product", queryParams).catchError((e) {
+      throw e;
+    });
     isLoading = false;
 
     prevDataLink = response['data']['previous'];

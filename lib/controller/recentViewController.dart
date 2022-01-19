@@ -7,10 +7,10 @@ class RecentViewController extends GetxController {
   List<dynamic> recentViewProductList = [];
   List<dynamic> selectProductList = [];
   DBHelper dbHelper = DBHelper();
-  HttpService httpService = HttpService();
+  HttpService httpservice = HttpService();
   bool edit = false;
 
-  void dataInit() {
+  void dataInit(context) {
     recentViewList.value = getRecentView(dbHelper.db);
   }
 
@@ -38,7 +38,7 @@ class RecentViewController extends GetxController {
     recentViewProductList = [];
     recentViewList.value = getRecentView(dbHelper.db);
     for (var i in await recentViewList.value) {
-      response = await httpService.httpGet('product/${i['productId']}');
+      response = await httpservice.httpGet('product/${i['productId']}');
       recentViewProductList.add(response["data"]);
     }
 

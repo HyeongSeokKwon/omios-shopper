@@ -8,15 +8,14 @@ class LoginController extends GetxController {
   var isAutoLoginChecked;
   var loginResponse;
 
+  HttpService httpservice = HttpService();
   String errorString = "";
   String userId = "";
   String userPwd = "";
   late LoginRequestModel loginRequestModel;
   late final SharedPreferences prefs;
 
-  HttpService httpservice = HttpService();
-
-  void init() async {
+  void initLoginController(context) async {
     httpservice.getToken();
     prefs = await SharedPreferences.getInstance();
     isAutoLoginChecked = prefs.getBool('isChecked');
