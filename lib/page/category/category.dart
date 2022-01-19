@@ -1,7 +1,7 @@
 import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/page/category/categoryProductView.dart';
 import 'package:cloth_collection/util/util.dart';
-import 'package:cloth_collection/widget/alertDialog.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';

@@ -2,7 +2,7 @@ import 'package:cloth_collection/controller/loginController.dart';
 import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/signUp/signUp.dart';
 import 'package:cloth_collection/util/util.dart';
-import 'package:cloth_collection/widget/alertDialog.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
