@@ -29,7 +29,6 @@ class HomeController extends GetxController {
   int currentIndex = 0;
 
   void onItemTapped(int index) {
-    print(index);
     if (currentIndex != index) {
       currentIconUrl[currentIndex] = navigationIconUrl[currentIndex];
       currentIndex = index;
