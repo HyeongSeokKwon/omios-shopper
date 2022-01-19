@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/alertDialog.dart';
 import 'package:cloth_collection/widget/product_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -70,22 +74,25 @@ class _CategoryProductViewState extends State<CategoryProductView>
         future: widget.categoryController
             .getSubCategory(widget.categoryController.mainCategory.id)
             .catchError((e) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(e.toString()),
-                actions: <Widget>[
-                  new TextButton(
-                    child: new Text("확인"),
-                    onPressed: () {
-                      Get.reload();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+          if (Platform.isIOS) {
+            CupertinoAlertDialog(
+              content: Text(
+                e.toString(),
+                style: textStyle(
+                    Colors.black, FontWeight.w500, "NotoSansKR", 16.0),
+              ),
+              actions: <Widget>[
+                new TextButton(
+                  child: new Text("확인"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          } else {
+            showAlertDialog(context, e);
+          }
         }),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -139,9 +146,7 @@ class _CategoryProductViewState extends State<CategoryProductView>
               return Container();
             }
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return progressBar();
           }
         },
       ),
@@ -180,22 +185,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
               scrollController.position.maxScrollExtent &&
           productController.nextDataLink != "") {
         productController.getProducts().catchError((e) {
-          return showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(e.toString()),
-                actions: <Widget>[
-                  new TextButton(
-                    child: new Text("확인"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+          return showAlertDialog(context, e);
         });
       }
     });
@@ -218,22 +208,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 .initGetProducts(widget.categoryController.mainCategory.id,
                     widget.subCategoryId)
                 .catchError((e) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: Text(e.toString()),
-                    actions: <Widget>[
-                      new TextButton(
-                        child: new Text("확인"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
+              showAlertDialog(context, e);
             }),
             color: Colors.black,
             child: FutureBuilder(
@@ -243,22 +218,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                   widget.subCategoryId,
                 )
                     .catchError((e) {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: Text(e.toString()),
-                        actions: <Widget>[
-                          new TextButton(
-                            child: new Text("확인"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  showAlertDialog(context, e);
                 }),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -281,10 +241,10 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             );
                           });
                     } else {
-                      return CircularProgressIndicator();
+                      return progressBar();
                     }
                   } else {
-                    return CircularProgressIndicator();
+                    return progressBar();
                   }
                 }),
           ),
@@ -373,22 +333,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeOut);
                             controller.sortClicked(index).catchError((e) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    content: Text(e.toString()),
-                                    actions: <Widget>[
-                                      new TextButton(
-                                        child: new Text("확인"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                              showAlertDialog(context, e);
                             });
                             Navigator.of(context).pop();
                           },
@@ -530,22 +475,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                 widget.categoryController.mainCategory.id,
                                 widget.subCategoryId)
                             .catchError((e) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text(e.toString()),
-                                actions: <Widget>[
-                                  new TextButton(
-                                    child: new Text("확인"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          showAlertDialog(context, e);
                         });
                       },
                     ),
@@ -679,22 +609,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.easeOut);
                         productController.searchClicked().catchError((e) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text(e.toString()),
-                                actions: <Widget>[
-                                  new TextButton(
-                                    child: new Text("확인"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          showAlertDialog(context, e);
                         });
                         Navigator.of(context).pop();
                       },
@@ -726,22 +641,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
     return Container(
       child: FutureBuilder(
           future: widget.categoryController.getColorImage().catchError((e) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: Text(e.toString()),
-                  actions: <Widget>[
-                    new TextButton(
-                      child: new Text("확인"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
+            showAlertDialog(context, e);
           }),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
