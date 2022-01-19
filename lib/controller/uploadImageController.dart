@@ -36,7 +36,6 @@ class UploadImageController extends GetxController {
   }
 
   void getImageFromGallery() async {
-    print(22);
     // ignore: invalid_use_of_visible_for_testing_member
     pickedFile = await ImagePicker.platform
         .pickImage(source: ImageSource.gallery, imageQuality: 50);
