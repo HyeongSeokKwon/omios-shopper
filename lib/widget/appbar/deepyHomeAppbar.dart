@@ -29,7 +29,7 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
                   style: TextStyle(
                       color: Colors.black,
                       fontFamily: "NotoSansKR",
-                      fontSize: 23,
+                      fontSize: 23 * Scale.width,
                       fontWeight: FontWeight.w900),
                 ),
                 color: Colors.white,
