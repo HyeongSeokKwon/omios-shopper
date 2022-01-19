@@ -2,6 +2,7 @@ import 'package:cloth_collection/controller/loginController.dart';
 import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/signUp/signUp.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/alertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -356,15 +357,8 @@ class _LoginState extends State<Login> {
                 ),
               );
             }
-          } catch (e) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: Text(e.toString()),
-                );
-              },
-            );
+          } on Exception catch (e) {
+            showAlertDialog(context, e);
           }
         },
       ),
