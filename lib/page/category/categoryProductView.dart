@@ -1,6 +1,5 @@
 import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/controller/productController.dart';
-import 'package:cloth_collection/data/exampleProduct.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/product_card.dart';
@@ -21,76 +20,103 @@ class _CategoryProductViewState extends State<CategoryProductView>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: widget.categoryController
-          .getSubCategory(widget.categoryController.mainCategory.id),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          List<Tab> tabs = [];
-          List<Widget> tabBarViewList = [];
-          for (int i = 0; i <= snapshot.data.length; i++) {
-            i == 0
-                ? tabs.add(Tab(text: '전체'))
-                : tabs.add(Tab(text: snapshot.data[i - 1]['name']));
-            tabBarViewList.add(ProductViewArea(
-              subCategoryId: i,
-              categoryController: widget.categoryController,
-            ));
-          }
-          return DefaultTabController(
-            length: snapshot.data.length + 1,
-            child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                automaticallyImplyLeading: false,
-                elevation: 0,
-                title: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: SvgPicture.asset(
-                        "assets/images/svg/moveToBack.svg",
-                        width: 10 * Scale.width,
-                        height: 20 * Scale.height,
-                        fit: BoxFit.scaleDown,
-                      ),
-                    ),
-                    SizedBox(width: 14 * Scale.width),
-                    Text("${widget.categoryController.mainCategory.name}",
-                        style: textStyle(const Color(0xff333333),
-                            FontWeight.w700, "NotoSansKR", 22.0)),
-                  ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: SvgPicture.asset(
+                "assets/images/svg/moveToBack.svg",
+                width: 10 * Scale.width,
+                height: 20 * Scale.height,
+                fit: BoxFit.scaleDown,
+              ),
+            ),
+            SizedBox(width: 14 * Scale.width),
+            Text("${widget.categoryController.mainCategory.name}",
+                style: textStyle(const Color(0xff333333), FontWeight.w700,
+                    "NotoSansKR", 22.0)),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 22 * Scale.width),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Vibrate.feedback(VIBRATETYPE);
+                  },
+                  child: SvgPicture.asset("assets/images/svg/search.svg"),
                 ),
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 22 * Scale.width),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Vibrate.feedback(VIBRATETYPE);
-                          },
-                          child:
-                              SvgPicture.asset("assets/images/svg/search.svg"),
-                        ),
-                        SizedBox(width: 22 * Scale.width),
-                        GestureDetector(
-                          onTap: () {
-                            Vibrate.feedback(VIBRATETYPE);
-                          },
-                          child: SvgPicture.asset("assets/images/svg/cart.svg"),
-                        ),
-                      ],
-                    ),
+                SizedBox(width: 22 * Scale.width),
+                GestureDetector(
+                  onTap: () {
+                    Vibrate.feedback(VIBRATETYPE);
+                  },
+                  child: SvgPicture.asset("assets/images/svg/cart.svg"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+        future: widget.categoryController
+            .getSubCategory(widget.categoryController.mainCategory.id)
+            .catchError((e) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text(e.toString()),
+                actions: <Widget>[
+                  new TextButton(
+                    child: new Text("확인"),
+                    onPressed: () {
+                      Get.reload();
+                    },
                   ),
                 ],
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(40 * Scale.height),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TabBar(
+              );
+            },
+          );
+        }),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              List<Tab> tabs = [];
+              List<Widget> tabBarViewList = [];
+              print(snapshot.data);
+              for (int i = 0; i <= snapshot.data.length; i++) {
+                i == 0
+                    ? tabs.add(Tab(text: '전체'))
+                    : tabs.add(Tab(text: snapshot.data[i - 1]['name']));
+                i == 0
+                    ? tabBarViewList.add(ProductViewArea(
+                        subCategoryId: 0,
+                        categoryController: widget.categoryController))
+                    : tabBarViewList.add(
+                        ProductViewArea(
+                          subCategoryId: snapshot.data[i - 1]['id'],
+                          categoryController: widget.categoryController,
+                        ),
+                      );
+              }
+              return DefaultTabController(
+                length: snapshot.data.length + 1,
+                child: Column(
+                  children: [
+                    Container(
+                      color: Colors.white,
+                      width: double.infinity,
+                      height: 50,
+                      child: TabBar(
                           isScrollable: true,
                           indicator: UnderlineTabIndicator(
                               borderSide: BorderSide(width: 2.0),
@@ -104,16 +130,21 @@ class _CategoryProductViewState extends State<CategoryProductView>
                               "NotoSansKR",
                               16.0),
                           onTap: (index) {}),
-                    ],
-                  ),
+                    ),
+                    Expanded(child: TabBarView(children: tabBarViewList)),
+                  ],
                 ),
-              ),
-              body: TabBarView(children: tabBarViewList),
-            ),
-          );
-        }
-        return Container();
-      },
+              );
+            } else {
+              return Container();
+            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -134,28 +165,44 @@ class _ProductViewAreaState extends State<ProductViewArea>
   ScrollController scrollController = ScrollController();
   ProductController productController =
       Get.put<ProductController>(ProductController());
+
   late TabController optionTabController;
+
   @override
   void initState() {
     super.initState();
+    print(widget.subCategoryId);
 
     optionTabController = TabController(length: 4, vsync: this);
-    productController.initGetProducts(widget.categoryController.mainCategory.id,
-        widget.subCategoryId); //첫 build시 데이터 초기화
     scrollController.addListener(() {
       //subCategory 상품
       if (scrollController.offset ==
               scrollController.position.maxScrollExtent &&
           productController.nextDataLink != "") {
-        productController.getProducts();
+        productController.getProducts().catchError((e) {
+          return showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text(e.toString()),
+                actions: <Widget>[
+                  new TextButton(
+                    child: new Text("확인"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        });
       }
     });
   }
 
   @override
   void dispose() {
-    print("dispose");
-    scrollController.dispose();
     optionTabController.dispose();
     super.dispose();
   }
@@ -164,44 +211,82 @@ class _ProductViewAreaState extends State<ProductViewArea>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        filterBarArea(),
+        filterBarArea(context),
         Expanded(
           child: RefreshIndicator(
-            onRefresh: () => productController.initGetProducts(
-                widget.categoryController.mainCategory.id,
-                widget.subCategoryId),
-            color: Colors.black,
-            child: GetBuilder<ProductController>(
-              init: productController,
-              global: false,
-              builder: (controller) {
-                if (!controller.isLoading) {
-                  if (controller.productData != []) {
-                    return Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-                      child: GridView.builder(
-                        controller: scrollController,
-                        itemCount: controller.productData.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, childAspectRatio: 0.6),
-                        itemBuilder: (context, int index) {
-                          return ProductCard(
-                              product: Product.fromJson(
-                                  controller.productData[index]),
-                              imageWidth: 170 * Scale.width);
+            onRefresh: () => productController
+                .initGetProducts(widget.categoryController.mainCategory.id,
+                    widget.subCategoryId)
+                .catchError((e) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text(e.toString()),
+                    actions: <Widget>[
+                      new TextButton(
+                        child: new Text("확인"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
                         },
                       ),
-                    );
+                    ],
+                  );
+                },
+              );
+            }),
+            color: Colors.black,
+            child: FutureBuilder(
+                future: productController
+                    .initGetProducts(
+                  widget.categoryController.mainCategory.id,
+                  widget.subCategoryId,
+                )
+                    .catchError((e) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: Text(e.toString()),
+                        actions: <Widget>[
+                          new TextButton(
+                            child: new Text("확인"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      return GetBuilder<ProductController>(
+                          init: productController,
+                          builder: (controller) {
+                            return GridView.builder(
+                              controller: scrollController,
+                              itemCount: controller.productData.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2, childAspectRatio: 0.6),
+                              itemBuilder: (context, int index) {
+                                return ProductCard(
+                                    product: Product.fromJson(
+                                        controller.productData[index]),
+                                    imageWidth: 170 * Scale.width);
+                              },
+                            );
+                          });
+                    } else {
+                      return CircularProgressIndicator();
+                    }
                   } else {
-                    return Text("nodata");
+                    return CircularProgressIndicator();
                   }
-                } else {
-                  return Transform.scale(
-                      scale: 0.1, child: CircularProgressIndicator());
-                }
-              },
-            ),
+                }),
           ),
         ),
       ],
@@ -287,7 +372,24 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                 scrollController.position.minScrollExtent,
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeOut);
-                            controller.sortClicked(index);
+                            controller.sortClicked(index).catchError((e) {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Text(e.toString()),
+                                    actions: <Widget>[
+                                      new TextButton(
+                                        child: new Text("확인"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            });
                             Navigator.of(context).pop();
                           },
                         ),
@@ -377,13 +479,13 @@ class _ProductViewAreaState extends State<ProductViewArea>
     );
   }
 
-  Widget filterBarArea() {
+  Widget filterBarArea(BuildContext context) {
     return GetBuilder<CategoryController>(
         init: widget.categoryController,
-        builder: (context) {
+        builder: (controller) {
           return Container(
+            color: Colors.white,
             height: 52 * Scale.height,
-            color: const Color(0xfffafafa),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
               child: ListView(
@@ -423,9 +525,28 @@ class _ProductViewAreaState extends State<ProductViewArea>
                         ),
                       ),
                       onTap: () {
-                        productController.initGetProducts(
-                            widget.categoryController.mainCategory.id,
-                            widget.subCategoryId);
+                        productController
+                            .initGetProducts(
+                                widget.categoryController.mainCategory.id,
+                                widget.subCategoryId)
+                            .catchError((e) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: Text(e.toString()),
+                                actions: <Widget>[
+                                  new TextButton(
+                                    child: new Text("확인"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        });
                       },
                     ),
                   ),
@@ -533,10 +654,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xffeeeeee)),
                       ),
-                      onPressed: () {
-                        print("click");
-                        print(optionTabController.index);
-                      },
+                      onPressed: () {},
                     ),
                     SizedBox(width: 8 * Scale.width),
                     TextButton(
@@ -560,7 +678,24 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             scrollController.position.minScrollExtent,
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.easeOut);
-                        productController.searchClicked();
+                        productController.searchClicked().catchError((e) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: Text(e.toString()),
+                                actions: <Widget>[
+                                  new TextButton(
+                                    child: new Text("확인"),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        });
                         Navigator.of(context).pop();
                       },
                     ),
@@ -590,7 +725,24 @@ class _ProductViewAreaState extends State<ProductViewArea>
   Widget colorOptionArea() {
     return Container(
       child: FutureBuilder(
-          future: widget.categoryController.getColorImage(),
+          future: widget.categoryController.getColorImage().catchError((e) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text(e.toString()),
+                  actions: <Widget>[
+                    new TextButton(
+                      child: new Text("확인"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return GridView.builder(
