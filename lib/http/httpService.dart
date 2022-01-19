@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -95,7 +96,7 @@ class HttpService {
             {"refresh": refreshToken},
           ),
         );
-        print("<" + response.body + ">");
+
         responseJson = _response(response);
         setAccessToken(responseJson['data']['access']);
         setRefreshToken(responseJson['data']['refresh']);
@@ -121,7 +122,7 @@ class HttpService {
 
       return responseJson;
     } on SocketException {
-      throw FetchDataException('연결된 인터넷이 없습니다.');
+      throw FetchDataException("연결된 인터넷이 없습니다!!");
     }
   }
 
