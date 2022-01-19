@@ -1,6 +1,5 @@
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
@@ -35,7 +34,7 @@ class _ProductDetailState extends State<ProductDetail>
     _controller = TabController(length: 4, vsync: this);
 
     productDetailController.initController();
-    recentViewController.dataInit();
+    recentViewController.dataInit(context);
     recentViewController.insertRecentView(
       widget.product.id,
     );

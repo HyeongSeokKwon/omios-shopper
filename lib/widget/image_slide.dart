@@ -77,10 +77,8 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
       if (_pageController.hasClients) {
         if (_currentPosition < 2) {
           _currentPosition = _currentPosition + 1;
-          print(_currentPosition);
         } else {
           _currentPosition = 0;
-          print(_currentPosition);
         }
         _pageController.animateToPage(_currentPosition.toInt(),
             duration: Duration(milliseconds: 3), curve: Curves.easeInOut);

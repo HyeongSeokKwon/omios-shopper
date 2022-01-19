@@ -20,6 +20,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController emailController = TextEditingController();
   TextEditingController recommandController = TextEditingController();
   SignUpController signUpController = SignUpController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +143,6 @@ class _SignUpState extends State<SignUp> {
                           init: signUpController,
                           builder: (controller) {
                             if (controller.isDuplicationCheck == "accept") {
-                              print("accept");
                               return IconButton(
                                 padding: EdgeInsets.zero,
                                 icon: SvgPicture.asset(
@@ -270,7 +270,6 @@ class _SignUpState extends State<SignUp> {
                         init: signUpController,
                         builder: (controller) {
                           if (controller.isPwdValidate == "accept") {
-                            print("accept");
                             return IconButton(
                               padding: EdgeInsets.zero,
                               icon: SvgPicture.asset(
@@ -374,8 +373,6 @@ class _SignUpState extends State<SignUp> {
                   onChanged: (text) {
                     signUpController.validateDuplicationCheck(
                         pwdTextController.text, pwdCheckTextController.text);
-                    print(text);
-                    print(pwdTextController.text);
                   },
                   validator: (text) {
                     if (text!.trim().isNotEmpty && text.trim().length < 4) {
@@ -403,7 +400,6 @@ class _SignUpState extends State<SignUp> {
                         init: signUpController,
                         builder: (controller) {
                           if (controller.isPwdSame == "accept") {
-                            print("accept");
                             return IconButton(
                               padding: EdgeInsets.zero,
                               icon: SvgPicture.asset(
