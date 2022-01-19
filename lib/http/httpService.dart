@@ -89,17 +89,21 @@ class HttpService {
       //access token 만료 되었으면
       if (!isRefreshExpired()) {
         // refresh token 만료 되지 않았으면
-        var response = await http.post(
-          Uri.parse(addressUrl + '/token/refresh/'), // refresh token 으로 재발급
-          headers: {"Content-Type": "application/json; charset=UTF-8"},
-          body: json.encode(
-            {"refresh": refreshToken},
-          ),
-        );
+        try {
+          var response = await http.post(
+            Uri.parse(addressUrl + '/token/refresh/'), // refresh token 으로 재발급
+            headers: {"Content-Type": "application/json; charset=UTF-8"},
+            body: json.encode(
+              {"refresh": refreshToken},
+            ),
+          );
 
-        responseJson = _response(response);
-        setAccessToken(responseJson['data']['access']);
-        setRefreshToken(responseJson['data']['refresh']);
+          responseJson = _response(response);
+          setAccessToken(responseJson['data']['access']);
+          setRefreshToken(responseJson['data']['refresh']);
+        } on SocketException {
+          throw FetchDataException("연결된 인터넷이 없습니다.");
+        }
       }
     } else {
       print("access token is valid");
