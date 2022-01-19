@@ -81,7 +81,7 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
           _currentPosition = 0;
         }
         _pageController.animateToPage(_currentPosition.toInt(),
-            duration: Duration(milliseconds: 300000), curve: Curves.linear);
+            duration: Duration(milliseconds: 300), curve: Curves.linear);
       }
     });
   }
