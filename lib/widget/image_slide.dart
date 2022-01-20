@@ -16,9 +16,16 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
   @override
   Widget build(BuildContext context) {
     final List<Container> images = <Container>[
-      Container(child: Image.asset("assets/images/임시상품2.png")),
-      Container(child: Image.asset("assets/images/임시상품3.png")),
-      Container(child: Image.asset("assets/images/임시상품4.png")),
+      Container(
+        child: Image.asset(
+          "assets/images/임시상품2.png",
+          fit: BoxFit.fill,
+        ),
+      ),
+      Container(
+          child: Image.asset("assets/images/임시상품3.png", fit: BoxFit.fill)),
+      Container(
+          child: Image.asset("assets/images/임시상품4.png", fit: BoxFit.fill)),
     ];
     return Container(
       width: 414 * Scale.width,
@@ -73,15 +80,16 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 4), (Timer timer) {
+    Timer.periodic(Duration(seconds: 3), (Timer timer) {
       if (_pageController.hasClients) {
         if (_currentPosition < 2) {
           _currentPosition = _currentPosition + 1;
+          print(_currentPosition);
         } else {
           _currentPosition = 0;
         }
         _pageController.animateToPage(_currentPosition.toInt(),
-            duration: Duration(milliseconds: 300), curve: Curves.linear);
+            duration: Duration(milliseconds: 1000), curve: Curves.easeOut);
       }
     });
   }

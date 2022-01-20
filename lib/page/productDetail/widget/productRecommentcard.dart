@@ -31,7 +31,9 @@ class ProductRecommentCard extends StatelessWidget {
       width: 156 * Scale.width,
       height: 156 * Scale.width * (500 / 375),
       child: ClipRRect(
-        child: Image.asset("${product.imageUrl}", fit: BoxFit.cover),
+        child: Image.network(
+            "${product.mainImage == null ? product.defaultImage : product.mainImage}",
+            fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(8.0),
       ),
       decoration: BoxDecoration(

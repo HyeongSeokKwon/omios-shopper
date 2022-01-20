@@ -32,10 +32,12 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildProductImage() {
     return Container(
-      width: imageWidth,
-      height: imageWidth * (4 / 3),
       child: ClipRRect(
-        child: Image.asset("${product.imageUrl}", fit: BoxFit.scaleDown),
+        child: Image.network(
+            "${product.mainImage == null ? product.defaultImage : product.mainImage}",
+            width: imageWidth,
+            height: imageWidth * (4 / 3),
+            fit: BoxFit.fill),
         borderRadius: BorderRadius.circular(8.0),
       ),
       decoration: BoxDecoration(
@@ -66,6 +68,7 @@ class ProductCard extends StatelessWidget {
             style: textStyle(
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 17.0),
           ),
+          Text("${product.id}"),
           SizedBox(height: 4 * Scale.height),
         ],
       ),

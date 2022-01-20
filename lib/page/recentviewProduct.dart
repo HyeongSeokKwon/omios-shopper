@@ -88,7 +88,9 @@ class _RecentviewProductState extends State<RecentviewProduct> {
             width: 110,
             height: 110 * (4 / 3),
             child: ClipRRect(
-              child: Image.asset("${product.imageUrl}", fit: BoxFit.scaleDown),
+              child: Image.network(
+                  "${product.mainImage == null ? product.defaultImage : product.mainImage}",
+                  fit: BoxFit.scaleDown),
               borderRadius: BorderRadius.circular(8.0),
             ),
             decoration: BoxDecoration(

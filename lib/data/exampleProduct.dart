@@ -3,35 +3,35 @@ import 'package:cloth_collection/model/productModel.dart';
 List<Map> temporaryProduct = [
   {
     'id': 1,
-    'imageUrl': "assets/images/임시상품1.png",
+    'mainImage': "assets/images/임시상품1.png",
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
     'price': 26000,
-    'subCategory': 7,
-    'wholeSaler': 9,
+    'defaultImage':
+        "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/default.png"
   },
   {
     'id': 2,
-    'imageUrl': "assets/images/임시상품2.png",
+    'mainImage': "assets/images/임시상품2.png",
     'name': "텍스처 라운드 정장 자켓",
     'price': 26000,
-    'subCategory': 12,
-    'wholeSaler': 4,
+    'defaultImage':
+        "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/default.png"
   },
   {
     'id': 2,
-    'imageUrl': "assets/images/임시상품3.png",
+    'mainImage': "assets/images/임시상품3.png",
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
     'price': 8400,
-    'subCategory': 2,
-    'wholeSaler': 1,
+    'defaultImage':
+        "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/default.png"
   },
   {
     'id': 4,
-    'imageUrl': "assets/images/임시상품4.png",
+    'mainImage': "assets/images/임시상품4.png",
     'name': "머슬 분또 잠바",
     'price': 8400,
-    'subCategory': 3,
-    'wholeSaler': 1,
+    'defaultImage':
+        "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/default.png"
   }
 ];
 List<Product> getProduct() {
@@ -39,11 +39,10 @@ List<Product> getProduct() {
   for (var product in temporaryProduct) {
     temporaryProductList.add(Product(
         id: product['id'],
-        imageUrl: product['imageUrl'],
+        mainImage: product['defaultImage'],
         name: product['name'],
         price: product['price'],
-        subCategory: product['subCategory'],
-        wholeSaler: product['wholeSaler']));
+        defaultImage: product['defaultImage']));
   }
   return temporaryProductList;
 }
@@ -53,13 +52,11 @@ Future<List<Product>> getProducts() async {
   for (var product in temporaryProduct) {
     temporaryProductList.add(
       Product(
-        id: product['id'],
-        imageUrl: product['image_url'],
-        name: product['name'],
-        price: product['price'],
-        subCategory: product['subCategory'],
-        wholeSaler: product['wholesaler'],
-      ),
+          id: product['id'],
+          mainImage: product['defaultImage'],
+          name: product['name'],
+          price: product['price'],
+          defaultImage: product['defaultImage']),
     );
   }
   return temporaryProductList;
