@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,22 +28,29 @@ class HttpService {
       case 200:
         var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
         return responseJson;
+
       case 201:
         var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        return responseJson;
 
-        return responseJson;
       case 400:
-        throw BadRequestException(response.body.toString());
+        throw BadRequestException("400 :");
+
       case 401:
-        var responseJson = utf8.decode(response.bodyBytes);
+        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
         return responseJson;
+
       case 403:
-        throw UnauthorisedException(response.body.toString());
+        throw UnauthorisedException("403 :");
+
+      case 404:
+        throw NotfoundException("404 :");
+
       case 500:
-        throw UnauthorisedException(response.body.toString());
+        throw FetchDataException("500 :");
+
       default:
-        throw FetchDataException(
-            'Error occured while Communication with Server with StatusCode:${response.statusCode}');
+        throw FetchDataException('');
     }
   }
 
@@ -116,7 +122,6 @@ class HttpService {
     var responseJson;
     try {
       updateToken();
-      print(Uri.http(addressUrlx, baseUrl, queryParams));
       response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
 
@@ -144,7 +149,6 @@ class HttpService {
           body: body);
 
       responseJson = _response(response);
-      print(responseJson);
       return responseJson;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');

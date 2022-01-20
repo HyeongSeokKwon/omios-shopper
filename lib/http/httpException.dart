@@ -15,13 +15,17 @@ class FetchDataException extends CustomApiException {
 }
 
 class BadRequestException extends CustomApiException {
-  BadRequestException(message) : super(message, 'Invalid Request :\n');
+  BadRequestException(message) : super(message, '잘못된 요청입니다.');
 }
 
 class UnauthorisedException extends CustomApiException {
-  UnauthorisedException(message) : super(message, 'Unauthorised :\n');
+  UnauthorisedException(message) : super(message, '권한이 없습니다.');
+}
+
+class NotfoundException extends CustomApiException {
+  NotfoundException(message) : super(message, '404 Not found');
 }
 
 class InvalidInputException extends CustomApiException {
-  InvalidInputException(message) : super(message, 'Invalid Input :\n');
+  InvalidInputException(message) : super(message, 'Invalid Input');
 }
