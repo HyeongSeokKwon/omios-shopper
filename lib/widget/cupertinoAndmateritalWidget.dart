@@ -6,12 +6,7 @@ import 'package:flutter/material.dart';
 
 Widget progressBar() {
   if (Platform.isIOS) {
-    return Center(
-      child: Container(
-          width: 20 * Scale.width,
-          height: 20 * Scale.width,
-          child: CupertinoActivityIndicator()),
-    );
+    return Center(child: CupertinoActivityIndicator());
   } else {
     return Center(
       child: CircularProgressIndicator(
@@ -39,10 +34,17 @@ dynamic showAlertDialog(BuildContext context, Exception e) {
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: Text(e.toString()),
+          content: Text(
+            e.toString(),
+            style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+          ),
           actions: <Widget>[
-            new TextButton(
-              child: new Text("확인"),
+            TextButton(
+              child: Text(
+                "확인",
+                style: textStyle(
+                    Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
