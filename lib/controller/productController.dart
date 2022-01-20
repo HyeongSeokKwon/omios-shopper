@@ -27,20 +27,16 @@ class ProductController extends GetxController {
   late int subCategoryId;
   late int mainCategoryId;
 
-  bool isLoading = false;
   Map<String, String> queryParams = {};
 
-  Future<dynamic> initGetProducts(int mainCategoryID, int subCategoryID) async {
+  Future<dynamic> initGetProducts() async {
     var response;
-
-    subCategoryId = subCategoryID;
-    mainCategoryId = mainCategoryID;
     queryParams = {};
     queryParams['main_category'] = '$mainCategoryId';
     if (subCategoryId != 0) {
       queryParams['sub_category'] = '$subCategoryId';
     }
-
+    print(Uri.http("deepy", "product", queryParams));
     response =
         await httpservice.httpGet("product", queryParams).catchError((e) {
       throw e;
@@ -49,19 +45,17 @@ class ProductController extends GetxController {
     productData = response["data"]["results"];
     prevDataLink = response["data"]["previous"];
     nextDataLink = response["data"]["next"];
-    print(response);
-    print(response['data']['results']);
+
     update();
     return response['data']['results'];
   }
 
   Future<void> getProducts() async {
     var response;
-    isLoading = true;
     if (nextDataLink != null) {
       var page = "page";
       queryParams['page'] = "${nextDataLink![nextDataLink!.indexOf(page) + 5]}";
-
+      print(Uri.http("deepy", "product", queryParams));
       response =
           await httpservice.httpGet("product", queryParams).catchError((e) {
         throw e;
@@ -73,8 +67,6 @@ class ProductController extends GetxController {
     prevDataLink = response['data']['previous'];
     nextDataLink = response['data']['next'];
     productData = productData + response['data']['results'];
-    print(productData);
-    isLoading = false;
     update();
   }
 
@@ -126,12 +118,10 @@ class ProductController extends GetxController {
       queryParams['sub_category'] = '$subCategoryId';
     }
 
-    isLoading = true;
     response =
         await httpservice.httpGet("product", queryParams).catchError((e) {
       throw e;
     });
-    isLoading = false;
 
     prevDataLink = response['data']['previous'];
     nextDataLink = response['data']['next'];
@@ -161,12 +151,10 @@ class ProductController extends GetxController {
       default:
     }
 
-    isLoading = true;
     response =
         await httpservice.httpGet("product", queryParams).catchError((e) {
       throw e;
     });
-    isLoading = false;
 
     prevDataLink = response['data']['previous'];
     nextDataLink = response['data']['next'];
