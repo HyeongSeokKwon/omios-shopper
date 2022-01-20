@@ -75,8 +75,8 @@ class LoginController extends GetxController {
         httpservice.setRefreshToken(responseData['refresh']);
         return true;
       }
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      throw e;
     }
   }
 
