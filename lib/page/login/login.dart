@@ -28,7 +28,10 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
 
-    loginController.initLoginController(context);
+    loginController.initLoginController(context).catchError((e) {
+      showAlertDialog(context, e);
+      setState(() {});
+    });
     // loginController.autoLogin();
 
     getVibratePermission();
