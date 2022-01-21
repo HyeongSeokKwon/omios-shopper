@@ -1,8 +1,12 @@
+import 'package:cloth_collection/http/httpService.dart';
 import 'package:cloth_collection/model/orderProduct.dart';
+import 'package:cloth_collection/model/productDetailModel.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:get/get.dart';
 
 class ProductDetailController extends GetxController {
+  late ProductDetailInfo productInfo;
+
   int colorCount = 0;
   int sizeCount = 0;
   int totalPrice = 0;
@@ -11,9 +15,10 @@ class ProductDetailController extends GetxController {
 
   int selectedColorIndex = -1;
   int selectedSizeIndex = -1;
+  HttpService httpservice = HttpService();
 
-  var colorData = ["브라운", "퍼플", "레드"];
-  var sizeData = ["S", "M", "L"];
+  var colorData = [];
+  var sizeData = [];
 
   List<OrderProduct> productCart = [];
   double opacity = 0;
@@ -32,6 +37,27 @@ class ProductDetailController extends GetxController {
   void initController() {
     //selectColorArray = List.generate(colorData.length, (index) => false);
     colorCount = colorData.length;
+  }
+
+  Future<dynamic> getProductDetailInfo(int productId) async {
+    var response = await httpservice.httpGet('product/$productId');
+    productInfo = ProductDetailInfo.fromJson(response['data']);
+
+    for (Map i in productInfo.options) {
+      if (!colorData.contains(i['color'])) {
+        colorData.add(i['color']);
+      }
+    }
+    for (Map i in productInfo.options) {
+      if (!sizeData.contains(i['size'])) {
+        sizeData.add(i['size']);
+      }
+    }
+
+    print(colorData);
+    print(sizeData);
+
+    return response;
   }
 
   void clickedColorButton() {
