@@ -62,18 +62,23 @@ class _CategoryState extends State<Category> {
                           Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
                     ),
                     SizedBox(height: 15 * Scale.height),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius:
-                              BorderRadiusDirectional.all(Radius.circular(17))),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 17 * Scale.width,
-                            vertical: 14 * Scale.height),
-                        child: Text("다시 시도하기",
-                            style: textStyle(Colors.black, FontWeight.w700,
-                                'NotoSansKR', 15.0)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {});
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadiusDirectional.all(
+                                Radius.circular(17))),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 17 * Scale.width,
+                              vertical: 14 * Scale.height),
+                          child: Text("다시 시도하기",
+                              style: textStyle(Colors.black, FontWeight.w700,
+                                  'NotoSansKR', 15.0)),
+                        ),
                       ),
                     ),
                   ],

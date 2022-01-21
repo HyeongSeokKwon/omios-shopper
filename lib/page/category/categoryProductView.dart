@@ -5,6 +5,7 @@ import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -142,8 +143,51 @@ class _CategoryProductViewState extends State<CategoryProductView>
                   ],
                 ),
               );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "네트워크에 연결하지 못했어요",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+                    ),
+                    Text(
+                      "네트워크 연결상태를 확인하고",
+                      style: textStyle(
+                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    ),
+                    Text(
+                      "다시 시도해 주세요",
+                      style: textStyle(
+                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    ),
+                    SizedBox(height: 15 * Scale.height),
+                    GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadiusDirectional.all(
+                                Radius.circular(19))),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 17 * Scale.width,
+                              vertical: 14 * Scale.height),
+                          child: Text("다시 시도하기",
+                              style: textStyle(Colors.black, FontWeight.w700,
+                                  'NotoSansKR', 15.0)),
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              );
             } else {
-              return Container();
+              return progressBar();
             }
           } else {
             return progressBar();
@@ -186,6 +230,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
               scrollController.position.maxScrollExtent &&
           productController.nextDataLink != "") {
         productController.getProducts().catchError((e) {
+          setState(() {});
           return showAlertDialog(context, e);
         });
       }
@@ -207,7 +252,9 @@ class _ProductViewAreaState extends State<ProductViewArea>
           child: RefreshIndicator(
             onRefresh: () =>
                 productController.initGetProducts().catchError((e) {
-              showAlertDialog(context, e);
+              // print('err');
+              // showAlertDialog(context, e);
+              setState(() {});
             }),
             color: Colors.black,
             child: FutureBuilder(
@@ -235,7 +282,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                               },
                             );
                           });
-                    } else if (snapshot.hasError) {
+                    } else {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -256,27 +303,31 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                   "NotoSansKR", 13.0),
                             ),
                             SizedBox(height: 15 * Scale.height),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadiusDirectional.all(
-                                      Radius.circular(17))),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 17 * Scale.width,
-                                    vertical: 14 * Scale.height),
-                                child: Text("다시 시도하기",
-                                    style: textStyle(Colors.black,
-                                        FontWeight.w700, 'NotoSansKR', 15.0)),
+                            GestureDetector(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadiusDirectional.all(
+                                        Radius.circular(19))),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 17 * Scale.width,
+                                      vertical: 14 * Scale.height),
+                                  child: Text("다시 시도하기",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w700, 'NotoSansKR', 15.0)),
+                                ),
                               ),
+                              onTap: () {
+                                setState(() {});
+                              },
                             ),
                           ],
                         ),
                       );
-                    } else {
-                      return progressBar();
                     }
                   } else {
+                    print("loading");
                     return progressBar();
                   }
                 }),
