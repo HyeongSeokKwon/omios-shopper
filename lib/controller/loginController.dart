@@ -15,7 +15,7 @@ class LoginController extends GetxController {
   late LoginRequestModel loginRequestModel;
   late final SharedPreferences prefs;
 
-  void initLoginController(context) async {
+  Future<void> initLoginController(context) async {
     httpservice.getToken();
     prefs = await SharedPreferences.getInstance();
     isAutoLoginChecked = prefs.getBool('isChecked');
@@ -29,7 +29,9 @@ class LoginController extends GetxController {
       // refresh token 만료되면 오토로그인 풀리게
       await prefs.setBool('isChecked', isAutoLoginChecked);
     }
-    autoLogin();
+    autoLogin().catchError((e) {
+      throw e;
+    });
     print(isAutoLoginChecked);
     update(["autoLogin"]);
   }
@@ -46,10 +48,14 @@ class LoginController extends GetxController {
     update(["autoLogin"]);
   }
 
-  void autoLogin() async {
+  Future<void> autoLogin() async {
     if (prefs.getBool("isChecked") == true) {
       print("do autologin");
-      httpservice.updateToken();
+      try {
+        httpservice.updateToken();
+      } catch (e) {
+        throw e;
+      }
       Get.to(() => HomePage());
     }
   }
