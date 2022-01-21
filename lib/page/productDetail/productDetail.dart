@@ -1,10 +1,13 @@
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
+import 'package:cloth_collection/model/productDetailModel.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/rating_bar.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,18 +29,21 @@ class _ProductDetailState extends State<ProductDetail>
   final ProductDetailController productDetailController =
       ProductDetailController();
   final PageController pageController = PageController();
+
   late TabController _controller;
 
   @override
   void initState() {
     super.initState();
+
     _controller = TabController(length: 4, vsync: this);
 
-    productDetailController.initController();
+    productDetailController.getProductDetailInfo(widget.product.id);
     recentViewController.dataInit(context);
     recentViewController.insertRecentView(
       widget.product.id,
     );
+
     pageController.addListener(() {
       productDetailController.changeOffset(pageController.offset);
     });
@@ -52,14 +58,18 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(65 * Scale.height),
-          child: _buildAppBar()),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-          controller: pageController, child: _buildScroll()),
-      bottomNavigationBar: _buildBottomNaviagationBar(),
+    return SafeArea(
+      top: true,
+      bottom: false,
+      child: Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(65 * Scale.height),
+            child: _buildAppBar()),
+        extendBodyBehindAppBar: true,
+        body: SingleChildScrollView(
+            controller: pageController, child: _buildScroll()),
+        bottomNavigationBar: _buildBottomNaviagationBar(),
+      ),
     );
   }
 
@@ -100,20 +110,34 @@ class _ProductDetailState extends State<ProductDetail>
   Widget _buildScroll() {
     return Container(
       color: const Color(0xffffffff),
-      child: Column(
-        children: [
-          ImageSlideHasDot(),
-          SizedBox(height: 10 * Scale.height),
-          _buildShortProductInfo(),
-          SizedBox(height: 14 * Scale.height),
-          _buildProductInfo(),
-          _buildDivider(),
-          _buildSatisfaction(),
-          _buildDivider(),
-          _buildSampleReivew(),
-          _buildDivider(),
-          _buildProductRecommend(),
-        ],
+      child: FutureBuilder(
+        future: productDetailController.getProductDetailInfo(widget.product.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return Column(
+                children: [
+                  ImageSlideHasDot(),
+                  SizedBox(height: 10 * Scale.height),
+                  _buildShortProductInfo(),
+                  SizedBox(height: 14 * Scale.height),
+                  _buildProductInfo(),
+                  _buildDivider(),
+                  _buildSatisfaction(),
+                  _buildDivider(),
+                  _buildSampleReivew(),
+                  _buildDivider(),
+                  _buildProductRecommend(),
+                ],
+              );
+            } else {
+              return Container(
+                child: Center(child: ErrorCard()),
+              );
+            }
+          } else
+            return progressBar();
+        },
       ),
     );
   }
@@ -151,7 +175,7 @@ class _ProductDetailState extends State<ProductDetail>
                 children: [],
               ),
               Text(
-                "${widget.product.name}",
+                "${productDetailController.productInfo.id}",
                 style: textStyle(const Color(0xff555555), FontWeight.w500,
                     "NotoSansKR", 16.0),
               ),
@@ -160,7 +184,7 @@ class _ProductDetailState extends State<ProductDetail>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    setPriceFormat(widget.product.price),
+                    setPriceFormat(productDetailController.productInfo.price),
                     style: textStyle(const Color(0xff333333), FontWeight.w700,
                         "NotoSansKR", 20.0),
                   ),
@@ -187,7 +211,7 @@ class _ProductDetailState extends State<ProductDetail>
   Widget _buildProductInfo() {
     return Column(
       children: [
-        _buildProductCardByColor(),
+        _buildProductImages(),
         SizedBox(height: 24 * Scale.height),
         _buildHashTag(),
         SizedBox(height: 32 * Scale.height),
@@ -196,32 +220,31 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  Widget _buildProductCardByColor() {
+  Widget _buildProductImages() {
     return Padding(
       padding: EdgeInsets.only(left: 22 * Scale.width),
       child: Container(
         width: 414 * Scale.width,
         height: 140 * Scale.height,
         child: ListView.builder(
-          itemCount: 4,
+          itemCount: productDetailController.productInfo.images.length,
           itemBuilder: (context, index) {
             return GestureDetector(
-              child: Column(
-                children: [
-                  Card(
-                    child: new Container(
-                      width: 70 * Scale.width,
-                      height: 90 * Scale.height,
-                      child: new Text('Product\n Image'),
-                      alignment: Alignment.center,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+                child: Container(
+                  width: 85 * Scale.width,
+                  height: 85 * 1.2 * Scale.width,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(7.0),
                     ),
+                    child: Image.network(
+                      "${productDetailController.productInfo.images[index]['url']}",
+                      fit: BoxFit.fill,
+                    ), //1을 index로 바꾸기
                   ),
-                  Text(
-                    "color",
-                    style: textStyle(Color.fromRGBO(153, 153, 153, 1),
-                        FontWeight.w500, "NotoSansKR", 14.0),
-                  )
-                ],
+                ),
               ),
             );
           },
@@ -610,6 +633,7 @@ class _ProductDetailState extends State<ProductDetail>
             topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 22 * Scale.width),
@@ -633,7 +657,7 @@ class _ProductDetailState extends State<ProductDetail>
           TextButton(
             child: Text("구매하기",
                 style: textStyle(const Color(0xffffffff), FontWeight.w500,
-                    "NotoSansKR", 16.0)),
+                    "NotoSansKR", 18.0)),
             style: ButtonStyle(
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
