@@ -69,15 +69,6 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
           padding: EdgeInsets.only(right: width * 0.053),
           child: Row(
             children: [
-              // GestureDetector(
-              //   child: SvgPicture.asset(
-              //     "assets/images/svg/search.svg",
-              //   ),
-              //   onTap: () {
-              //     Vibrate.feedback(VIBRATETYPE);
-              //     Get.to(() => SearchText());
-              //   },
-              // ),
               GestureDetector(
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
