@@ -59,8 +59,8 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      top: true,
-      bottom: false,
+      top: false,
+      bottom: true,
       child: Scaffold(
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(65 * Scale.height),
@@ -117,7 +117,9 @@ class _ProductDetailState extends State<ProductDetail>
             if (snapshot.hasData) {
               return Column(
                 children: [
-                  ImageSlideHasDot(),
+                  ImageSlideHasDot(
+                    imageList: productDetailController.productInfo.images,
+                  ),
                   SizedBox(height: 10 * Scale.height),
                   _buildShortProductInfo(),
                   SizedBox(height: 14 * Scale.height),
@@ -753,7 +755,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                 padding: EdgeInsets.only(
                     top: 25 * Scale.height, bottom: 30 * Scale.height),
                 child: Text("옵션 선택하기",
-                    style: textStyle(Color(0xff333333), FontWeight.w500,
+                    style: textStyle(Color(0xff333333), FontWeight.w700,
                         "NotoSansKR", 18.0)),
               ),
               Expanded(
