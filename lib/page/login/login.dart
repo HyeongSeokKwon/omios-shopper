@@ -52,6 +52,7 @@ class _LoginState extends State<Login> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
         body: Container(
           color: const Color(0xffffffff),
           child: SingleChildScrollView(

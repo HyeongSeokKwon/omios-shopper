@@ -11,6 +11,7 @@ class _SearchTextState extends State<SearchText> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(),
+        backgroundColor: Colors.white,
         body: Center(
           child: Column(
             children: [

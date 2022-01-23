@@ -71,6 +71,7 @@ class _CategoryProductViewState extends State<CategoryProductView>
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: FutureBuilder(
         future: widget.categoryController
             .getSubCategory(widget.categoryController.mainCategory.id)
@@ -264,24 +265,28 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      return GetBuilder<ProductController>(
-                          global: false,
-                          init: productController,
-                          builder: (controller) {
-                            return GridView.builder(
-                              controller: scrollController,
-                              itemCount: controller.productData.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2, childAspectRatio: 0.6),
-                              itemBuilder: (context, int index) {
-                                return ProductCard(
-                                    product: Product.fromJson(
-                                        controller.productData[index]),
-                                    imageWidth: 170 * Scale.width);
-                              },
-                            );
-                          });
+                      return Container(
+                        color: Colors.white,
+                        child: GetBuilder<ProductController>(
+                            global: false,
+                            init: productController,
+                            builder: (controller) {
+                              return GridView.builder(
+                                controller: scrollController,
+                                itemCount: controller.productData.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 0.6),
+                                itemBuilder: (context, int index) {
+                                  return ProductCard(
+                                      product: Product.fromJson(
+                                          controller.productData[index]),
+                                      imageWidth: 170 * Scale.width);
+                                },
+                              );
+                            }),
+                      );
                     } else {
                       return Center(
                         child: Column(

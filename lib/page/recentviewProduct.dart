@@ -62,6 +62,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Center(
         child: Stack(
           children: [

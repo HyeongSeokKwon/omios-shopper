@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> {
               return appBar[homeController.currentIndex];
             }),
       ),
+      backgroundColor: Colors.white,
       body: GetBuilder<HomeController>(
           init: homeController,
           builder: (controller) {

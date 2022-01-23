@@ -8,6 +8,7 @@ class Cart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: DefaultTabController(
         length: 2,
         child: Scaffold(
