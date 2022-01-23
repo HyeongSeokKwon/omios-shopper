@@ -54,6 +54,7 @@ class ProductDetailController extends GetxController {
       }
     }
 
+    print(productInfo.options);
     print(colorData);
     print(sizeData);
 
@@ -90,6 +91,8 @@ class ProductDetailController extends GetxController {
     } else {
       selectedColorIndex = -1;
     }
+
+    print(colorData[selectedColorIndex]);
     update();
   }
 
@@ -101,18 +104,30 @@ class ProductDetailController extends GetxController {
     } else {
       selectedSizeIndex = -1;
     }
+
     update();
   }
 
   void pushProduct() {
+    int pricePerOption = productInfo.price;
+
     if (selectedSizeIndex != -1 && selectedColorIndex != -1) {
+      for (Map<String, dynamic> i in productInfo.options) {
+        if (i['size'] == sizeData[selectedSizeIndex] &&
+            i['color'] == colorData[selectedColorIndex]) {
+          pricePerOption += i['price_difference'] as int;
+          break;
+        }
+      }
+
       OrderProduct orderProduct = OrderProduct(
           color: colorData[selectedColorIndex],
           size: sizeData[selectedSizeIndex],
           count: 1,
-          price: 10000);
+          price: pricePerOption);
 
       for (int i = 0; i < productCart.length; i++) {
+        // 중복 상품 추가 있을때
         if (productCart[i].size == sizeData[selectedSizeIndex] &&
             productCart[i].color == colorData[selectedColorIndex]) {
           productCart[i].count++;
