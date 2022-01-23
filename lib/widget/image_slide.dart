@@ -6,6 +6,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 //점으로 현재 페이지 표시되는 이미지 슬라이드
 class ImageSlideHasDot extends StatefulWidget {
+  final List<dynamic> imageList;
+  ImageSlideHasDot({required this.imageList});
   @override
   _ImageSlideHasDotState createState() => _ImageSlideHasDotState();
 }
@@ -15,18 +17,6 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Container> images = <Container>[
-      Container(
-        child: Image.asset(
-          "assets/images/임시상품2.png",
-          fit: BoxFit.fill,
-        ),
-      ),
-      Container(
-          child: Image.asset("assets/images/임시상품3.png", fit: BoxFit.fill)),
-      Container(
-          child: Image.asset("assets/images/임시상품4.png", fit: BoxFit.fill)),
-    ];
     return Container(
       width: 414 * Scale.width,
       height: (1.2) * 414 * Scale.width,
@@ -34,9 +24,12 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
         children: [
           PageView.builder(
             controller: _pageController,
-            itemCount: images.length,
+            itemCount: widget.imageList.length,
             itemBuilder: (BuildContext context, int index) {
-              return images[index];
+              return Image.network(
+                "${widget.imageList[index]['url']}",
+                fit: BoxFit.fill,
+              );
             },
             onPageChanged: (value) {
               setState(() {});
@@ -48,7 +41,7 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
               padding: EdgeInsets.only(bottom: 12),
               child: SmoothPageIndicator(
                 controller: _pageController,
-                count: images.length,
+                count: widget.imageList.length,
                 effect: WormEffect(
                     spacing: 8.0,
                     dotWidth: 15.0,

@@ -54,10 +54,6 @@ class ProductDetailController extends GetxController {
       }
     }
 
-    print(productInfo.options);
-    print(colorData);
-    print(sizeData);
-
     return response;
   }
 
