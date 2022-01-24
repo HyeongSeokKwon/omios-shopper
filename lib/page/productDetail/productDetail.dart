@@ -1,6 +1,5 @@
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/model/productDetailModel.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
@@ -93,9 +92,8 @@ class _ProductDetailState extends State<ProductDetail>
                 padding: EdgeInsets.only(right: 22 * Scale.width),
                 child: GestureDetector(
                   onTap: () {},
-                  child: SvgPicture.asset(
-                    "assets/images/svg/cart.svg",
-                  ),
+                  child: SvgPicture.asset("assets/images/svg/cart.svg",
+                      width: 26 * Scale.width, height: 26 * Scale.height),
                 ),
               )
             ],
