@@ -35,14 +35,16 @@ class MypageAppbar extends StatelessWidget with PreferredSizeWidget {
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
                 },
-                child: SvgPicture.asset("assets/images/svg/search.svg"),
+                child: SvgPicture.asset("assets/images/svg/search.svg",
+                    width: 26 * Scale.width, height: 26 * Scale.width),
               ),
-              SizedBox(width: width * 0.053),
+              SizedBox(width: 13 * Scale.width),
               GestureDetector(
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
                 },
-                child: SvgPicture.asset("assets/images/svg/cart.svg"),
+                child: SvgPicture.asset("assets/images/svg/cart.svg",
+                    width: 26 * Scale.width, height: 26 * Scale.width),
               ),
             ],
           ),

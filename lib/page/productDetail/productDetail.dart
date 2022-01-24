@@ -241,8 +241,11 @@ class _ProductDetailState extends State<ProductDetail>
                     borderRadius: BorderRadius.all(
                       Radius.circular(7.0),
                     ),
+
                     child: Image.network(
                       "${productDetailController.productInfo.images[index]['url']}",
+                      cacheHeight: 50,
+                      cacheWidth: 40,
                       fit: BoxFit.fill,
                     ), //1을 index로 바꾸기
                   ),

@@ -57,14 +57,16 @@ class _CategoryProductViewState extends State<CategoryProductView>
                   onTap: () {
                     Vibrate.feedback(VIBRATETYPE);
                   },
-                  child: SvgPicture.asset("assets/images/svg/search.svg"),
+                  child: SvgPicture.asset("assets/images/svg/search.svg",
+                      width: 26 * Scale.width, height: 26 * Scale.width),
                 ),
-                SizedBox(width: 22 * Scale.width),
+                SizedBox(width: 13 * Scale.width),
                 GestureDetector(
                   onTap: () {
                     Vibrate.feedback(VIBRATETYPE);
                   },
-                  child: SvgPicture.asset("assets/images/svg/cart.svg"),
+                  child: SvgPicture.asset("assets/images/svg/cart.svg",
+                      width: 26 * Scale.width, height: 26 * Scale.width),
                 ),
               ],
             ),
