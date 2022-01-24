@@ -1,5 +1,4 @@
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/model/productDetailModel.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';

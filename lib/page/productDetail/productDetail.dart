@@ -9,6 +9,7 @@ import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
@@ -57,18 +58,21 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      bottom: true,
-      child: Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(65 * Scale.height),
-            child: _buildAppBar()),
-        extendBodyBehindAppBar: true,
-        body: SingleChildScrollView(
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.red // 원하는 색
+            ));
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(65 * Scale.height),
+          child: _buildAppBar()),
+      extendBodyBehindAppBar: true,
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: SingleChildScrollView(
             controller: pageController, child: _buildScroll()),
-        bottomNavigationBar: _buildBottomNaviagationBar(),
       ),
+      bottomNavigationBar: _buildBottomNaviagationBar(),
     );
   }
 
