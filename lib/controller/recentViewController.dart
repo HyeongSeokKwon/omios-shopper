@@ -3,7 +3,7 @@ import 'package:cloth_collection/http/httpService.dart';
 import 'package:get/get.dart';
 
 class RecentViewController extends GetxController {
-  var recentViewList = Future.value().obs;
+  var recentViewList = Future.value();
   List<dynamic> recentViewProductList = [];
   List<dynamic> selectProductList = [];
   DBHelper dbHelper = DBHelper();
@@ -11,13 +11,13 @@ class RecentViewController extends GetxController {
   bool edit = false;
 
   void dataInit(context) {
-    recentViewList.value = getRecentView(dbHelper.db);
+    recentViewList = getRecentView(dbHelper.db);
   }
 
   void insertRecentView(int productId) async {
     int listCount = 0;
 
-    for (var i in await recentViewList.value) {
+    for (var i in await recentViewList) {
       listCount++;
       if (i['productId'] == productId) {
         deleteRecent(dbHelper.db, productId);
@@ -33,12 +33,13 @@ class RecentViewController extends GetxController {
     update();
   }
 
-  void getRecentViewProduct() async {
+  Future<void> getRecentViewProduct() async {
     var response;
     recentViewProductList = [];
-    recentViewList.value = getRecentView(dbHelper.db);
-    for (var i in await recentViewList.value) {
+    recentViewList = getRecentView(dbHelper.db);
+    for (var i in await recentViewList) {
       response = await httpservice.httpGet('product/${i['productId']}');
+      print(response);
       recentViewProductList.add(response["data"]);
     }
 
@@ -67,7 +68,30 @@ class RecentViewController extends GetxController {
     } else {
       selectProductList.add(productId);
     }
+
     update();
     return;
+  }
+
+  void selectAllProduct() {
+    if (recentViewProductList.length != selectProductList.length) {
+      selectProductList.clear();
+      for (var i in recentViewProductList) {
+        selectProductList.add(i['id']);
+      }
+    } else {
+      selectProductList = [];
+    }
+
+    update();
+  }
+
+  void deleteProduct() {
+    for (var i in selectProductList) {
+      deleteRecent(dbHelper.db, i);
+      recentViewProductList.removeWhere((element) => element['id'] == i);
+    }
+
+    update();
   }
 }
