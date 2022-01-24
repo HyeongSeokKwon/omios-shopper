@@ -142,7 +142,10 @@ class _CategoryProductViewState extends State<CategoryProductView>
                               16.0),
                           onTap: (index) {}),
                     ),
-                    Expanded(child: TabBarView(children: tabBarViewList)),
+                    Expanded(
+                        child: TabBarView(
+                            physics: NeverScrollableScrollPhysics(),
+                            children: tabBarViewList)),
                   ],
                 ),
               );
