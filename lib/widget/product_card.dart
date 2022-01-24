@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
@@ -33,13 +34,21 @@ class ProductCard extends StatelessWidget {
   Widget _buildProductImage() {
     return Container(
       child: ClipRRect(
-        child: Image.network(
-            "${product.mainImage == null ? product.defaultImage : product.mainImage}",
+          borderRadius: BorderRadius.circular(8.0),
+          child: CachedNetworkImage(
             width: imageWidth,
             height: imageWidth * (4 / 3),
-            fit: BoxFit.fill),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+            fit: BoxFit.fill,
+            imageUrl:
+                "${product.mainImage == null ? product.defaultImage : product.mainImage}",
+            fadeInDuration: Duration(milliseconds: 1000),
+            placeholder: (context, url) {
+              return Container(
+                  color: Colors.grey[200],
+                  width: imageWidth,
+                  height: imageWidth * (4 / 3));
+            },
+          )),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(14),

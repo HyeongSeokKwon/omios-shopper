@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
@@ -59,7 +60,7 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.red // 원하는 색
+        SystemUiOverlayStyle(statusBarColor: Colors.white // status bar 색깔
             ));
     return Scaffold(
       appBar: PreferredSize(
@@ -240,17 +241,27 @@ class _ProductDetailState extends State<ProductDetail>
                   width: 85 * Scale.width,
                   height: 85 * 1.2 * Scale.width,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(7.0),
-                    ),
-
-                    child: Image.network(
-                      "${productDetailController.productInfo.images[index]['url']}",
-                      cacheHeight: 50,
-                      cacheWidth: 40,
-                      fit: BoxFit.fill,
-                    ), //1을 index로 바꾸기
-                  ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(7.0),
+                      ),
+                      child: CachedNetworkImage(
+                        width: 85 * Scale.width,
+                        height: 85 * 1.2 * Scale.width,
+                        imageUrl:
+                            "${productDetailController.productInfo.images[index]['url']}",
+                        placeholder: (context, url) {
+                          return Container(
+                              width: 85 * Scale.width,
+                              height: 85 * 1.2 * Scale.width);
+                        },
+                      )
+                      // Image.network(
+                      //   "${productDetailController.productInfo.images[index]['url']}",
+                      //   cacheHeight: 50,
+                      //   cacheWidth: 40,
+                      //   fit: BoxFit.fill,
+                      // ),
+                      ),
                 ),
               ),
             );

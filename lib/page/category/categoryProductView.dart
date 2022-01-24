@@ -287,7 +287,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                   return ProductCard(
                                       product: Product.fromJson(
                                           controller.productData[index]),
-                                      imageWidth: 170 * Scale.width);
+                                      imageWidth: 150 * Scale.width);
                                 },
                               );
                             }),
