@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/page/productDetail/photoViewer.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
   Widget build(BuildContext context) {
     return Container(
       width: 414 * Scale.width,
-      height: (1.2) * 414 * Scale.width,
+      height: 1.2 * 414 * Scale.width,
       child: Stack(
         children: [
           PageView.builder(
@@ -30,9 +31,11 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 child: GestureDetector(
-                  child: Image.network(
-                    "${widget.imageList[index]['url']}",
+                  child: CachedNetworkImage(
+                    imageUrl: "${widget.imageList[index]['url']}",
                     fit: BoxFit.fill,
+                    width: 414 * Scale.width,
+                    height: 1.2 * 414 * Scale.width,
                   ),
                   onTap: () {
                     Get.to(() =>
