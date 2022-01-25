@@ -13,6 +13,7 @@ class ProductDetailController extends GetxController {
   bool isColorButtonClicked = true;
   bool isSizeButtonClicked = false;
 
+  int reviewTabIndex = 0;
   int selectedColorIndex = -1;
   int selectedSizeIndex = -1;
   HttpService httpservice = HttpService();
@@ -55,6 +56,11 @@ class ProductDetailController extends GetxController {
     }
 
     return response;
+  }
+
+  void reviewTabClicked(int tab) {
+    reviewTabIndex = tab;
+    update(['review']);
   }
 
   void clickedColorButton() {

@@ -4,37 +4,28 @@ import 'package:cloth_collection/widget/appbar/rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class ReviewBox extends StatefulWidget {
-  const ReviewBox({Key? key}) : super(key: key);
-
-  @override
-  _ReviewBoxState createState() => _ReviewBoxState();
-}
-
-class _ReviewBoxState extends State<ReviewBox> {
-  PageController reviewPhotoController = PageController();
+class ReviewBox extends StatelessWidget {
+  final PageController reviewPhotoController = PageController();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 22 * Scale.width,
-          right: 22 * Scale.width,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 25 * Scale.height),
-            reviewerIDDateArea(),
-            SizedBox(height: 8 * Scale.height),
-            buildRatingBar(14, 4.3),
-            SizedBox(height: 11 * Scale.height),
-            reviewInfoArea(),
-            reviewPhotoArea(),
-            SizedBox(height: 8 * Scale.height),
-            addtionalButtonArea(),
-          ],
-        ),
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 22 * Scale.width,
+        right: 22 * Scale.width,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 25 * Scale.height),
+          reviewerIDDateArea(),
+          SizedBox(height: 8 * Scale.height),
+          buildRatingBar(14, 4.3),
+          SizedBox(height: 11 * Scale.height),
+          reviewInfoArea(),
+          reviewPhotoArea(),
+          SizedBox(height: 8 * Scale.height),
+          addtionalButtonArea(),
+        ],
       ),
     );
   }

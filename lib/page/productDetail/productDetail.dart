@@ -28,7 +28,7 @@ class _ProductDetailState extends State<ProductDetail>
     with SingleTickerProviderStateMixin {
   final RecentViewController recentViewController = RecentViewController();
   final ProductDetailController productDetailController =
-      ProductDetailController();
+      Get.put<ProductDetailController>(ProductDetailController());
   final PageController pageController = PageController();
 
   late TabController _controller;
@@ -135,13 +135,15 @@ class _ProductDetailState extends State<ProductDetail>
                   _buildProductRecommend(),
                 ],
               );
-            } else {
+            } else if (snapshot.hasError) {
               return Container(
                 child: Center(child: ErrorCard()),
               );
+            } else {
+              return progressBar();
             }
           } else
-            return progressBar();
+            return Center(child: progressBar());
         },
       ),
     );
@@ -239,7 +241,7 @@ class _ProductDetailState extends State<ProductDetail>
                 padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
                 child: Container(
                   width: 85 * Scale.width,
-                  height: 85 * 1.2 * Scale.width,
+                  height: 85 * 1.2 * Scale.height,
                   child: ClipRRect(
                       borderRadius: BorderRadius.all(
                         Radius.circular(7.0),
@@ -567,9 +569,6 @@ class _ProductDetailState extends State<ProductDetail>
               labelStyle: textStyle(
                   const Color(0xff999999), FontWeight.w500, "NotoSansKR", 14.0),
               unselectedLabelColor: const Color(0xff999999),
-              onTap: (value) {
-                setState(() {});
-              },
               tabs: [
                 Tab(
                   child: Text(
@@ -592,10 +591,19 @@ class _ProductDetailState extends State<ProductDetail>
                   ),
                 ),
               ],
+              onTap: (index) {
+                productDetailController.reviewTabClicked(index);
+              },
             ),
           ),
         ),
-        tabList[_controller.index]
+        GetBuilder<ProductDetailController>(
+          id: 'review',
+          init: productDetailController,
+          builder: (controller) {
+            return tabList[productDetailController.reviewTabIndex];
+          },
+        )
       ],
     );
   }
@@ -641,7 +649,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   Widget _buildBottomNaviagationBar() {
     return Container(
-      height: 80,
+      height: 100 * Scale.height,
       decoration: BoxDecoration(
         color: const Color(0xffffffff),
         boxShadow: [
