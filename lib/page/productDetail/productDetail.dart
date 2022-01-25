@@ -71,7 +71,9 @@ class _ProductDetailState extends State<ProductDetail>
         top: false,
         bottom: true,
         child: SingleChildScrollView(
-            controller: pageController, child: _buildScroll()),
+          controller: pageController,
+          child: _buildScroll(),
+        ),
       ),
       bottomNavigationBar: _buildBottomNaviagationBar(),
     );
@@ -111,14 +113,14 @@ class _ProductDetailState extends State<ProductDetail>
   }
 
   Widget _buildScroll() {
-    return Container(
-      color: const Color(0xffffffff),
-      child: FutureBuilder(
-        future: productDetailController.getProductDetailInfo(widget.product.id),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return Column(
+    return FutureBuilder(
+      future: productDetailController.getProductDetailInfo(widget.product.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return Container(
+              color: Colors.white,
+              child: Column(
                 children: [
                   ImageSlideHasDot(
                     imageList: productDetailController.productInfo.images,
@@ -134,18 +136,26 @@ class _ProductDetailState extends State<ProductDetail>
                   _buildDivider(),
                   _buildProductRecommend(),
                 ],
-              );
-            } else if (snapshot.hasError) {
-              return Container(
-                child: Center(child: ErrorCard()),
-              );
-            } else {
-              return progressBar();
-            }
-          } else
-            return Center(child: progressBar());
-        },
-      ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Container(
+              width: 414 * Scale.width,
+              height: 896 * Scale.height,
+              child: Center(child: ErrorCard()),
+            );
+          } else {
+            return Container(
+                width: 414 * Scale.width,
+                height: 896 * Scale.height,
+                child: progressBar());
+          }
+        } else
+          return Container(
+              width: 414 * Scale.width,
+              height: 896 * Scale.height,
+              child: progressBar());
+      },
     );
   }
 
@@ -256,14 +266,7 @@ class _ProductDetailState extends State<ProductDetail>
                               width: 85 * Scale.width,
                               height: 85 * 1.2 * Scale.width);
                         },
-                      )
-                      // Image.network(
-                      //   "${productDetailController.productInfo.images[index]['url']}",
-                      //   cacheHeight: 50,
-                      //   cacheWidth: 40,
-                      //   fit: BoxFit.fill,
-                      // ),
-                      ),
+                      )),
                 ),
               ),
             );
@@ -649,7 +652,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   Widget _buildBottomNaviagationBar() {
     return Container(
-      height: 100 * Scale.height,
+      height: 120 * Scale.height,
       decoration: BoxDecoration(
         color: const Color(0xffffffff),
         boxShadow: [
@@ -661,23 +664,20 @@ class _ProductDetailState extends State<ProductDetail>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.only(left: 22 * Scale.width),
-            child: InkWell(
-              child: Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: const Color(0xffeeeeee),
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset("assets/images/svg/heart.svg"),
-                  )),
-              onTap: () {
-                Vibrate.feedback(VIBRATETYPE);
-              },
-            ),
+          InkWell(
+            child: Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: const Color(0xffeeeeee),
+                ),
+                child: Center(
+                  child: SvgPicture.asset("assets/images/svg/heart.svg"),
+                )),
+            onTap: () {
+              Vibrate.feedback(VIBRATETYPE);
+            },
           ),
           SizedBox(width: 8 * Scale.width),
           TextButton(

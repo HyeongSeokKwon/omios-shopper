@@ -337,8 +337,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                       );
                     }
                   } else {
-                    print("loading");
-                    return progressBar();
+                    return Container();
                   }
                 }),
           ),
