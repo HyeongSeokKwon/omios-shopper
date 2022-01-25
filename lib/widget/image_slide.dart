@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:cloth_collection/page/productDetail/photoViewer.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 //점으로 현재 페이지 표시되는 이미지 슬라이드
@@ -26,9 +28,17 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
             controller: _pageController,
             itemCount: widget.imageList.length,
             itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                "${widget.imageList[index]['url']}",
-                fit: BoxFit.fill,
+              return Container(
+                child: GestureDetector(
+                  child: Image.network(
+                    "${widget.imageList[index]['url']}",
+                    fit: BoxFit.fill,
+                  ),
+                  onTap: () {
+                    Get.to(() =>
+                        PhotoViewer(imageList: widget.imageList, index: index));
+                  },
+                ),
               );
             },
             onPageChanged: (value) {
@@ -77,7 +87,6 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
       if (_pageController.hasClients) {
         if (_currentPosition < 2) {
           _currentPosition = _currentPosition + 1;
-          print(_currentPosition);
         } else {
           _currentPosition = 0;
         }
@@ -140,10 +149,11 @@ class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Center(
-                    child: Text(
-                        "${(_currentPosition + 1).toInt()}/${images.length}",
-                        style: textStyle(const Color(0xffffffff),
-                            FontWeight.w400, "NotoSansKR", 12.0))),
+                  child: Text(
+                      "${(_currentPosition + 1).toInt()}/${images.length}",
+                      style: textStyle(const Color(0xffffffff), FontWeight.w400,
+                          "NotoSansKR", 12.0)),
+                ),
               ),
             ),
           ),
