@@ -60,7 +60,7 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.white // status bar 색깔
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent // status bar 색깔
             ));
     return Scaffold(
       appBar: PreferredSize(
@@ -145,10 +145,7 @@ class _ProductDetailState extends State<ProductDetail>
               child: Center(child: ErrorCard()),
             );
           } else {
-            return Container(
-                width: 414 * Scale.width,
-                height: 896 * Scale.height,
-                child: progressBar());
+            return Container();
           }
         } else
           return Container(

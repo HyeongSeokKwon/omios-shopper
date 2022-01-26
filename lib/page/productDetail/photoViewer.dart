@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class PhotoViewer extends StatefulWidget {
   final List<dynamic> imageList;
@@ -15,6 +16,9 @@ class PhotoViewer extends StatefulWidget {
 class _PhotoViewerState extends State<PhotoViewer> {
   late int curIndex;
   late PageController _pageController;
+  PhotoViewScaleStateController scaleController =
+      PhotoViewScaleStateController();
+  late ScrollPhysics scrollPhysics = ClampingScrollPhysics();
   @override
   void initState() {
     super.initState();
@@ -31,28 +35,39 @@ class _PhotoViewerState extends State<PhotoViewer> {
   Widget build(BuildContext context) {
     _pageController = PageController(initialPage: widget.index);
     return SafeArea(
-      top: true,
+      top: false,
+      bottom: true,
       child: Scaffold(
         body: Stack(
           children: [
-            PageView.builder(
-              allowImplicitScrolling: true,
-              controller: _pageController,
-              physics: ClampingScrollPhysics(),
-              itemCount: widget.imageList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                    child: PhotoView(
-                  minScale: PhotoViewComputedScale.contained,
-                  imageProvider: CachedNetworkImageProvider(
-                      "${widget.imageList[index]['url']}"),
-                ));
-              },
-              onPageChanged: (value) {
-                curIndex = value;
-
-                setState(() {});
-              },
+            Container(
+              child: PhotoViewGallery.builder(
+                scrollPhysics: scrollPhysics,
+                builder: (BuildContext context, int index) {
+                  return PhotoViewGalleryPageOptions(
+                    scaleStateController: scaleController,
+                    imageProvider: CachedNetworkImageProvider(
+                        "${widget.imageList[index]['url']}"),
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.contained * 1.75,
+                  );
+                },
+                scaleStateChangedCallback: (controller) {
+                  if (scaleController.isZooming) {
+                    scrollPhysics = NeverScrollableScrollPhysics();
+                    setState(() {});
+                  } else {
+                    scrollPhysics = ClampingScrollPhysics();
+                    setState(() {});
+                  }
+                },
+                itemCount: widget.imageList.length,
+                pageController: _pageController,
+                onPageChanged: (value) {
+                  curIndex = value;
+                  setState(() {});
+                },
+              ),
             ),
             Positioned(
               top: 20 * Scale.height,

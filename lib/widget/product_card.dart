@@ -37,12 +37,11 @@ class ProductCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           child: CachedNetworkImage(
             width: imageWidth,
-            repeat: ImageRepeat.repeat,
             height: imageWidth * (4 / 3),
             fit: BoxFit.fill,
             imageUrl:
                 "${product.mainImage == null ? product.defaultImage : product.mainImage}",
-            fadeInDuration: Duration(milliseconds: 50),
+            fadeInDuration: Duration(milliseconds: 0),
             placeholder: (context, url) {
               return Container(
                   color: Colors.grey[200],
