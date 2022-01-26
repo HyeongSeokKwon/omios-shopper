@@ -5,7 +5,6 @@ import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
-import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -134,7 +133,7 @@ class _CategoryProductViewState extends State<CategoryProductView>
                               insets: EdgeInsets.symmetric(horizontal: 16.0)),
                           tabs: tabs,
                           labelStyle: textStyle(const Color(0xff333333),
-                              FontWeight.w400, "NotoSansKR", 16.0),
+                              FontWeight.w600, "NotoSansKR", 16.0),
                           unselectedLabelStyle: textStyle(
                               const Color(0xffcccccc),
                               FontWeight.w400,
@@ -254,6 +253,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
     return Column(
       children: [
         filterBarArea(context),
+        Divider(thickness: 5, color: Colors.grey[200]),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () =>
@@ -276,19 +276,51 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             global: false,
                             init: productController,
                             builder: (controller) {
-                              return GridView.builder(
-                                controller: scrollController,
-                                itemCount: controller.productData.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 5 * Scale.width),
+                                child: Stack(
+                                  children: [
+                                    GridView.builder(
+                                      controller: scrollController,
+                                      itemCount: controller.productData.length,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
-                                        childAspectRatio: 0.6),
-                                itemBuilder: (context, int index) {
-                                  return ProductCard(
-                                      product: Product.fromJson(
-                                          controller.productData[index]),
-                                      imageWidth: 150 * Scale.width);
-                                },
+                                        childAspectRatio: 0.6,
+                                      ),
+                                      itemBuilder: (context, int index) {
+                                        return ProductCard(
+                                            product: Product.fromJson(
+                                                controller.productData[index]),
+                                            imageWidth: 190 * Scale.width);
+                                      },
+                                    ),
+                                    Positioned(
+                                      bottom: 15 * Scale.width,
+                                      right: 15 * Scale.width,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          scrollController.jumpTo(
+                                            0.0,
+                                          );
+                                        },
+                                        child: Container(
+                                            width: 45 * Scale.width,
+                                            height: 45 * Scale.width,
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(color: Colors.grey)
+                                              ],
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                            ),
+                                            child: Icon(
+                                                Icons.arrow_upward_rounded)),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               );
                             }),
                       );
@@ -354,7 +386,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(445)),
             border: Border.all(
-              color: Color(0xffcccccc),
+              color: Color(0xffdddddd),
               width: 1,
             ),
           ),
@@ -372,6 +404,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             FontWeight.w700, "NotoSansKR", 14.0),
                       );
                     }),
+                SizedBox(width: 6 * Scale.width),
                 SvgPicture.asset(
                   "assets/images/svg/dropdown.svg",
                   width: 10 * Scale.width,
@@ -458,7 +491,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(445)),
             border: Border.all(
-              color: Color(0xffcccccc),
+              color: Color(0xffdddddd),
               width: 1,
             ),
           ),
@@ -521,11 +554,11 @@ class _ProductViewAreaState extends State<ProductViewArea>
     return GetBuilder<CategoryController>(
         init: widget.categoryController,
         builder: (controller) {
-          return Container(
-            color: Colors.white,
-            height: 52 * Scale.height,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
+          return Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Container(
+              color: Colors.white,
+              height: 35 * Scale.height,
               child: ListView(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
@@ -538,7 +571,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(445)),
                           border: Border.all(
-                            color: Color(0xffcccccc),
+                            color: Color(0xffdddddd),
                             width: 1,
                           ),
                         ),
