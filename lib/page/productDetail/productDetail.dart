@@ -246,24 +246,22 @@ class _ProductDetailState extends State<ProductDetail>
             return GestureDetector(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
-                child: Container(
-                  width: 85 * Scale.width,
-                  height: 85 * 1.2 * Scale.height,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7.0),
-                      ),
-                      child: CachedNetworkImage(
-                        width: 85 * Scale.width,
-                        height: 85 * 1.2 * Scale.width,
-                        imageUrl:
-                            "${productDetailController.productInfo.images[index]['url']}",
-                        placeholder: (context, url) {
-                          return Container(
-                              width: 85 * Scale.width,
-                              height: 85 * 1.2 * Scale.width);
-                        },
-                      )),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(7.0),
+                  ),
+                  child: CachedNetworkImage(
+                    width: 85 * Scale.width,
+                    height: 85 * 1.2 * Scale.width,
+                    fit: BoxFit.fill,
+                    imageUrl:
+                        "${productDetailController.productInfo.images[index]['url']}",
+                    placeholder: (context, url) {
+                      return Container(
+                          width: 85 * Scale.width,
+                          height: 85 * 1.2 * Scale.width);
+                    },
+                  ),
                 ),
               ),
             );
