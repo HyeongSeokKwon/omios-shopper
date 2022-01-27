@@ -70,27 +70,34 @@ class _PhotoViewerState extends State<PhotoViewer> {
               ),
             ),
             Positioned(
-              top: 20 * Scale.height,
-              right: 20 * Scale.height,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Icon(
-                  Icons.clear,
-                  color: Colors.white,
+              top: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: 20 * Scale.height, right: 20 * Scale.height),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.clear,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
             Positioned(
-              top: 20 * Scale.height,
-              child: Container(
-                width: 414 * Scale.width,
-                child: Center(
-                  child: Text(
-                    "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
-                    style: textStyle(const Color(0xffffffff), FontWeight.w700,
-                        "NotoSansKR", 20.0),
+              top: 0,
+              child: Padding(
+                padding: EdgeInsets.only(top: 20 * Scale.height),
+                child: Container(
+                  width: 414 * Scale.width,
+                  child: Center(
+                    child: Text(
+                      "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
+                      style: textStyle(const Color(0xffffffff), FontWeight.w700,
+                          "NotoSansKR", 20.0),
+                    ),
                   ),
                 ),
               ),
