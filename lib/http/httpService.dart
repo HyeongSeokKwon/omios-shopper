@@ -120,6 +120,7 @@ class HttpService {
       [Map<String, String>? queryParams]) async {
     var response;
     var responseJson;
+    print(Uri.http(addressUrlx, baseUrl, queryParams));
     try {
       updateToken();
       response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams),
