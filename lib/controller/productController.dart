@@ -36,7 +36,6 @@ class ProductController extends GetxController {
     if (subCategoryId != 0) {
       queryParams['sub_category'] = '$subCategoryId';
     }
-    print(Uri.http("deepy", "product", queryParams));
     response =
         await httpservice.httpGet("product", queryParams).catchError((e) {
       throw e;

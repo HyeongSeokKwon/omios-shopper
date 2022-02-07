@@ -1,3 +1,4 @@
+import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/cart.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
@@ -33,29 +34,34 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
               ),
               SizedBox(width: 10 * Scale.width),
               Flexible(
-                child: Container(
-                  height: 45 * Scale.height,
-                  width: 500,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(() => (SearchByText()));
+                  },
+                  child: Container(
+                    height: 45 * Scale.height,
+                    width: 500,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Row(
-                      children: [
-                        SizedBox(width: 10 * Scale.width),
-                        Icon(
-                          Icons.search,
-                          size: 20,
-                          color: Colors.grey[500],
-                        ),
-                        SizedBox(width: 5 * Scale.width),
-                        Text("검색어를 입력하세요",
-                            style: textStyle(Colors.grey[500]!, FontWeight.w600,
-                                "NotoSansKR", 14.0)),
-                      ],
+                    child: Center(
+                      child: Row(
+                        children: [
+                          SizedBox(width: 10 * Scale.width),
+                          Icon(
+                            Icons.search,
+                            size: 20,
+                            color: Colors.grey[500],
+                          ),
+                          SizedBox(width: 5 * Scale.width),
+                          Text("검색어를 입력하세요",
+                              style: textStyle(Colors.grey[500]!,
+                                  FontWeight.w600, "NotoSansKR", 14.0)),
+                        ],
+                      ),
                     ),
                   ),
                 ),

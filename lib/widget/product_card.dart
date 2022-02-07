@@ -39,8 +39,7 @@ class ProductCard extends StatelessWidget {
             width: imageWidth,
             height: imageWidth * (4 / 3),
             fit: BoxFit.fill,
-            imageUrl:
-                "${product.mainImage == null ? product.defaultImage : product.mainImage}",
+            imageUrl: "${product.mainImage}",
             fadeInDuration: Duration(milliseconds: 0),
             placeholder: (context, url) {
               return Container(

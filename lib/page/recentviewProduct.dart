@@ -107,7 +107,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                     Container(
                                       child: ClipRRect(
                                         child: Image.network(
-                                            "${controller.recentViewProductList[index]['images'] == [] ? controller.recentViewProductList[index]['defaultImage'] : controller.recentViewProductList[index]['images'][0]['url']}",
+                                            "${controller.recentViewProductList[index]['images'][0]['url']}",
                                             width: 110,
                                             height: 110 * (4 / 3),
                                             fit: BoxFit.fill),
