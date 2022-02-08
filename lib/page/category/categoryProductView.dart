@@ -14,8 +14,8 @@ import 'package:get/get.dart';
 
 class CategoryProductView extends StatefulWidget {
   final CategoryController categoryController;
-  CategoryProductView({Key? key, required this.categoryController})
-      : super(key: key);
+  final int? initialIndex;
+  CategoryProductView(this.categoryController, [this.initialIndex]);
   @override
   _CategoryProductViewState createState() => _CategoryProductViewState();
 }
@@ -120,6 +120,9 @@ class _CategoryProductViewState extends State<CategoryProductView>
               }
               return DefaultTabController(
                 length: snapshot.data.length + 1,
+                initialIndex: widget.initialIndex != null
+                    ? (widget.initialIndex! - snapshot.data[0]['id'] + 1) as int
+                    : 0,
                 child: Column(
                   children: [
                     Container(

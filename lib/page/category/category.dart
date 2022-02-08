@@ -109,7 +109,7 @@ class _CategoryState extends State<Category> {
       onTap: () {
         categoryController.selectMainCategory(category);
         Get.to(() => CategoryProductView(
-              categoryController: categoryController,
+              categoryController,
             ));
       },
     );

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
+import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/util/util.dart';
@@ -282,21 +283,30 @@ class _ProductDetailState extends State<ProductDetail>
           itemBuilder: (context, index) {
             return Padding(
               padding: EdgeInsets.only(right: 4 * Scale.width),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
+              child: GestureDetector(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                    color: Color.fromRGBO(234, 237, 240, 1),
                   ),
-                  color: Color.fromRGBO(234, 237, 240, 1),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
-                    child: Text("#" + "HashTag ",
-                        style: textStyle(const Color(0xff0090ff),
-                            FontWeight.w400, "NotoSansKR", 13.0)),
+                  child: Center(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+                      child: Text(
+                          "#" +
+                              "${productDetailController.productInfo.tags[index]} ",
+                          style: textStyle(const Color(0xff0090ff),
+                              FontWeight.w400, "NotoSansKR", 13.0)),
+                    ),
                   ),
                 ),
+                onTap: () {
+                  Get.to(() => SearchByText(
+                      productDetailController.productInfo.tags[index]));
+                },
               ),
             );
           },

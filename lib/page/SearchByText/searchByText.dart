@@ -1,13 +1,17 @@
+import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/controller/searchBytTextController.dart';
 import 'package:cloth_collection/model/productModel.dart';
+import 'package:cloth_collection/page/category/categoryProductView.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class SearchByText extends StatefulWidget {
-  const SearchByText({Key? key}) : super(key: key);
+  final String? initialSearchText;
+  SearchByText([this.initialSearchText]);
 
   @override
   _SearchByTextState createState() => _SearchByTextState();
@@ -16,214 +20,247 @@ class SearchByText extends StatefulWidget {
 class _SearchByTextState extends State<SearchByText> {
   SearchByTextController searchByTextController = SearchByTextController();
   TextEditingController textController = TextEditingController();
-
+  ScrollController scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
+    searchByTextController.streamController.add([]);
     // 첫 빌드시 검색 "" 초기화
+    if (widget.initialSearchText != null) {
+      searchByTextController.isSearchButtonClicked = true;
+      searchByTextController.getSearchResults(widget.initialSearchText!);
+      textController.text = widget.initialSearchText!;
+    }
+    scrollController.addListener(() {
+      print(scrollController.offset);
+      if (scrollController.offset ==
+              scrollController.position.maxScrollExtent &&
+          searchByTextController.nextDataLink != "") {
+        searchByTextController.getProducts().catchError((e) {
+          return showAlertDialog(context, e);
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: TextField(
-          controller: textController,
-          autofocus: true,
-          onChanged: (String value) async {
-            if (value.isNotEmpty) {
-              await searchByTextController
-                  .getSearchBoxResults(value); //글자 바뀔때마다 검색 요청
-            }
-          },
-          onSubmitted: (String value) {
-            setState(() {
-              searchByTextController.isSearchButtonClicked = true;
-            });
-          },
-          showCursor: false,
-          decoration: InputDecoration(
-              isDense: true,
-              contentPadding: EdgeInsets.all(11 * Scale.width),
-              filled: true,
-              fillColor: Colors.grey[5],
-              floatingLabelBehavior: FloatingLabelBehavior.auto,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(7)),
-                borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(7)),
-                borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
-              ),
-              hintText: ' 검색어를 입력하세요'),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: GestureDetector(
+            onTap: () {
+              searchByTextController.isSearchButtonClicked = false;
+            },
+            child: TextField(
+              controller: textController,
+              autofocus: true,
+              onChanged: (String value) async {
+                searchByTextController.searchTextChange(value);
+              },
+              onSubmitted: (String value) {
+                if (value.length >= 2) {
+                  searchByTextController.getSearchResults(value);
+                  searchByTextController.isSearchButtonClicked = true;
+                }
+              },
+              showCursor: false,
+              decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.all(11 * Scale.width),
+                  filled: true,
+                  fillColor: Colors.grey[5],
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+                  ),
+                  hintText: ' 검색어를 입력하세요'),
+            ),
+          ),
         ),
-      ),
-      body: FutureBuilder(
-        future: searchByTextController.getSearchBoxResults(
-            ""), //controller의 searchData(list)를 future로 가지고 있는다. getBuilder로 감싸서 실시간 데이터 변화 감지
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return GetBuilder<SearchByTextController>(
+        body: StreamBuilder(
+          stream: searchByTextController.streamController.stream,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return GetBuilder<SearchByTextController>(
                 init: searchByTextController,
                 builder: (controller) {
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount:
-                              controller.searchBoxData['sub_category'].length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              children: [
-                                Text(controller.searchBoxData['sub_category']
-                                    [index]['name']),
-                              ],
-                            );
-                          },
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: controller.searchBoxData['keyword'].length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              children: [
-                                Text(
-                                    controller.searchBoxData['keyword'][index]),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                });
-          } else if (snapshot.hasError) {
-            return Container(child: Text("error"));
-          } else {
-            return Container(child: Text("else"));
-          }
-        },
-      ),
-    );
-  }
-
-  Widget productArea(String text) {
-    ScrollController scrollController = ScrollController();
-    return SingleChildScrollView(
-      child: FutureBuilder(
-          future: searchByTextController.initGetProducts(text).catchError((e) {
-            showAlertDialog(context, e);
-          }),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                return Container(
-                  color: Colors.white,
-                  child: GetBuilder<SearchByTextController>(
-                      global: false,
-                      init: searchByTextController,
-                      builder: (controller) {
-                        return Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 5 * Scale.width),
-                          child: Stack(
-                            children: [
-                              GridView.builder(
-                                controller: scrollController,
-                                itemCount: controller.searchData.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 0.6,
-                                ),
-                                itemBuilder: (context, int index) {
-                                  return ProductCard(
-                                      product: Product.fromJson(
-                                          controller.searchData[index]),
-                                      imageWidth: 190 * Scale.width);
-                                },
-                              ),
-                              Positioned(
-                                bottom: 15 * Scale.width,
-                                right: 15 * Scale.width,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    scrollController.jumpTo(
-                                      0.0,
-                                    );
-                                  },
-                                  child: Container(
-                                      width: 45 * Scale.width,
-                                      height: 45 * Scale.width,
-                                      decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(color: Colors.grey)
-                                        ],
-                                        shape: BoxShape.circle,
-                                        color: Colors.white,
+                  if (controller.isSearchButtonClicked) {
+                    return GridView.builder(
+                      controller: scrollController,
+                      itemCount: snapshot.data.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.6,
+                      ),
+                      itemBuilder: (context, int index) {
+                        return ProductCard(
+                            product: Product.fromJson(snapshot.data[index]),
+                            imageWidth: 190 * Scale.width);
+                      },
+                    );
+                  } else {
+                    if (controller.searchText!.isEmpty) {
+                      return Text("검색어를 입력해주세요");
+                    }
+                    return Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                      child: Column(
+                        children: [
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data['sub_category'].length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                child: Container(
+                                  height: 45 * Scale.height,
+                                  width: 414 * Scale.width,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 15 * Scale.width,
+                                        height: 15 * Scale.width,
+                                        child: SvgPicture.asset(
+                                          "assets/images/svg/search.svg",
+                                          fit: BoxFit.scaleDown,
+                                        ),
                                       ),
-                                      child: Icon(Icons.arrow_upward_rounded)),
+                                      SizedBox(width: 7 * Scale.width),
+                                      Text(
+                                        snapshot.data['sub_category'][index]
+                                            ['main_category']['name'],
+                                        style: textStyle(
+                                            Colors.black,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            17.0),
+                                      ),
+                                      Icon(
+                                        Icons.keyboard_arrow_right,
+                                        size: 20 * Scale.width,
+                                      ),
+                                      Text(
+                                        snapshot.data['sub_category'][index]
+                                            ['name'],
+                                        style: textStyle(
+                                            Colors.black,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            17.0),
+                                      ),
+                                      Text(
+                                        "  카테고리",
+                                        style: textStyle(
+                                            Colors.grey[400]!,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            13.0),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              )
-                            ],
+                                onTap: () {
+                                  CategoryController categoryController =
+                                      CategoryController();
+                                  categoryController.mainCategory = Category(
+                                      id: snapshot.data['sub_category'][index]
+                                          ['main_category']['id'],
+                                      name: snapshot.data['sub_category'][index]
+                                          ['main_category']['name']);
+
+                                  Get.to(CategoryProductView(
+                                      categoryController,
+                                      snapshot.data['sub_category'][index]
+                                          ['id']));
+                                },
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
                           ),
-                        );
-                      }),
-                );
-              } else {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "네트워크에 연결하지 못했어요",
-                        style: textStyle(
-                            Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
-                      ),
-                      Text(
-                        "네트워크 연결상태를 확인하고",
-                        style: textStyle(
-                            Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
-                      ),
-                      Text(
-                        "다시 시도해 주세요",
-                        style: textStyle(
-                            Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
-                      ),
-                      SizedBox(height: 15 * Scale.height),
-                      GestureDetector(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadiusDirectional.all(
-                                  Radius.circular(19))),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 17 * Scale.width,
-                                vertical: 14 * Scale.height),
-                            child: Text("다시 시도하기",
-                                style: textStyle(Colors.black, FontWeight.w700,
-                                    'NotoSansKR', 15.0)),
+                          Divider(),
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data['keyword'].length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                  child: Container(
+                                    height: 45 * Scale.height,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 15 * Scale.width,
+                                          height: 15 * Scale.width,
+                                          child: SvgPicture.asset(
+                                            "assets/images/svg/search.svg",
+                                            fit: BoxFit.scaleDown,
+                                          ),
+                                        ),
+                                        SizedBox(width: 7 * Scale.width),
+                                        Text(
+                                          snapshot.data['keyword'][index],
+                                          style: textStyle(
+                                              Colors.black,
+                                              FontWeight.w500,
+                                              "NotoSansKR",
+                                              17.0),
+                                        ),
+                                        Text(
+                                          "  키워드",
+                                          style: textStyle(
+                                              Colors.grey[400]!,
+                                              FontWeight.w500,
+                                              "NotoSansKR",
+                                              13.0),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    searchByTextController.getSearchResults(
+                                        snapshot.data['keyword'][index]);
+                                    textController.text =
+                                        snapshot.data['keyword'][index];
+                                    searchByTextController
+                                        .isSearchButtonClicked = true;
+                                  });
+                            },
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
                           ),
-                        ),
-                        onTap: () {
-                          setState(() {});
-                        },
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              }
+                    );
+                  }
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Container(child: Text("error"));
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              print("wating");
+              return Container(color: Colors.pink, child: progressBar());
             } else {
-              return Container();
+              return Container(child: Text("검색어를 입력해주세요"));
             }
-          }),
+          },
+        ),
+      ),
     );
   }
 }
