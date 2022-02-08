@@ -6,6 +6,7 @@ class ProductDetailInfo {
   List<dynamic> images;
   Map<String, dynamic> subCategory;
   Map<String, dynamic> mainCategory;
+  List<dynamic> tags;
 
   ProductDetailInfo({
     required this.id,
@@ -15,6 +16,7 @@ class ProductDetailInfo {
     required this.images,
     required this.subCategory,
     required this.mainCategory,
+    required this.tags,
   });
 
   factory ProductDetailInfo.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class ProductDetailInfo {
       images: json['images'],
       subCategory: json['sub_category'],
       mainCategory: json['main_category'],
+      tags: json['tags'],
     );
   }
 }

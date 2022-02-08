@@ -29,8 +29,8 @@ class CategoryController extends GetxController {
         .catchError((e) {
       throw e;
     });
-    subCategoryList = response['data']['sub_category'];
-    return response['data']['sub_category'];
+    subCategoryList = response['data'];
+    return response['data'];
   }
 
   Future<List<dynamic>> getColorImage() async {
