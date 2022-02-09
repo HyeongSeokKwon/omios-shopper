@@ -33,6 +33,7 @@ class SearchByTextController extends GetxController {
   }
 
   Future<void> getSearchResults(String text) async {
+    streamController.add(null);
     Map<String, String> queryParams = {};
     queryParams['query'] = text;
     var response = await httpservice
@@ -44,6 +45,8 @@ class SearchByTextController extends GetxController {
     prevDataLink = response["data"]["previous"];
     nextDataLink = response["data"]["next"];
     streamController.add(searchData);
+
+    update();
   }
 
   Future<void> getProducts() async {

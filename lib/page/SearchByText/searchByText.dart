@@ -24,7 +24,7 @@ class _SearchByTextState extends State<SearchByText> {
   @override
   void initState() {
     super.initState();
-    searchByTextController.streamController.add([]);
+    //searchByTextController.streamController.add([]);
     // 첫 빌드시 검색 "" 초기화
     if (widget.initialSearchText != null) {
       searchByTextController.isSearchButtonClicked = true;
@@ -61,13 +61,13 @@ class _SearchByTextState extends State<SearchByText> {
             child: TextField(
               controller: textController,
               autofocus: true,
-              onChanged: (String value) async {
+              onChanged: (String value) {
                 searchByTextController.searchTextChange(value);
               },
-              onSubmitted: (String value) {
+              onSubmitted: (String value) async {
                 if (value.length >= 2) {
-                  searchByTextController.getSearchResults(value);
                   searchByTextController.isSearchButtonClicked = true;
+                  searchByTextController.getSearchResults(value);
                 }
               },
               showCursor: false,
@@ -92,24 +92,30 @@ class _SearchByTextState extends State<SearchByText> {
         body: StreamBuilder(
           stream: searchByTextController.streamController.stream,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return GetBuilder<SearchByTextController>(
+            return Container(
+              child: GetBuilder<SearchByTextController>(
                 init: searchByTextController,
                 builder: (controller) {
                   if (controller.isSearchButtonClicked) {
-                    return GridView.builder(
-                      controller: scrollController,
-                      itemCount: snapshot.data.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.6,
-                      ),
-                      itemBuilder: (context, int index) {
-                        return ProductCard(
-                            product: Product.fromJson(snapshot.data[index]),
-                            imageWidth: 190 * Scale.width);
-                      },
-                    );
+                    if (snapshot.hasData) {
+                      print("has data");
+                      return GridView.builder(
+                        controller: scrollController,
+                        itemCount: snapshot.data.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.6,
+                        ),
+                        itemBuilder: (context, int index) {
+                          return ProductCard(
+                              product: Product.fromJson(snapshot.data[index]),
+                              imageWidth: 190 * Scale.width);
+                        },
+                      );
+                    } else {
+                      print("waiting");
+                      return progressBar();
+                    }
                   } else {
                     if (controller.searchText!.isEmpty) {
                       return Text("검색어를 입력해주세요");
@@ -249,15 +255,17 @@ class _SearchByTextState extends State<SearchByText> {
                     );
                   }
                 },
-              );
-            } else if (snapshot.hasError) {
-              return Container(child: Text("error"));
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              print("wating");
-              return Container(color: Colors.pink, child: progressBar());
-            } else {
-              return Container(child: Text("검색어를 입력해주세요"));
-            }
+              ),
+            );
+
+            //    else if (snapshot.hasError) {
+            //   return Container(child: Text("error"));
+            // } else if (snapshot.connectionState == ConnectionState.waiting) {
+            //   print("wating");
+            //   return Container(color: Colors.pink, child: progressBar());
+            // } else {
+            //   return Container(child: Text("검색어를 입력해주세요"));
+            // }
           },
         ),
       ),
