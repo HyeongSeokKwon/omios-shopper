@@ -1,7 +1,9 @@
+import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:get/get.dart';
 
 class CategoryAppbar extends StatelessWidget with PreferredSizeWidget {
   @override
@@ -33,6 +35,7 @@ class CategoryAppbar extends StatelessWidget with PreferredSizeWidget {
             children: [
               GestureDetector(
                 onTap: () {
+                  Get.to(() => SearchByText());
                   Vibrate.feedback(VIBRATETYPE);
                 },
                 child: SvgPicture.asset("assets/images/svg/search.svg",

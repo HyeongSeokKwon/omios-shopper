@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloth_collection/controller/categoryController.dart';
 import 'package:cloth_collection/controller/productController.dart';
 import 'package:cloth_collection/model/productModel.dart';
+import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/product_card.dart';
@@ -54,6 +55,7 @@ class _CategoryProductViewState extends State<CategoryProductView>
               children: [
                 GestureDetector(
                   onTap: () {
+                    Get.to(() => SearchByText());
                     Vibrate.feedback(VIBRATETYPE);
                   },
                   child: SvgPicture.asset("assets/images/svg/search.svg",
