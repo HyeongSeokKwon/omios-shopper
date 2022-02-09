@@ -117,7 +117,7 @@ class HttpService {
   }
 
   Future<dynamic> httpGet(String baseUrl,
-      [Map<String, String>? queryParams]) async {
+      [Map<String, dynamic>? queryParams]) async {
     var response;
     var responseJson;
     print(Uri.http(addressUrlx, baseUrl, queryParams));
