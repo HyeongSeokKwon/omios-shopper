@@ -24,6 +24,7 @@ class _SearchByTextState extends State<SearchByText> {
   @override
   void initState() {
     super.initState();
+
     //searchByTextController.streamController.add([]);
     // 첫 빌드시 검색 "" 초기화
     if (widget.initialSearchText != null) {
@@ -60,7 +61,7 @@ class _SearchByTextState extends State<SearchByText> {
             },
             child: TextField(
               controller: textController,
-              autofocus: true,
+              autofocus: false,
               onChanged: (String value) {
                 searchByTextController.searchTextChange(value);
               },
