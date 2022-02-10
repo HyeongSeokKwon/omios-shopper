@@ -40,7 +40,11 @@ class _ProductDetailState extends State<ProductDetail>
 
     _controller = TabController(length: 4, vsync: this);
 
-    productDetailController.getProductDetailInfo(widget.product.id);
+    // productDetailController
+    //     .getProductDetailInfo(widget.product.id)
+    //     .catchError((e) {
+    //   showAlertDialog(context, e);
+    // });
     recentViewController.dataInit(context);
     recentViewController.insertRecentView(
       widget.product.id,
@@ -115,7 +119,12 @@ class _ProductDetailState extends State<ProductDetail>
 
   Widget _buildScroll() {
     return FutureBuilder(
-      future: productDetailController.getProductDetailInfo(widget.product.id),
+      future: productDetailController
+          .getProductDetailInfo(widget.product.id)
+          .catchError((e) {
+        showAlertDialog(context, e);
+        ErrorCard();
+      }),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -139,20 +148,19 @@ class _ProductDetailState extends State<ProductDetail>
                 ],
               ),
             );
-          } else if (snapshot.hasError) {
+          } else {
             return Container(
               width: 414 * Scale.width,
               height: 896 * Scale.height,
               child: Center(child: ErrorCard()),
             );
-          } else {
-            return Container();
           }
         } else
           return Container(
-              width: 414 * Scale.width,
-              height: 896 * Scale.height,
-              child: progressBar());
+            width: 414 * Scale.width,
+            height: 896 * Scale.height,
+            child: progressBar(),
+          );
       },
     );
   }
@@ -279,7 +287,7 @@ class _ProductDetailState extends State<ProductDetail>
       child: Container(
         height: 30 * Scale.height,
         child: ListView.builder(
-          itemCount: 4,
+          itemCount: productDetailController.productInfo.tags.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: EdgeInsets.only(right: 4 * Scale.width),

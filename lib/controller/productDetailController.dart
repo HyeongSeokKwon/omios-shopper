@@ -41,21 +41,24 @@ class ProductDetailController extends GetxController {
   }
 
   Future<dynamic> getProductDetailInfo(int productId) async {
-    var response = await httpservice.httpGet('product/$productId');
-    productInfo = ProductDetailInfo.fromJson(response['data']);
-
-    for (Map i in productInfo.options) {
-      if (!colorData.contains(i['color'])) {
-        colorData.add(i['color']);
+    try {
+      var response = await httpservice.httpGet('product/$productId');
+      productInfo = ProductDetailInfo.fromJson(response['data']);
+      for (Map i in productInfo.options) {
+        if (!colorData.contains(i['color'])) {
+          colorData.add(i['color']);
+        }
       }
-    }
-    for (Map i in productInfo.options) {
-      if (!sizeData.contains(i['size'])) {
-        sizeData.add(i['size']);
+      for (Map i in productInfo.options) {
+        if (!sizeData.contains(i['size'])) {
+          sizeData.add(i['size']);
+        }
       }
-    }
 
-    return response;
+      return response;
+    } catch (e) {
+      throw e;
+    }
   }
 
   void reviewTabClicked(int tab) {
