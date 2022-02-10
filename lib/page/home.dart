@@ -11,7 +11,6 @@ import 'package:cloth_collection/widget/appbar/deepyHomeAppbar.dart';
 import 'package:cloth_collection/widget/appbar/imageSearch_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/myPage_Appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -57,8 +56,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    focusNode.dispose();
+    homeController.scrollController.dispose();
     homeController.dispose();
-
     super.dispose();
   }
 
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
               ],
               showSelectedLabels: false,
               showUnselectedLabels: false,
-              selectedFontSize: 12.sp,
+              selectedFontSize: 12 * Scale.width,
               onTap: homeController.onItemTapped,
               currentIndex: _currentIndex,
               type: BottomNavigationBarType.fixed,

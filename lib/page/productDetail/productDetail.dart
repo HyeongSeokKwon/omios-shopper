@@ -12,7 +12,6 @@ import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -54,6 +53,7 @@ class _ProductDetailState extends State<ProductDetail>
   void dispose() {
     recentViewController.dispose();
     pageController.dispose();
+    productDetailController.dispose();
     super.dispose();
   }
 
@@ -339,7 +339,7 @@ class _ProductDetailState extends State<ProductDetail>
           ),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14.r),
+              borderRadius: BorderRadius.circular(14),
             ),
           ),
           fixedSize: MaterialStateProperty.all<Size>(

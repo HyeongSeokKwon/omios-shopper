@@ -5,7 +5,6 @@ import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
@@ -23,6 +22,7 @@ class _LoginState extends State<Login> {
   LoginController loginController = LoginController();
   TextEditingController idTextController = TextEditingController();
   TextEditingController pwdTextController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -37,6 +37,12 @@ class _LoginState extends State<Login> {
     getVibratePermission();
   }
 
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
   void getVibratePermission() async {
     try {
       canVibrate = await Vibrate.canVibrate;
@@ -48,7 +54,7 @@ class _LoginState extends State<Login> {
     Scale.setScale(context);
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
+        FocusScope.of(context).requestFocus(focusNode);
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -165,23 +171,23 @@ class _LoginState extends State<Login> {
                     "NotoSansKR", 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
               ),
               textAlign: TextAlign.left,
@@ -246,23 +252,23 @@ class _LoginState extends State<Login> {
                     "NotoSansKR", 16.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide:
-                      BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                  borderSide: BorderSide(
+                      color: const Color(0xffcccccc), width: 1 * Scale.width),
                 ),
               ),
               textAlign: TextAlign.left,
@@ -339,7 +345,7 @@ class _LoginState extends State<Login> {
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14.r),
+              borderRadius: BorderRadius.circular(14),
             ),
           ),
           fixedSize: MaterialStateProperty.all<Size>(
@@ -417,7 +423,7 @@ class _LoginState extends State<Login> {
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14.r),
+                borderRadius: BorderRadius.circular(14),
                 side: BorderSide(color: const Color(0xffe2e2e2)),
               ),
             ),

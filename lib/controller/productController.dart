@@ -1,7 +1,6 @@
 import 'package:cloth_collection/http/httpService.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
-import 'package:path/path.dart';
 
 class SearchOption {
   List<int> color;

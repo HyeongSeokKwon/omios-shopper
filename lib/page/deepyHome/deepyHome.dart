@@ -15,7 +15,7 @@ class DeepyHome extends StatefulWidget {
 
 class _DeepyHomeState extends State<DeepyHome> {
   late List<Product> products;
-
+  FocusNode focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -23,10 +23,16 @@ class _DeepyHomeState extends State<DeepyHome> {
   }
 
   @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
+        FocusScope.of(context).requestFocus(focusNode);
       },
       child: Container(
         child: SingleChildScrollView(

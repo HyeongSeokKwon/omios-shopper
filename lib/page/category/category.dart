@@ -19,6 +19,12 @@ class _CategoryState extends State<Category> {
   }
 
   @override
+  void dispose() {
+    categoryController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xffffffff),

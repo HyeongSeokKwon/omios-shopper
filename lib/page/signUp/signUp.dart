@@ -2,7 +2,6 @@ import 'package:cloth_collection/controller/signUpController.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/state_manager.dart';
 
@@ -149,7 +148,7 @@ class _SignUpState extends State<SignUp> {
                         fontWeight: FontWeight.w400,
                         fontFamily: "NotoSansKR",
                         fontStyle: FontStyle.normal,
-                        fontSize: 14.sp,
+                        fontSize: 14.0,
                       ),
                       suffixIcon: GetBuilder<SignUpController>(
                           init: signUpController,
@@ -181,26 +180,30 @@ class _SignUpState extends State<SignUp> {
                           }),
                       hintText: ("아이디를 입력하세요"),
                       hintStyle: textStyle(const Color(0xffcccccc),
-                          FontWeight.w400, "NotoSansKR", 16.sp),
+                          FontWeight.w400, "NotoSansKR", 16.0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(
-                            color: const Color(0xffcccccc), width: 1.w),
+                            color: const Color(0xffcccccc),
+                            width: 1 * Scale.width),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(
-                            color: const Color(0xffcccccc), width: 1.w),
+                            color: const Color(0xffcccccc),
+                            width: 1 * Scale.width),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(
-                            color: const Color(0xffcccccc), width: 1.w),
+                            color: const Color(0xffcccccc),
+                            width: 1 * Scale.width),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(
-                            color: const Color(0xffcccccc), width: 1.w),
+                            color: const Color(0xffcccccc),
+                            width: 1 * Scale.width),
                       ),
                     ),
                     textAlign: TextAlign.left,
@@ -276,7 +279,7 @@ class _SignUpState extends State<SignUp> {
                       fontWeight: FontWeight.w400,
                       fontFamily: "NotoSansKR",
                       fontStyle: FontStyle.normal,
-                      fontSize: 14.sp,
+                      fontSize: 14.0,
                     ),
                     suffixIcon: GetBuilder<SignUpController>(
                         init: signUpController,
@@ -307,26 +310,30 @@ class _SignUpState extends State<SignUp> {
                         }),
                     hintText: ("비밀번호를 입력하세요"),
                     hintStyle: textStyle(const Color(0xffcccccc),
-                        FontWeight.w400, "NotoSansKR", 16.sp),
+                        FontWeight.w400, "NotoSansKR", 16.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                   ),
                   textAlign: TextAlign.left,
@@ -406,7 +413,7 @@ class _SignUpState extends State<SignUp> {
                       fontWeight: FontWeight.w400,
                       fontFamily: "NotoSansKR",
                       fontStyle: FontStyle.normal,
-                      fontSize: 14.sp,
+                      fontSize: 14.0,
                     ),
                     suffixIcon: GetBuilder<SignUpController>(
                         init: signUpController,
@@ -437,26 +444,30 @@ class _SignUpState extends State<SignUp> {
                         }),
                     hintText: ("비밀번호를 입력하세요"),
                     hintStyle: textStyle(const Color(0xffcccccc),
-                        FontWeight.w400, "NotoSansKR", 16.sp),
+                        FontWeight.w400, "NotoSansKR", 16.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                       borderSide: BorderSide(
-                          color: const Color(0xffcccccc), width: 1.w),
+                          color: const Color(0xffcccccc),
+                          width: 1 * Scale.width),
                     ),
                   ),
                   textAlign: TextAlign.left,
@@ -534,30 +545,34 @@ class _SignUpState extends State<SignUp> {
                           fontWeight: FontWeight.w400,
                           fontFamily: "NotoSansKR",
                           fontStyle: FontStyle.normal,
-                          fontSize: 14.sp,
+                          fontSize: 14.0,
                         ),
                         hintText: ("입력하세요"),
                         hintStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.sp),
+                            FontWeight.w400, "NotoSansKR", 16.0),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           borderSide: BorderSide(
-                              color: const Color(0xffcccccc), width: 1.w),
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
                         ),
                         errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           borderSide: BorderSide(
-                              color: const Color(0xffcccccc), width: 1.w),
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           borderSide: BorderSide(
-                              color: const Color(0xffcccccc), width: 1.w),
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           borderSide: BorderSide(
-                              color: const Color(0xffcccccc), width: 1.w),
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
                         ),
                       ),
                       textAlign: TextAlign.left,
@@ -605,21 +620,19 @@ class _SignUpState extends State<SignUp> {
               counterText: "",
               floatingLabelBehavior: FloatingLabelBehavior.auto,
               contentPadding: EdgeInsets.only(left: 12 * Scale.width),
-              labelStyle: TextStyle(
-                color: const Color(0xff666666),
-                height: 0.6,
-                fontWeight: FontWeight.w400,
-                fontFamily: "NotoSansKR",
-                fontStyle: FontStyle.normal,
-                fontSize: 14.sp,
+              labelStyle: textStyle(
+                const Color(0xff666666),
+                FontWeight.w400,
+                "NotoSansKR",
+                14.0,
               ),
               hintText: ("추천인을 입력하세요"),
-              hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                  "NotoSansKR", 16.sp),
+              hintStyle: textStyle(
+                  const Color(0xffcccccc), FontWeight.w400, "NotoSansKR", 16.0),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12)),
-                borderSide:
-                    BorderSide(color: const Color(0xffcccccc), width: 1.w),
+                borderSide: BorderSide(
+                    color: const Color(0xffcccccc), width: 1 * Scale.width),
               ),
             ),
             textAlign: TextAlign.left,
@@ -810,7 +823,7 @@ class _SignUpState extends State<SignUp> {
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   fixedSize: MaterialStateProperty.all<Size>(

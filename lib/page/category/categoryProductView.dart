@@ -250,6 +250,8 @@ class _ProductViewAreaState extends State<ProductViewArea>
   @override
   void dispose() {
     optionTabController.dispose();
+    scrollController.dispose();
+    productController.dispose();
     super.dispose();
   }
 

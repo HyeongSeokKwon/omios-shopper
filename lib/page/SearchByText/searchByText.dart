@@ -21,6 +21,7 @@ class _SearchByTextState extends State<SearchByText> {
   SearchByTextController searchByTextController = SearchByTextController();
   TextEditingController textController = TextEditingController();
   ScrollController scrollController = ScrollController();
+  FocusNode focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -45,10 +46,20 @@ class _SearchByTextState extends State<SearchByText> {
   }
 
   @override
+  void dispose() {
+    focusNode.dispose();
+    textController.dispose();
+    scrollController.dispose();
+    searchByTextController.streamController.close();
+    searchByTextController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
+        FocusScope.of(context).requestFocus(focusNode);
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,

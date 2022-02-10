@@ -1,4 +1,3 @@
-import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/page/recentviewProduct.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';

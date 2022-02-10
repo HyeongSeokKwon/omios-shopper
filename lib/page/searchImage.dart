@@ -1,7 +1,6 @@
 import 'package:cloth_collection/controller/uploadImageController.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -47,12 +46,12 @@ class _SearchImageState extends State<SearchImage> {
           text: TextSpan(
             text: "$id님!\n",
             style: textStyle(
-                const Color(0xffec5363), FontWeight.w700, "NotoSansKR", 18.sp),
+                const Color(0xffec5363), FontWeight.w700, "NotoSansKR", 18.0),
             children: [
               TextSpan(
                 text: "지금 어떤 옷을 찾고있나요?",
                 style: textStyle(
-                    Colors.black, FontWeight.w500, "NotoSansKR", 18.sp),
+                    Colors.black, FontWeight.w500, "NotoSansKR", 18.0),
               ),
             ],
           ),
@@ -69,7 +68,7 @@ class _SearchImageState extends State<SearchImage> {
           height: 492 * Scale.height,
           decoration: BoxDecoration(
             color: const Color(0xfffafafa),
-            borderRadius: BorderRadius.all(Radius.circular(20.r)),
+            borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           child: _buildOpenImage(),
         ),
@@ -90,18 +89,18 @@ class _SearchImageState extends State<SearchImage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset("$upLoadButtonIcon"),
-                SizedBox(width: 5.w),
+                SizedBox(width: 5 * Scale.width),
                 Text(
                   controller.isSelectedImage() == false ? "이미지 업로드" : "검색하기",
                   style: textStyle(
-                      Colors.white, FontWeight.w500, "NotoSansKR", 16.sp),
+                      Colors.white, FontWeight.w500, "NotoSansKR", 16.0),
                 ),
               ],
             ),
             style: ButtonStyle(
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14.r),
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
               fixedSize: MaterialStateProperty.all<Size>(

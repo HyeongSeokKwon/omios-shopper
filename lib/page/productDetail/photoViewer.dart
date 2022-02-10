@@ -28,6 +28,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
   @override
   void dispose() {
     _pageController.dispose();
+    scaleController.dispose();
     super.dispose();
   }
 
