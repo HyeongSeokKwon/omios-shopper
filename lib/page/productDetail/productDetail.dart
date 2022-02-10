@@ -40,11 +40,6 @@ class _ProductDetailState extends State<ProductDetail>
 
     _controller = TabController(length: 4, vsync: this);
 
-    // productDetailController
-    //     .getProductDetailInfo(widget.product.id)
-    //     .catchError((e) {
-    //   showAlertDialog(context, e);
-    // });
     recentViewController.dataInit(context);
     recentViewController.insertRecentView(
       widget.product.id,
@@ -198,7 +193,7 @@ class _ProductDetailState extends State<ProductDetail>
                 children: [],
               ),
               Text(
-                "${productDetailController.productInfo.id}",
+                "${productDetailController.productInfo.name}",
                 style: textStyle(const Color(0xff555555), FontWeight.w500,
                     "NotoSansKR", 16.0),
               ),
