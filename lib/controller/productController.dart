@@ -98,18 +98,18 @@ class ProductController extends GetxController {
   }
 
   bool isColorSelected(int colorIndex) {
-    if (selectedColor.contains(colorIndex)) {
+    if (selectedColor.contains(colorIndex + 1)) {
       return true;
     }
     return false;
   }
 
   void selectColor(int colorIndex) {
-    if (selectedColor.contains(colorIndex)) {
-      selectedColor.remove(colorIndex);
+    if (selectedColor.contains(colorIndex + 1)) {
+      selectedColor.remove(colorIndex + 1);
       update();
     } else {
-      selectedColor.add(colorIndex);
+      selectedColor.add(colorIndex + 1);
       update();
     }
   }
