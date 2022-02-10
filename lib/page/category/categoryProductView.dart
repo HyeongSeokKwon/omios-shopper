@@ -222,7 +222,8 @@ class ProductViewArea extends StatefulWidget {
 class _ProductViewAreaState extends State<ProductViewArea>
     with SingleTickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
-  ProductController productController = ProductController();
+  ProductController productController =
+      Get.put<ProductController>(ProductController());
 
   late TabController optionTabController;
 
@@ -249,9 +250,9 @@ class _ProductViewAreaState extends State<ProductViewArea>
 
   @override
   void dispose() {
+    //productController.dispose();
     optionTabController.dispose();
     scrollController.dispose();
-    productController.dispose();
     super.dispose();
   }
 
@@ -857,7 +858,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
               ),
               SliderTheme(
                 data: SliderThemeData(
-                  inactiveTrackColor: Colors.grey[400]!,
+                  inactiveTrackColor: Colors.grey,
                   activeTrackColor: const Color(0xffec5363),
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 0.0),
                   trackHeight: 10 * Scale.height,
