@@ -22,6 +22,18 @@ class _SignUpState extends State<SignUp> {
   SignUpController signUpController = SignUpController();
 
   @override
+  void dispose() {
+    idTextController.dispose();
+    pwdTextController.dispose();
+    pwdCheckTextController.dispose();
+    emailController.dispose();
+    recommandController.dispose();
+    signUpController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffffff),
