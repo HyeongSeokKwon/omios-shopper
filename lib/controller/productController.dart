@@ -21,10 +21,10 @@ class ProductController extends GetxController {
   String? prevDataLink = "";
   String? nextDataLink = "";
 
-  int sortType = 0;
-  double startPrice = 1.0;
-  double endPrice = 99999.0;
-  RangeValues priceRange = RangeValues(0.0, 100000.0);
+  int sortType = NOTSELECT;
+  int startPrice = 0;
+  int endPrice = 100;
+  RangeValues priceRange = RangeValues(0, 100);
 
   List<int> selectedColor = [];
   List<String> sortTypes = ["최신순", "가격 낮은순", "가격 높은순", "리뷰 많은순", "추천순"];
@@ -87,7 +87,7 @@ class ProductController extends GetxController {
   }
 
   void refreshPriceOption() {
-    priceRange = RangeValues(0.0, 100000.0);
+    priceRange = RangeValues(0, 100);
     update(["priceOption"]);
   }
 
@@ -121,8 +121,8 @@ class ProductController extends GetxController {
     queryParams = {};
 
     queryParams['main_category'] = '$mainCategoryId';
-    queryParams['minprice'] = '$startPrice';
-    queryParams['maxprice'] = '$endPrice';
+    queryParams['minprice'] = '${startPrice * 1000}';
+    queryParams['maxprice'] = '${endPrice * 1000}';
 
     queryParams['sort'] = sortTypesUrl[sortType];
 

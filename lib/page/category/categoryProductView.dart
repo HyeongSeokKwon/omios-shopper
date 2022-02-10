@@ -672,12 +672,15 @@ class _ProductViewAreaState extends State<ProductViewArea>
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-                  child: TabBarView(controller: optionTabController, children: [
-                    colorOptionArea(),
-                    priceOptionArea(),
-                    colorOptionArea(),
-                    colorOptionArea(),
-                  ]),
+                  child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: optionTabController,
+                      children: [
+                        colorOptionArea(),
+                        priceOptionArea(),
+                        colorOptionArea(),
+                        colorOptionArea(),
+                      ]),
                 ),
               ),
               Padding(
@@ -843,49 +846,34 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 height: 30 * Scale.height,
               ),
               Text("가격대",
-                  style: textStyle(const Color(0xff797979), FontWeight.w400,
-                      "NotoSans", 20.0)),
+                  style: textStyle(const Color(0xff797979), FontWeight.w500,
+                      "NotoSans", 14.0)),
               Text(
-                  "${(controller.priceRange.start).toInt()}원 ~ ${(controller.priceRange.end).toInt()}원",
-                  style: textStyle(const Color(0xff333333), FontWeight.w500,
+                  "${(controller.priceRange.start).toInt() * 1000}원 ~ ${(controller.priceRange.end).toInt() * 1000}원",
+                  style: textStyle(const Color(0xff333333), FontWeight.w700,
                       "NotoSansKR", 22.0)),
               SizedBox(
                 height: 33 * Scale.height,
               ),
               SliderTheme(
                 data: SliderThemeData(
-                  inactiveTrackColor: const Color(0xffe2e2e2),
+                  inactiveTrackColor: Colors.grey[400]!,
                   activeTrackColor: const Color(0xffec5363),
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 0.0),
-                  trackHeight: 18 * Scale.height,
+                  trackHeight: 10 * Scale.height,
                   thumbColor: Colors.white,
                   thumbShape: RoundSliderThumbShape(),
                 ),
                 child: RangeSlider(
                     values: controller.priceRange,
-                    min: 0.0,
-                    max: 100000.0,
-                    divisions: 100,
+                    min: 0,
+                    max: 100,
                     onChanged: (value) {
+                      print(value.end);
                       controller.priceRangeChange(value);
                     }),
               ),
               SizedBox(height: 16 * Scale.height),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "${controller.startPrice.toInt()}원",
-                    style: textStyle(const Color(0xff999999), FontWeight.w400,
-                        "NotoSansKR", 18.0),
-                  ),
-                  Text(
-                    "${controller.endPrice.toInt()}원",
-                    style: textStyle(const Color(0xff999999), FontWeight.w400,
-                        "NotoSansKR", 18.0),
-                  ),
-                ],
-              ),
             ],
           );
         },
