@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../page/login/login.dart';
 import 'httpException.dart';
 
 // 13.209.244.41/user/token/            : id, pwd 이용해서 token 발급
@@ -37,8 +40,10 @@ class HttpService {
         throw BadRequestException("400 :");
 
       case 401:
-        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
-        return responseJson;
+        // var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        // return responseJson;
+
+        throw UnauthorisedException("401 :");
 
       case 403:
         throw UnauthorisedException("403 :");
@@ -47,6 +52,7 @@ class HttpService {
         throw NotfoundException("404 :");
 
       case 500:
+        print(response.body);
         throw FetchDataException("500 :");
 
       default:
@@ -105,10 +111,15 @@ class HttpService {
           );
 
           responseJson = _response(response);
+          print(responseJson);
           setAccessToken(responseJson['data']['access']);
           setRefreshToken(responseJson['data']['refresh']);
         } on SocketException {
           throw FetchDataException("연결된 인터넷이 없습니다.");
+        } catch (e) {
+          Get.snackbar('Snackbar', 'Snackbar',
+              snackPosition: SnackPosition.TOP);
+          Get.offAll(Login());
         }
       }
     } else {
