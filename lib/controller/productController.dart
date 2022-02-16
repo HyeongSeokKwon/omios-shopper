@@ -23,7 +23,7 @@ class ProductController extends GetxController {
 
   int sortType = NOTSELECT;
   int startPrice = 0;
-  int endPrice = 100;
+  double endPrice = 100;
   RangeValues priceRange = RangeValues(0, 100);
 
   List<int> selectedColor = [];
@@ -54,9 +54,13 @@ class ProductController extends GetxController {
       throw e;
     });
 
+    endPrice = (response["data"]["max_price"] / 1000) + 1;
     productData = response["data"]["results"];
     prevDataLink = response["data"]["previous"];
     nextDataLink = response["data"]["next"];
+
+    priceRange = RangeValues(0, (response["data"]["max_price"] / 1000) + 1);
+    endPrice = ((response["data"]["max_price"] / 1000) + 1);
 
     update();
     return response['data']['results'];
@@ -178,5 +182,21 @@ class ProductController extends GetxController {
     nextDataLink = response['data']['next'];
     productData = response['data']['results'];
     update();
+  }
+
+  void initFilter() {
+    sortType = NOTSELECT;
+    selectedColor = [];
+    priceRange = RangeValues(0, 100);
+  }
+
+  bool isApplyedFilter() {
+    if (sortType != NOTSELECT ||
+        selectedColor.isNotEmpty ||
+        endPrice != priceRange.end) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

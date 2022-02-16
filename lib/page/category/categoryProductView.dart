@@ -390,39 +390,41 @@ class _ProductViewAreaState extends State<ProductViewArea>
     return GestureDetector(
       child: Padding(
         padding: EdgeInsets.only(right: 8 * Scale.width),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(445)),
-            border: Border.all(
-              color: Color(0xffdddddd),
-              width: 1,
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 10 * Scale.width, vertical: 6 * Scale.height),
-            child: Row(
-              children: [
-                GetBuilder<ProductController>(
-                    init: productController,
-                    builder: (controller) {
-                      return Text(
+        child: GetBuilder<ProductController>(
+            init: productController,
+            builder: (controller) {
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(445)),
+                  border: Border.all(
+                    color: controller.sortType == 0
+                        ? Color(0xffdddddd)
+                        : const Color(0xffec5363),
+                    width: 1,
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 10 * Scale.width, vertical: 6 * Scale.height),
+                  child: Row(
+                    children: [
+                      Text(
                         "${controller.sortTypes[controller.sortType]}",
                         style: textStyle(const Color(0xff444444),
                             FontWeight.w700, "NotoSansKR", 14.0),
-                      );
-                    }),
-                SizedBox(width: 6 * Scale.width),
-                SvgPicture.asset(
-                  "assets/images/svg/dropdown.svg",
-                  width: 10 * Scale.width,
-                  height: 5 * Scale.height,
-                  fit: BoxFit.scaleDown,
+                      ),
+                      SizedBox(width: 6 * Scale.width),
+                      SvgPicture.asset(
+                        "assets/images/svg/dropdown.svg",
+                        width: 10 * Scale.width,
+                        height: 5 * Scale.height,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              );
+            }),
       ),
       onTap: () {
         showModalBottomSheet(
@@ -559,67 +561,74 @@ class _ProductViewAreaState extends State<ProductViewArea>
   }
 
   Widget filterBarArea(BuildContext context) {
-    return GetBuilder<CategoryController>(
-        init: widget.categoryController,
-        builder: (controller) {
-          return Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Container(
-              color: Colors.white,
-              height: 35 * Scale.height,
-              child: ListView(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: 8 * Scale.width, left: 22 * Scale.width),
-                    child: GestureDetector(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(445)),
-                          border: Border.all(
-                            color: Color(0xffdddddd),
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10 * Scale.width,
-                            vertical: 6 * Scale.height,
-                          ),
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                "assets/images/svg/refreshDark.svg",
-                                width: 10 * Scale.width,
-                                height: 10 * Scale.width,
-                                fit: BoxFit.scaleDown,
+    return Padding(
+      padding: EdgeInsets.only(top: 8),
+      child: Container(
+        color: Colors.white,
+        height: 35 * Scale.height,
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            GetBuilder<ProductController>(
+                init: productController,
+                builder: (controller) {
+                  return controller.isApplyedFilter()
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              right: 8 * Scale.width, left: 22 * Scale.width),
+                          child: GestureDetector(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(445)),
+                                border: Border.all(
+                                  color: Color(0xffdddddd),
+                                  width: 1,
+                                ),
                               ),
-                              Text("  초기화",
-                                  style: textStyle(const Color(0xff444444),
-                                      FontWeight.w700, "NotoSansKR", 14.0))
-                            ],
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10 * Scale.width,
+                                  vertical: 6 * Scale.height,
+                                ),
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/images/svg/refreshDark.svg",
+                                      width: 10 * Scale.width,
+                                      height: 10 * Scale.width,
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                    Text("  초기화",
+                                        style: textStyle(
+                                            const Color(0xff444444),
+                                            FontWeight.w700,
+                                            "NotoSansKR",
+                                            14.0))
+                                  ],
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              controller.initGetProducts().catchError((e) {
+                                showAlertDialog(context, e);
+                              });
+                              controller.initFilter();
+                            },
                           ),
-                        ),
-                      ),
-                      onTap: () {
-                        productController.initGetProducts().catchError((e) {
-                          showAlertDialog(context, e);
-                        });
-                      },
-                    ),
-                  ),
-                  sortButton(),
-                  filterButton("색상"),
-                  filterButton("가격"),
-                  filterButton("연령"),
-                  filterButton("스타일"),
-                ],
-              ),
-            ),
-          );
-        });
+                        )
+                      : Container();
+                }),
+            sortButton(),
+            filterButton("색상"),
+            filterButton("가격"),
+            filterButton("연령"),
+            filterButton("스타일"),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget optionArea(String type) {
@@ -868,7 +877,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 child: RangeSlider(
                     values: controller.priceRange,
                     min: 0,
-                    max: 100,
+                    max: controller.endPrice,
                     onChanged: (value) {
                       print(value.end);
                       controller.priceRangeChange(value);
