@@ -25,28 +25,33 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final RecentViewController recentViewController = RecentViewController();
   final ProductDetailController productDetailController =
       Get.put<ProductDetailController>(ProductDetailController());
   final PageController pageController = PageController();
 
   late TabController _controller;
-
+  late NavigatorState navigator;
   @override
   void initState() {
     super.initState();
-
-    _controller = TabController(length: 4, vsync: this);
-
-    recentViewController.dataInit(context);
+    recentViewController.dataInit();
     recentViewController.insertRecentView(
       widget.product.id,
     );
 
+    _controller = TabController(length: 4, vsync: this);
+
     pageController.addListener(() {
       productDetailController.changeOffset(pageController.offset);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    navigator = Navigator.of(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -128,8 +133,7 @@ class _ProductDetailState extends State<ProductDetail>
               child: Column(
                 children: [
                   ImageSlideHasDot(
-                    imageList: productDetailController.productInfo.images,
-                  ),
+                      imageList: productDetailController.productInfo.images),
                   SizedBox(height: 10 * Scale.height),
                   _buildShortProductInfo(),
                   SizedBox(height: 14 * Scale.height),
@@ -247,24 +251,18 @@ class _ProductDetailState extends State<ProductDetail>
         child: ListView.builder(
           itemCount: productDetailController.productInfo.images.length,
           itemBuilder: (context, index) {
-            return GestureDetector(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3 * Scale.width),
+              child: GestureDetector(
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(
                     Radius.circular(7.0),
                   ),
                   child: CachedNetworkImage(
-                    width: 85 * Scale.width,
-                    height: 85 * 1.2 * Scale.width,
+                    width: 140 * 3 / 4 * Scale.height,
                     fit: BoxFit.fill,
                     imageUrl:
                         "${productDetailController.productInfo.images[index]['url']}",
-                    placeholder: (context, url) {
-                      return Container(
-                          width: 85 * Scale.width,
-                          height: 85 * 1.2 * Scale.width);
-                    },
                   ),
                 ),
               ),

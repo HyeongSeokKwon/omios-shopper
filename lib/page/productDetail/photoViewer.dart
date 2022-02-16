@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
@@ -36,74 +38,87 @@ class _PhotoViewerState extends State<PhotoViewer> {
   Widget build(BuildContext context) {
     _pageController = PageController(initialPage: widget.index);
     return SafeArea(
-      top: false,
+      top: true,
       bottom: true,
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              child: PhotoViewGallery.builder(
-                scrollPhysics: scrollPhysics,
-                builder: (BuildContext context, int index) {
-                  return PhotoViewGalleryPageOptions(
-                    scaleStateController: scaleController,
-                    imageProvider: CachedNetworkImageProvider(
-                        "${widget.imageList[index]['url']}"),
-                    minScale: PhotoViewComputedScale.contained,
-                    maxScale: PhotoViewComputedScale.contained * 1.75,
-                  );
-                },
-                scaleStateChangedCallback: (controller) {
-                  if (scaleController.isZooming) {
-                    scrollPhysics = NeverScrollableScrollPhysics();
-                    setState(() {});
-                  } else {
-                    scrollPhysics = ClampingScrollPhysics();
-                    setState(() {});
-                  }
-                },
-                itemCount: widget.imageList.length,
-                pageController: _pageController,
-                onPageChanged: (value) {
-                  curIndex = value;
-                  setState(() {});
-                },
-              ),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    top: 20 * Scale.height, right: 20 * Scale.height),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
+      child: WillPopScope(
+        onWillPop: () async {
+          if (Platform.isIOS) {
+            if (Navigator.of(context).userGestureInProgress)
+              return false;
+            else {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        },
+        child: Scaffold(
+          body: Stack(
+            children: [
+              Container(
+                child: PhotoViewGallery.builder(
+                  scrollPhysics: scrollPhysics,
+                  builder: (BuildContext context, int index) {
+                    return PhotoViewGalleryPageOptions(
+                      scaleStateController: scaleController,
+                      imageProvider: CachedNetworkImageProvider(
+                          "${widget.imageList[index]['url']}"),
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.contained * 1.75,
+                    );
                   },
-                  child: Icon(
-                    Icons.clear,
-                    color: Colors.white,
-                  ),
+                  scaleStateChangedCallback: (controller) {
+                    if (scaleController.isZooming) {
+                      scrollPhysics = NeverScrollableScrollPhysics();
+                      setState(() {});
+                    } else {
+                      scrollPhysics = ClampingScrollPhysics();
+                      setState(() {});
+                    }
+                  },
+                  itemCount: widget.imageList.length,
+                  pageController: _pageController,
+                  onPageChanged: (value) {
+                    curIndex = value;
+                    setState(() {});
+                  },
                 ),
               ),
-            ),
-            Positioned(
-              top: 0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 20 * Scale.height),
-                child: Container(
-                  width: 414 * Scale.width,
-                  child: Center(
-                    child: Text(
-                      "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
-                      style: textStyle(const Color(0xffffffff), FontWeight.w700,
-                          "NotoSansKR", 20.0),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: 20 * Scale.height, right: 20 * Scale.height),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Icon(
+                      Icons.clear,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                top: 0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20 * Scale.height),
+                  child: Container(
+                    width: 414 * Scale.width,
+                    child: Center(
+                      child: Text(
+                        "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
+                        style: textStyle(const Color(0xffffffff),
+                            FontWeight.w700, "NotoSansKR", 20.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
