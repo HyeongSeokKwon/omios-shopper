@@ -10,7 +10,7 @@ class RecentViewController extends GetxController {
   HttpService httpservice = HttpService();
   bool edit = false;
 
-  void dataInit(context) {
+  void dataInit() {
     recentViewList = getRecentView(dbHelper.db);
   }
 
@@ -40,6 +40,7 @@ class RecentViewController extends GetxController {
     for (var i in await recentViewList) {
       response = await httpservice.httpGet('product/${i['productId']}');
       print(response);
+
       recentViewProductList.add(response["data"]);
     }
 
