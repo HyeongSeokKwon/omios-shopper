@@ -497,35 +497,62 @@ class _ProductViewAreaState extends State<ProductViewArea>
     return GestureDetector(
       child: Padding(
         padding: EdgeInsets.only(right: 8 * Scale.width),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(445)),
-            border: Border.all(
-              color: Color(0xffdddddd),
-              width: 1,
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 10 * Scale.width, vertical: 6 * Scale.height),
-            child: Row(
-              children: [
-                Text(
-                  "$type",
-                  style: textStyle(const Color(0xff444444), FontWeight.w700,
-                      "NotoSansKR", 14.0),
+        child: GetBuilder<ProductController>(
+            init: productController,
+            builder: (controller) {
+              String buttonText = type;
+
+              switch (type) {
+                case "가격":
+                  if (controller.isFilterApplyed(type)) {
+                    buttonText =
+                        "${(controller.priceRange.start).toInt() * 1000}원 ~ ${(controller.priceRange.end).toInt() * 1000}원";
+                  }
+                  break;
+                case "색상":
+                  if (controller.isFilterApplyed(type)) {
+                    if (controller.selectedColor.length == 1) {
+                      buttonText = controller
+                          .colorData[controller.selectedColor[0]]['name'];
+                    } else {
+                      buttonText = "색상 ${controller.selectedColor.length}";
+                    }
+                  }
+                  break;
+                default:
+              }
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(445)),
+                  border: Border.all(
+                    color: controller.isFilterApplyed(type)
+                        ? const Color(0xffec5363)
+                        : Color(0xffdddddd),
+                    width: 1,
+                  ),
                 ),
-                SizedBox(width: 6 * Scale.width),
-                SvgPicture.asset(
-                  "assets/images/svg/dropdown.svg",
-                  width: 10 * Scale.width,
-                  height: 5 * Scale.height,
-                  fit: BoxFit.scaleDown,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 10 * Scale.width, vertical: 6 * Scale.height),
+                  child: Row(
+                    children: [
+                      Text(
+                        buttonText,
+                        style: textStyle(const Color(0xff444444),
+                            FontWeight.w700, "NotoSansKR", 14.0),
+                      ),
+                      SizedBox(width: 6 * Scale.width),
+                      SvgPicture.asset(
+                        "assets/images/svg/dropdown.svg",
+                        width: 10 * Scale.width,
+                        height: 5 * Scale.height,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              );
+            }),
       ),
       onTap: () {
         showModalBottomSheet(
@@ -782,7 +809,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
   Widget colorOptionArea() {
     return Container(
       child: FutureBuilder(
-          future: widget.categoryController.getColorImage().catchError((e) {
+          future: productController.getColorImage().catchError((e) {
             showAlertDialog(context, e);
           }),
           builder: (context, AsyncSnapshot snapshot) {

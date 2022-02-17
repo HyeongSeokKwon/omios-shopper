@@ -17,6 +17,7 @@ class ProductController extends GetxController {
 
   HttpService httpservice = HttpService();
   List<dynamic> productData = [];
+  List<dynamic> colorData = [];
 
   String? prevDataLink = "";
   String? nextDataLink = "";
@@ -25,7 +26,7 @@ class ProductController extends GetxController {
   int startPrice = 0;
   double endPrice = 100;
   RangeValues priceRange = RangeValues(0, 100);
-
+  RangeValues initPriceRange = RangeValues(0, 100);
   List<int> selectedColor = [];
   List<String> sortTypes = ["최신순", "가격 낮은순", "가격 높은순", "리뷰 많은순", "추천순"];
   List<String> sortTypesUrl = [
@@ -60,6 +61,7 @@ class ProductController extends GetxController {
     nextDataLink = response["data"]["next"];
 
     priceRange = RangeValues(0, (response["data"]["max_price"] / 1000) + 1);
+    initPriceRange = priceRange;
     endPrice = ((response["data"]["max_price"] / 1000) + 1);
 
     update();
@@ -184,16 +186,46 @@ class ProductController extends GetxController {
     update();
   }
 
+  Future<List<dynamic>> getColorImage() async {
+    var response = await httpservice.httpGet("product/color");
+    colorData = response['data'];
+    return response['data'];
+  }
+
   void initFilter() {
     sortType = NOTSELECT;
     selectedColor = [];
     priceRange = RangeValues(0, 100);
   }
 
+  bool isSortApplyed() {
+    if (sortType == NOTSELECT) {
+      return false;
+    }
+    return true;
+  }
+
+  bool isFilterApplyed(String type) {
+    switch (type) {
+      case "가격":
+        if (priceRange != initPriceRange) {
+          return true;
+        }
+        return false;
+
+      case "색상":
+        if (selectedColor.isNotEmpty) {
+          return true;
+        }
+        return false;
+    }
+    return false;
+  }
+
   bool isApplyedFilter() {
     if (sortType != NOTSELECT ||
         selectedColor.isNotEmpty ||
-        endPrice != priceRange.end) {
+        priceRange != initPriceRange) {
       return true;
     } else {
       return false;

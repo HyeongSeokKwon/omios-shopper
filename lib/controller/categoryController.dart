@@ -33,12 +33,6 @@ class CategoryController extends GetxController {
     return response['data'];
   }
 
-  Future<List<dynamic>> getColorImage() async {
-    var response = await httpservice.httpGet("product/color");
-
-    return response['data'];
-  }
-
   void selectMainCategory(Map<String, dynamic> mainCategoryInfo) {
     mainCategory.id = mainCategoryInfo['id'];
     mainCategory.name = mainCategoryInfo['name'];
