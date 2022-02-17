@@ -267,127 +267,131 @@ class _ProductViewAreaState extends State<ProductViewArea>
         filterBarArea(context),
         Divider(thickness: 5, color: Colors.grey[200]),
         Expanded(
-          child: RefreshIndicator(
-            onRefresh: () =>
-                productController.initGetProducts().catchError((e) {
+            child: RefreshIndicator(
+          onRefresh: () {
+            productController.initFilter("전체");
+
+            return productController.initGetProducts().catchError((e) {
               // print('err');
               // showAlertDialog(context, e);
               setState(() {});
-            }),
-            color: Colors.black,
-            child: FutureBuilder(
-                future: productController.initGetProducts().catchError((e) {
-                  showAlertDialog(context, e);
-                }),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasData) {
-                      return Container(
-                        color: Colors.white,
-                        child: GetBuilder<ProductController>(
-                            global: false,
-                            init: productController,
-                            builder: (controller) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5 * Scale.width),
-                                child: Stack(
-                                  children: [
-                                    GridView.builder(
-                                      controller: scrollController,
-                                      itemCount: controller.productData.length,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        childAspectRatio: 0.6,
-                                      ),
-                                      itemBuilder: (context, int index) {
-                                        return ProductCard(
-                                            product: Product.fromJson(
-                                                controller.productData[index]),
-                                            imageWidth: 190 * Scale.width);
-                                      },
-                                    ),
-                                    Positioned(
-                                      bottom: 75 * Scale.height,
-                                      right: 15 * Scale.width,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          scrollController.jumpTo(
-                                            0.0,
-                                          );
-                                        },
-                                        child: Container(
-                                            width: 45 * Scale.width,
-                                            height: 45 * Scale.width,
-                                            decoration: BoxDecoration(
-                                              boxShadow: [
-                                                BoxShadow(color: Colors.grey)
-                                              ],
-                                              shape: BoxShape.circle,
-                                              color: Colors.white,
-                                            ),
-                                            child: Icon(
-                                                Icons.arrow_upward_rounded)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }),
-                      );
-                    } else {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+            });
+          },
+          child: productViewArea(),
+        ))
+      ],
+    );
+  }
+
+  Widget productViewArea() {
+    return FutureBuilder(
+        future: productController.initGetProducts().catchError((e) {
+          showAlertDialog(context, e);
+        }),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return Container(
+                color: Colors.white,
+                child: GetBuilder<ProductController>(
+                    global: false,
+                    init: productController,
+                    builder: (controller) {
+                      return Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+                        child: Stack(
                           children: [
-                            Text(
-                              "네트워크에 연결하지 못했어요",
-                              style: textStyle(Colors.black, FontWeight.w700,
-                                  "NotoSansKR", 20.0),
-                            ),
-                            Text(
-                              "네트워크 연결상태를 확인하고",
-                              style: textStyle(Colors.grey, FontWeight.w500,
-                                  "NotoSansKR", 13.0),
-                            ),
-                            Text(
-                              "다시 시도해 주세요",
-                              style: textStyle(Colors.grey, FontWeight.w500,
-                                  "NotoSansKR", 13.0),
-                            ),
-                            SizedBox(height: 15 * Scale.height),
-                            GestureDetector(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    borderRadius: BorderRadiusDirectional.all(
-                                        Radius.circular(19))),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 17 * Scale.width,
-                                      vertical: 14 * Scale.height),
-                                  child: Text("다시 시도하기",
-                                      style: textStyle(Colors.black,
-                                          FontWeight.w700, 'NotoSansKR', 15.0)),
-                                ),
+                            GridView.builder(
+                              controller: scrollController,
+                              itemCount: controller.productData.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.6,
                               ),
-                              onTap: () {
-                                setState(() {});
+                              itemBuilder: (context, int index) {
+                                return ProductCard(
+                                    product: Product.fromJson(
+                                        controller.productData[index]),
+                                    imageWidth: 190 * Scale.width);
                               },
                             ),
+                            Positioned(
+                              bottom: 75 * Scale.height,
+                              right: 15 * Scale.width,
+                              child: GestureDetector(
+                                onTap: () {
+                                  scrollController.jumpTo(
+                                    0.0,
+                                  );
+                                },
+                                child: Container(
+                                    width: 45 * Scale.width,
+                                    height: 45 * Scale.width,
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(color: Colors.grey)
+                                      ],
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(Icons.arrow_upward_rounded)),
+                              ),
+                            )
                           ],
                         ),
                       );
-                    }
-                  } else {
-                    return Container();
-                  }
-                }),
-          ),
-        ),
-      ],
-    );
+                    }),
+              );
+            } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "네트워크에 연결하지 못했어요",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+                    ),
+                    Text(
+                      "네트워크 연결상태를 확인하고",
+                      style: textStyle(
+                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    ),
+                    Text(
+                      "다시 시도해 주세요",
+                      style: textStyle(
+                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    ),
+                    SizedBox(height: 15 * Scale.height),
+                    GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadiusDirectional.all(
+                                Radius.circular(19))),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 17 * Scale.width,
+                              vertical: 14 * Scale.height),
+                          child: Text("다시 시도하기",
+                              style: textStyle(Colors.black, FontWeight.w700,
+                                  'NotoSansKR', 15.0)),
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              );
+            }
+          } else {
+            return Container();
+          }
+        });
   }
 
   Widget sortButton() {
@@ -472,7 +476,8 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                 scrollController.position.minScrollExtent,
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeOut);
-                            controller.sortClicked(index).catchError((e) {
+                            controller.sortType = index;
+                            controller.searchClicked().catchError((e) {
                               showAlertDialog(context, e);
                             });
                             Navigator.of(context).pop();
@@ -517,7 +522,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                   if (controller.isFilterApplyed(type)) {
                     if (controller.selectedColor.length == 1) {
                       buttonText = controller
-                          .colorData[controller.selectedColor[0]]['name'];
+                          .colorData[controller.selectedColor[0] - 1]['name'];
                     } else {
                       buttonText = "색상 ${controller.selectedColor.length}";
                     }
@@ -645,7 +650,10 @@ class _ProductViewAreaState extends State<ProductViewArea>
                               controller.initGetProducts().catchError((e) {
                                 showAlertDialog(context, e);
                               });
-                              controller.initFilter();
+                              controller.initFilter("전체");
+                              scrollController.jumpTo(
+                                0.0,
+                              );
                             },
                           ),
                         )
@@ -725,7 +733,8 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewPadding.bottom),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -757,7 +766,12 @@ class _ProductViewAreaState extends State<ProductViewArea>
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xffeeeeee)),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        productController.initFilter(type);
+                        scrollController.jumpTo(
+                          0.0,
+                        );
+                      },
                     ),
                     SizedBox(width: 8 * Scale.width),
                     TextButton(
@@ -877,7 +891,6 @@ class _ProductViewAreaState extends State<ProductViewArea>
   Widget priceOptionArea() {
     return Container(
       child: GetBuilder<ProductController>(
-        id: "priceOption",
         init: productController,
         builder: (controller) {
           return Column(

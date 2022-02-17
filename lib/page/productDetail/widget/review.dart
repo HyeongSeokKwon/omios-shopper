@@ -214,33 +214,6 @@ class ReviewBox extends StatelessWidget {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      "assets/images/svg/report.svg",
-                      width: 8 * Scale.width,
-                      height: 8 * Scale.width,
-                    ),
-                    SizedBox(width: 3.2 * Scale.width),
-                    Text(
-                      "신고하기",
-                      style: textStyle(const Color(0xfff84457), FontWeight.w500,
-                          "NotoSansKR", 13.0),
-                    ),
-                  ],
-                ),
-                width: 80 * Scale.width,
-                height: 24 * Scale.height,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  color: const Color(0xfffff0f2),
-                ),
-              ),
-            ),
           ],
         ),
       ],
