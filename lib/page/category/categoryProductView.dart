@@ -28,25 +28,29 @@ class _CategoryProductViewState extends State<CategoryProductView>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
         elevation: 0,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: SvgPicture.asset(
-                "assets/images/svg/moveToBack.svg",
-                width: 10 * Scale.width,
-                height: 20 * Scale.height,
-                fit: BoxFit.scaleDown,
+        leadingWidth: 200 * Scale.width,
+        leading: Padding(
+          padding: EdgeInsets.only(left: 17 * Scale.width),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: SvgPicture.asset(
+                  "assets/images/svg/moveToBack.svg",
+                  width: 10 * Scale.width,
+                  height: 20 * Scale.height,
+                  fit: BoxFit.scaleDown,
+                ),
               ),
-            ),
-            SizedBox(width: 14 * Scale.width),
-            Text("${widget.categoryController.mainCategory.name}",
-                style: textStyle(const Color(0xff333333), FontWeight.w700,
-                    "NotoSansKR", 22.0)),
-          ],
+              SizedBox(width: 10 * Scale.width),
+              Text("${widget.categoryController.mainCategory.name}",
+                  style: textStyle(const Color(0xff333333), FontWeight.w700,
+                      "NotoSansKR", 22.0)),
+            ],
+          ),
         ),
         actions: [
           Padding(
@@ -305,7 +309,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                       },
                                     ),
                                     Positioned(
-                                      bottom: 15 * Scale.width,
+                                      bottom: 75 * Scale.height,
                                       right: 15 * Scale.width,
                                       child: GestureDetector(
                                         onTap: () {
