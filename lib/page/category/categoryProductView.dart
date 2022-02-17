@@ -8,7 +8,6 @@ import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -30,7 +29,7 @@ class _CategoryProductViewState extends State<CategoryProductView>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leadingWidth: 200 * Scale.width,
+        leadingWidth: double.infinity,
         leading: Padding(
           padding: EdgeInsets.only(left: 17 * Scale.width),
           child: Row(
@@ -241,6 +240,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
 
     optionTabController = TabController(length: 4, vsync: this);
     scrollController.addListener(() {
+      productController.showMoveToUp(scrollController.offset);
       //subCategory 상품
       if (scrollController.offset ==
               scrollController.position.maxScrollExtent &&
@@ -360,25 +360,34 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             Positioned(
                               bottom: 75 * Scale.height,
                               right: 15 * Scale.width,
-                              child: GestureDetector(
-                                onTap: () {
-                                  scrollController.jumpTo(
-                                    0.0,
-                                  );
-                                },
-                                child: Container(
-                                    width: 45 * Scale.width,
-                                    height: 45 * Scale.width,
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(color: Colors.grey)
-                                      ],
-                                      shape: BoxShape.circle,
-                                      color: Colors.white,
-                                    ),
-                                    child: Icon(Icons.arrow_upward_rounded)),
-                              ),
-                            )
+                              child: GetBuilder<ProductController>(
+                                  init: productController,
+                                  builder: (controller) {
+                                    return controller.showMoveToUpBtn
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              scrollController.animateTo(0,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  curve: Curves.easeIn);
+                                            },
+                                            child: Container(
+                                                width: 45 * Scale.width,
+                                                height: 45 * Scale.width,
+                                                decoration: BoxDecoration(
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        color: Colors.grey)
+                                                  ],
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white,
+                                                ),
+                                                child: Icon(Icons
+                                                    .arrow_upward_rounded)),
+                                          )
+                                        : SizedBox();
+                                  }),
+                            ),
                           ],
                         ),
                       );

@@ -40,8 +40,18 @@ class ProductController extends GetxController {
   late SearchOption searchOption;
   late int subCategoryId;
   late int mainCategoryId;
+  bool showMoveToUpBtn = false;
 
   Map<String, dynamic> queryParams = {};
+
+  void showMoveToUp(double scrollControllerOffset) {
+    if (scrollControllerOffset > 500.0) {
+      showMoveToUpBtn = true;
+    } else {
+      showMoveToUpBtn = false;
+    }
+    update();
+  }
 
   Future<dynamic> initGetProducts() async {
     var response;
