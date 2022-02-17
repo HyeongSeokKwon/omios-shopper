@@ -8,6 +8,7 @@ import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -254,7 +255,6 @@ class _ProductViewAreaState extends State<ProductViewArea>
 
   @override
   void dispose() {
-    //productController.dispose();
     optionTabController.dispose();
     scrollController.dispose();
     super.dispose();
@@ -267,18 +267,8 @@ class _ProductViewAreaState extends State<ProductViewArea>
         filterBarArea(context),
         Divider(thickness: 5, color: Colors.grey[200]),
         Expanded(
-            child: RefreshIndicator(
-          onRefresh: () {
-            productController.initFilter("전체");
-
-            return productController.initGetProducts().catchError((e) {
-              // print('err');
-              // showAlertDialog(context, e);
-              setState(() {});
-            });
-          },
           child: productViewArea(),
-        ))
+        ),
       ],
     );
   }
@@ -302,21 +292,71 @@ class _ProductViewAreaState extends State<ProductViewArea>
                             EdgeInsets.symmetric(horizontal: 5 * Scale.width),
                         child: Stack(
                           children: [
-                            GridView.builder(
-                              controller: scrollController,
-                              itemCount: controller.productData.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.6,
-                              ),
-                              itemBuilder: (context, int index) {
-                                return ProductCard(
-                                    product: Product.fromJson(
-                                        controller.productData[index]),
-                                    imageWidth: 190 * Scale.width);
-                              },
-                            ),
+                            Platform.isIOS
+                                ? CustomScrollView(
+                                    controller: scrollController,
+                                    slivers: [
+                                      CupertinoSliverRefreshControl(
+                                        onRefresh: () {
+                                          productController.initFilter("전체");
+
+                                          return productController
+                                              .initGetProducts()
+                                              .catchError((e) {
+                                            // print('err');
+                                            // showAlertDialog(context, e);
+                                            setState(() {});
+                                          });
+                                        },
+                                      ),
+                                      SliverGrid(
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          childAspectRatio: 0.6,
+                                        ),
+                                        delegate: SliverChildBuilderDelegate(
+                                          (context, index) {
+                                            return ProductCard(
+                                                product: Product.fromJson(
+                                                    controller
+                                                        .productData[index]),
+                                                imageWidth: 190 * Scale.width);
+                                          },
+                                          childCount:
+                                              controller.productData.length,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : RefreshIndicator(
+                                    onRefresh: () {
+                                      productController.initFilter("전체");
+
+                                      return productController
+                                          .initGetProducts()
+                                          .catchError((e) {
+                                        // print('err');
+                                        // showAlertDialog(context, e);
+                                        setState(() {});
+                                      });
+                                    },
+                                    child: GridView.builder(
+                                      controller: scrollController,
+                                      itemCount: controller.productData.length,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 0.6,
+                                      ),
+                                      itemBuilder: (context, int index) {
+                                        return ProductCard(
+                                            product: Product.fromJson(
+                                                controller.productData[index]),
+                                            imageWidth: 190 * Scale.width);
+                                      },
+                                    ),
+                                  ),
                             Positioned(
                               bottom: 75 * Scale.height,
                               right: 15 * Scale.width,
@@ -768,6 +808,9 @@ class _ProductViewAreaState extends State<ProductViewArea>
                       ),
                       onPressed: () {
                         productController.initFilter(type);
+                        productController.searchClicked().catchError((e) {
+                          showAlertDialog(context, e);
+                        });
                         scrollController.jumpTo(
                           0.0,
                         );
