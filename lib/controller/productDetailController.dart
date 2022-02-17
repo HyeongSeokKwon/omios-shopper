@@ -97,7 +97,6 @@ class ProductDetailController extends GetxController {
       selectedColorIndex = -1;
     }
 
-    print(colorData[selectedColorIndex]);
     update();
   }
 
