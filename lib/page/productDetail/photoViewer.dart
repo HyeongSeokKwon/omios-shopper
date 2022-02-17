@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -20,8 +21,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
   late PageController _pageController;
   PhotoViewScaleStateController scaleController =
       PhotoViewScaleStateController();
-  late ScrollPhysics scrollPhysics = ClampingScrollPhysics();
-  @override
+  ScrollPhysics scrollPhysics = ClampingScrollPhysics();
   void initState() {
     super.initState();
     curIndex = widget.index;
@@ -31,12 +31,17 @@ class _PhotoViewerState extends State<PhotoViewer> {
   void dispose() {
     _pageController.dispose();
     scaleController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     _pageController = PageController(initialPage: widget.index);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.light));
+
     return SafeArea(
       top: true,
       bottom: true,
@@ -67,20 +72,12 @@ class _PhotoViewerState extends State<PhotoViewer> {
                       maxScale: PhotoViewComputedScale.contained * 1.75,
                     );
                   },
-                  scaleStateChangedCallback: (controller) {
-                    if (scaleController.isZooming) {
-                      scrollPhysics = NeverScrollableScrollPhysics();
-                      setState(() {});
-                    } else {
-                      scrollPhysics = ClampingScrollPhysics();
-                      setState(() {});
-                    }
-                  },
                   itemCount: widget.imageList.length,
                   pageController: _pageController,
                   onPageChanged: (value) {
-                    curIndex = value;
-                    setState(() {});
+                    setState(() {
+                      curIndex = value;
+                    });
                   },
                 ),
               ),
@@ -92,7 +89,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
                       top: 20 * Scale.height, right: 20 * Scale.height),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(context);
                     },
                     child: Icon(
                       Icons.clear,
