@@ -62,6 +62,7 @@ class ProductController extends GetxController {
 
     priceRange = RangeValues(0, (response["data"]["max_price"] / 1000) + 1);
     initPriceRange = priceRange;
+
     endPrice = ((response["data"]["max_price"] / 1000) + 1);
 
     update();
@@ -93,13 +94,13 @@ class ProductController extends GetxController {
   }
 
   void refreshPriceOption() {
-    priceRange = RangeValues(0, 100);
-    update(["priceOption"]);
+    priceRange = initPriceRange;
+    update();
   }
 
   void priceRangeChange(RangeValues changeRange) {
     priceRange = changeRange;
-    update(["priceOption"]);
+    update();
   }
 
   bool isColorSelected(int colorIndex) {
@@ -151,51 +152,27 @@ class ProductController extends GetxController {
     update();
   }
 
-  Future<void> sortClicked(int index) async {
-    var response;
-
-    queryParams = {};
-    sortType = index;
-
-    queryParams['main_category'] = '$mainCategoryId';
-    if (subCategoryId != NOTSELECT) {
-      queryParams['sub_category'] = '$subCategoryId';
-    }
-
-    switch (index) {
-      case CREATED:
-        queryParams['sort'] = 'created';
-        break;
-      case PRICEASC:
-        queryParams['sort'] = 'price_asc';
-        break;
-      case PRICEDSC:
-        queryParams['sort'] = 'price_dsc';
-        break;
-      default:
-    }
-
-    response =
-        await httpservice.httpGet("product", queryParams).catchError((e) {
-      throw e;
-    });
-
-    prevDataLink = response['data']['previous'];
-    nextDataLink = response['data']['next'];
-    productData = response['data']['results'];
-    update();
-  }
-
   Future<List<dynamic>> getColorImage() async {
     var response = await httpservice.httpGet("product/color");
     colorData = response['data'];
     return response['data'];
   }
 
-  void initFilter() {
-    sortType = NOTSELECT;
-    selectedColor = [];
-    priceRange = RangeValues(0, 100);
+  void initFilter(String type) {
+    switch (type) {
+      case "색상":
+        refreshColorOption();
+        break;
+      case "가격":
+        refreshPriceOption();
+        break;
+      case "전체":
+        refreshColorOption();
+        refreshPriceOption();
+        sortType = NOTSELECT;
+        break;
+    }
+    update();
   }
 
   bool isSortApplyed() {
