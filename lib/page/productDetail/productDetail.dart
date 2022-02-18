@@ -3,6 +3,7 @@ import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
+import 'package:cloth_collection/page/productDetail/photoViewer.dart';
 import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/util/util.dart';

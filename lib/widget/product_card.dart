@@ -76,8 +76,6 @@ class ProductCard extends StatelessWidget {
             style: textStyle(
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 17.0),
           ),
-          Text("${product.id}"),
-          SizedBox(height: 4 * Scale.height),
         ],
       ),
     );
