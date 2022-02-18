@@ -139,8 +139,8 @@ class _DeepyHomeState extends State<DeepyHome>
           todaysPickProduct(),
           divider(),
           totalBestProduct(),
-          divider(),
           eventBannerArea(),
+          divider(),
           todaySpecialPrice(),
           divider(),
           specialExhibitionArea(),
@@ -185,7 +185,7 @@ class _DeepyHomeState extends State<DeepyHome>
                   children: [
                     Align(
                         child: Text(
-                          "오늘의 PICK 상품",
+                          "👉 오늘의 PICK 상품",
                           style: textStyle(Colors.black, FontWeight.w500,
                               "NotoSansKR", 18.0),
                         ),
@@ -230,7 +230,7 @@ class _DeepyHomeState extends State<DeepyHome>
                   children: [
                     Align(
                         child: Text(
-                          "전체 BEST 상품",
+                          "🍒 전체 BEST 상품",
                           style: textStyle(Colors.black, FontWeight.w500,
                               "NotoSansKR", 18.0),
                         ),
@@ -317,8 +317,7 @@ class _DeepyHomeState extends State<DeepyHome>
     return GridView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      padding: EdgeInsets.symmetric(
-          horizontal: 22 * Scale.width, vertical: 25 * Scale.height),
+      padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
       itemCount: 8,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
@@ -394,7 +393,7 @@ class _DeepyHomeState extends State<DeepyHome>
       padding: EdgeInsets.only(
           left: 22 * Scale.width,
           right: 22 * Scale.width,
-          bottom: 40 * Scale.height),
+          top: 20 * Scale.height),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -427,7 +426,7 @@ class _DeepyHomeState extends State<DeepyHome>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "오늘만 특가!",
+                          "⏰ 오늘만 특가!",
                           style: textStyle(Colors.black, FontWeight.w500,
                               "NotoSansKR", 18.0),
                         ),
@@ -473,7 +472,7 @@ class _DeepyHomeState extends State<DeepyHome>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "핫한 기획전(이벤트)",
+                " 핫한 기획전(이벤트)",
                 style: textStyle(
                     Colors.black, FontWeight.w500, "NotoSansKR", 18.0),
               ),
@@ -540,7 +539,7 @@ class _DeepyHomeState extends State<DeepyHome>
 
   Widget divider() {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 30 * Scale.height),
+        padding: EdgeInsets.symmetric(vertical: 20 * Scale.height),
         child: Divider(
           thickness: 10 * Scale.height,
           color: Colors.grey[50],

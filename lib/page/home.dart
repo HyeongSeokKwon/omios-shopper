@@ -18,8 +18,9 @@ import 'chatting/chatting.dart';
 
 const int HOME = 0;
 const int CATEGORY = 1;
-const int CHAT = 2;
-const int MYPAGE = 3;
+const int LIKE = 2;
+const int CHAT = 3;
+const int MYPAGE = 4;
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,8 +37,8 @@ class _HomePageState extends State<HomePage> {
     DeepyHomeAppbar(),
     CategoryAppbar(),
     ChattingAppbar(),
-    MypageAppbar(),
     ImageSearchAppbar(),
+    MypageAppbar(),
   ];
 
   @override
@@ -49,8 +50,8 @@ class _HomePageState extends State<HomePage> {
       DeepyHome(homeController.scrollController),
       Category(),
       Chatting(),
+      Chatting(),
       MyPage(),
-      SearchImage(),
     ];
   }
 
@@ -80,12 +81,12 @@ class _HomePageState extends State<HomePage> {
             return selectedPage[homeController.currentIndex];
           }),
       bottomNavigationBar: _buildBottomNaviagationBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xffec5363),
-        child: SvgPicture.asset("assets/images/svg/imgaeSearch.svg"),
-      ),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   backgroundColor: const Color(0xffec5363),
+      //   child: SvgPicture.asset("assets/images/svg/imgaeSearch.svg"),
+      // ),
     );
   }
 
@@ -123,8 +124,7 @@ class _HomePageState extends State<HomePage> {
                 BottomNavigationBarItem(
                   label: "",
                   icon: Padding(
-                    padding: EdgeInsets.only(
-                        top: 5 * Scale.height, right: 50 * Scale.width),
+                    padding: EdgeInsets.only(top: 5 * Scale.height),
                     child: Column(
                       children: [
                         SvgPicture.asset(controller.currentIconUrl[CATEGORY]),
@@ -141,8 +141,26 @@ class _HomePageState extends State<HomePage> {
                 BottomNavigationBarItem(
                   label: "",
                   icon: Padding(
+                    padding: EdgeInsets.only(top: 5 * Scale.height),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(controller.currentIconUrl[LIKE]),
+                        SizedBox(height: 6 * Scale.height),
+                        Text(
+                          "찜한 상품",
+                          style: textStyle(const Color(0xffcccccc),
+                              FontWeight.w400, "NotoSansKR", 12.0),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: Padding(
                     padding: EdgeInsets.only(
-                        top: 5 * Scale.height, left: 50 * Scale.width),
+                      top: 5 * Scale.height,
+                    ),
                     child: Column(
                       children: [
                         SvgPicture.asset(controller.currentIconUrl[CHAT]),
@@ -177,7 +195,9 @@ class _HomePageState extends State<HomePage> {
               showSelectedLabels: false,
               showUnselectedLabels: false,
               selectedFontSize: 12 * Scale.width,
-              onTap: homeController.onItemTapped,
+              onTap: (index) {
+                homeController.onItemTapped(index);
+              },
               currentIndex: _currentIndex,
               type: BottomNavigationBarType.fixed,
             );

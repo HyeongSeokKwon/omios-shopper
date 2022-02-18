@@ -38,10 +38,17 @@ class RecentViewController extends GetxController {
     recentViewProductList = [];
     recentViewList = getRecentView(dbHelper.db);
     for (var i in await recentViewList) {
-      response = await httpservice.httpGet('product/${i['productId']}');
-      print(response);
-
-      recentViewProductList.add(response["data"]);
+      try {
+        response =
+            await httpservice.httpGet('product/${i['productId']}').onError(
+          (error, stackTrace) {
+            deleteRecent(dbHelper.db, i['productId']);
+          },
+        );
+        recentViewProductList.add(response["data"]);
+      } catch (e) {
+        print(e);
+      }
     }
 
     update();

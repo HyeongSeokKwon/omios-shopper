@@ -12,18 +12,21 @@ class HomeController extends GetxController {
   List<String> currentIconUrl = [
     "assets/images/svg/homeTapped.svg",
     "assets/images/svg/category.svg",
+    "assets/images/svg/bottomNavigationUnlike.svg",
     "assets/images/svg/feed.svg",
     "assets/images/svg/myPage.svg",
   ];
   List<String> navigationIconUrl = [
     "assets/images/svg/home.svg",
     "assets/images/svg/category.svg",
+    "assets/images/svg/bottomNavigationUnlike.svg",
     "assets/images/svg/feed.svg",
     "assets/images/svg/myPage.svg"
   ];
   List<String> navigationOnTapIconUrl = [
     "assets/images/svg/homeTapped.svg",
     "assets/images/svg/categoryTapped.svg",
+    "assets/images/svg/bottomNavigationLike.svg",
     "assets/images/svg/feedTapped.svg",
     "assets/images/svg/myPageTapped.svg"
   ];
