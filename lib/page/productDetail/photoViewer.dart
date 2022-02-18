@@ -21,10 +21,11 @@ class _PhotoViewerState extends State<PhotoViewer> {
   late PageController _pageController;
   PhotoViewScaleStateController scaleController =
       PhotoViewScaleStateController();
-  ScrollPhysics scrollPhysics = ClampingScrollPhysics();
+  //ScrollPhysics scrollPhysics = ClampingScrollPhysics();
   void initState() {
     super.initState();
     curIndex = widget.index;
+    _pageController = PageController(initialPage: widget.index);
   }
 
   @override
@@ -37,7 +38,6 @@ class _PhotoViewerState extends State<PhotoViewer> {
 
   @override
   Widget build(BuildContext context) {
-    _pageController = PageController(initialPage: widget.index);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.light));
@@ -58,28 +58,27 @@ class _PhotoViewerState extends State<PhotoViewer> {
           }
         },
         child: Scaffold(
+          backgroundColor: Colors.green,
           body: Stack(
             children: [
-              Container(
-                child: PhotoViewGallery.builder(
-                  scrollPhysics: scrollPhysics,
-                  builder: (BuildContext context, int index) {
-                    return PhotoViewGalleryPageOptions(
-                      scaleStateController: scaleController,
-                      imageProvider: CachedNetworkImageProvider(
-                          "${widget.imageList[index]['url']}"),
-                      minScale: PhotoViewComputedScale.contained,
-                      maxScale: PhotoViewComputedScale.contained * 1.75,
-                    );
-                  },
-                  itemCount: widget.imageList.length,
-                  pageController: _pageController,
-                  onPageChanged: (value) {
-                    setState(() {
-                      curIndex = value;
-                    });
-                  },
-                ),
+              PhotoViewGallery.builder(
+                scrollPhysics: const ClampingScrollPhysics(),
+                builder: (BuildContext context, int index) {
+                  return PhotoViewGalleryPageOptions(
+                    scaleStateController: scaleController,
+                    imageProvider: CachedNetworkImageProvider(
+                        "${widget.imageList[index]['url']}"),
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.contained * 1.75,
+                  );
+                },
+                itemCount: widget.imageList.length,
+                pageController: _pageController,
+                onPageChanged: (value) {
+                  setState(() {
+                    curIndex = value;
+                  });
+                },
               ),
               Positioned(
                 top: 0,
@@ -87,9 +86,9 @@ class _PhotoViewerState extends State<PhotoViewer> {
                 child: Padding(
                   padding: EdgeInsets.only(
                       top: 20 * Scale.height, right: 20 * Scale.height),
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
-                      Navigator.of(context).pop(context);
+                      Navigator.pop(context);
                     },
                     child: Icon(
                       Icons.clear,
