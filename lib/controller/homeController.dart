@@ -1,3 +1,4 @@
+import 'package:cloth_collection/http/httpService.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 
@@ -6,6 +7,8 @@ class HomeController extends GetxController {
   final int category = 1;
   final int chat = 2;
   final int mypage = 3;
+
+  HttpService httpservice = HttpService();
   List<String> currentIconUrl = [
     "assets/images/svg/homeTapped.svg",
     "assets/images/svg/category.svg",
@@ -41,5 +44,17 @@ class HomeController extends GetxController {
       }
     }
     update();
+  }
+
+  Future<List<dynamic>> getTodaysProducts() async {
+    Map<String, String> queryParams = {};
+    queryParams['main_category'] = "1";
+    queryParams['sub_category'] = "6";
+    var response =
+        await httpservice.httpGet("product/", queryParams).catchError((e) {
+      throw e;
+    });
+    print(response);
+    return response['data']['results'];
   }
 }
