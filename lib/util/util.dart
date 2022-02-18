@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 
-const MAINCOLOR = Color.fromRGBO(176, 140, 217, 100);
+const MAINCOLOR = const Color(0xffec5363);
 const VIBRATETYPE = FeedbackType.light;
 
 late bool canVibrate;
