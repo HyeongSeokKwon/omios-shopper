@@ -371,19 +371,22 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                                       milliseconds: 500),
                                                   curve: Curves.easeIn);
                                             },
-                                            child: Container(
-                                                width: 45 * Scale.width,
-                                                height: 45 * Scale.width,
-                                                decoration: BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.grey)
-                                                  ],
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.white,
-                                                ),
-                                                child: Icon(Icons
-                                                    .arrow_upward_rounded)),
+                                            child: Opacity(
+                                              opacity: 0.7,
+                                              child: Container(
+                                                  width: 45 * Scale.width,
+                                                  height: 45 * Scale.width,
+                                                  decoration: BoxDecoration(
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          color: Colors.grey)
+                                                    ],
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.white,
+                                                  ),
+                                                  child: Icon(Icons
+                                                      .arrow_upward_rounded)),
+                                            ),
                                           )
                                         : SizedBox();
                                   }),
