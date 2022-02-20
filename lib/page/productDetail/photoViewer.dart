@@ -105,10 +105,9 @@ class _PhotoViewerState extends State<PhotoViewer> {
                     width: 414 * Scale.width,
                     child: Center(
                       child: Text(
-                        "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
-                        style: textStyle(const Color(0xffffffff),
-                            FontWeight.w700, "NotoSansKR", 20.0),
-                      ),
+                          "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
+                          style: textStyle(const Color(0xffffffff),
+                              FontWeight.w700, "NotoSansKR", 20.0)),
                     ),
                   ),
                 ),
