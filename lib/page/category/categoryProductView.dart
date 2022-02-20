@@ -224,13 +224,17 @@ class ProductViewArea extends StatefulWidget {
 }
 
 class _ProductViewAreaState extends State<ProductViewArea>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   ScrollController scrollController = ScrollController();
   ProductController productController =
       Get.put<ProductController>(ProductController());
 
   late TabController optionTabController;
   late Future categoryProductInit;
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
@@ -267,6 +271,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         filterBarArea(context),
