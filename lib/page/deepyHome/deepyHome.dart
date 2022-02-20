@@ -6,6 +6,7 @@ import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DeepyHome extends StatefulWidget {
   final ScrollController scrollController;
@@ -19,14 +20,21 @@ class _DeepyHomeState extends State<DeepyHome>
     with SingleTickerProviderStateMixin {
   late List<Product> products;
   late TabController categoryTabController;
-  HomeController homeController = HomeController();
+  HomeController homeController = Get.put<HomeController>(HomeController());
   List<Tab> tabList = [];
   FocusNode focusNode = FocusNode();
+  late Future recommandFuture;
+  late Future totalBestFuture;
+  late Future specialPriceFuture;
+
   @override
   void initState() {
     super.initState();
     products = getProduct();
     categoryTabController = TabController(length: 6, vsync: this);
+    recommandFuture = homeController.getTodaysProducts();
+    totalBestFuture = homeController.getTodaysProducts();
+    specialPriceFuture = homeController.getTodaysProducts();
     tabList.add(
       Tab(
         text: "홈",
@@ -175,52 +183,54 @@ class _DeepyHomeState extends State<DeepyHome>
 
   Widget todaysPickProduct() {
     return FutureBuilder(
-        future: homeController.getTodaysProducts(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-                child: Column(
-                  children: [
-                    Align(
-                        child: Text(
-                          "👉 오늘의 PICK 상품",
-                          style: textStyle(Colors.black, FontWeight.w500,
-                              "NotoSansKR", 18.0),
-                        ),
-                        alignment: Alignment.centerLeft),
-                    SizedBox(height: 14 * Scale.height),
-                    GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 0.55,
-                            mainAxisSpacing: 10 * Scale.height),
-                        itemCount: 9,
-                        itemBuilder: (context, index) {
-                          return ProductCard(
-                              product: Product.fromJson(snapshot.data[index]),
-                              imageWidth: 115 * Scale.width);
-                        }),
-                  ],
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Container();
-            } else {
-              return progressBar();
-            }
+      future: recommandFuture,
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+              child: Column(
+                children: [
+                  Align(
+                      child: Text(
+                        "👉 오늘의 PICK 상품",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 18.0),
+                      ),
+                      alignment: Alignment.centerLeft),
+                  SizedBox(height: 14 * Scale.height),
+                  GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.55,
+                        mainAxisSpacing: 10 * Scale.height),
+                    itemCount: 9,
+                    itemBuilder: (context, index) {
+                      return ProductCard(
+                          product: Product.fromJson(snapshot.data[index]),
+                          imageWidth: 115 * Scale.width);
+                    },
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Container();
           } else {
             return progressBar();
           }
-        });
+        } else {
+          return progressBar();
+        }
+      },
+    );
   }
 
   Widget totalBestProduct() {
     return FutureBuilder(
-        future: homeController.getTodaysProducts(),
+        future: totalBestFuture,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
@@ -414,7 +424,7 @@ class _DeepyHomeState extends State<DeepyHome>
 
   Widget todaySpecialPrice() {
     return FutureBuilder(
-        future: homeController.getTodaysProducts(),
+        future: specialPriceFuture,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {

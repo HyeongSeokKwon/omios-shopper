@@ -230,13 +230,18 @@ class _ProductViewAreaState extends State<ProductViewArea>
       Get.put<ProductController>(ProductController());
 
   late TabController optionTabController;
-
+  late Future categoryProductInit;
   @override
   void initState() {
     super.initState();
+
     productController.subCategoryId = widget.subCategoryId;
     productController.mainCategoryId =
         widget.categoryController.mainCategory.id;
+
+    categoryProductInit = productController.initGetProducts().catchError((e) {
+      showAlertDialog(context, e);
+    });
 
     optionTabController = TabController(length: 4, vsync: this);
     scrollController.addListener(() {
@@ -275,9 +280,7 @@ class _ProductViewAreaState extends State<ProductViewArea>
 
   Widget productViewArea() {
     return FutureBuilder(
-        future: productController.initGetProducts().catchError((e) {
-          showAlertDialog(context, e);
-        }),
+        future: categoryProductInit,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {

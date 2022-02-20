@@ -49,7 +49,7 @@ class HomeController extends GetxController {
     update();
   }
 
-  Future<List<dynamic>> getTodaysProducts() async {
+  Future<dynamic> getTodaysProducts() async {
     Map<String, String> queryParams = {};
     queryParams['main_category'] = "1";
     queryParams['sub_category'] = "6";
@@ -57,7 +57,7 @@ class HomeController extends GetxController {
         await httpservice.httpGet("product/", queryParams).catchError((e) {
       throw e;
     });
-    print(response);
+    print("getTodaysProducts");
     return response['data']['results'];
   }
 }
