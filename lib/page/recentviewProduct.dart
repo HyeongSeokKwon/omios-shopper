@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
@@ -18,10 +18,12 @@ class RecentviewProduct extends StatefulWidget {
 class _RecentviewProductState extends State<RecentviewProduct> {
   RecentViewController recentViewController =
       Get.put<RecentViewController>(RecentViewController());
+
+  late Future recentProductList;
   @override
   void initState() {
     super.initState();
-    recentViewController.getRecentViewProduct();
+    recentProductList = recentViewController.getRecentViewProduct();
   }
 
   @override
@@ -85,7 +87,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
   Widget recentProductArea() {
     return Container(
       child: FutureBuilder(
-        future: recentViewController.recentViewList,
+        future: recentProductList,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
@@ -106,8 +108,9 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                   children: [
                                     Container(
                                       child: ClipRRect(
-                                        child: Image.network(
-                                            "${controller.recentViewProductList[index]['images'][0]['url']}",
+                                        child: CachedNetworkImage(
+                                            imageUrl:
+                                                "${controller.recentViewProductList[index]['images'][0]['url']}",
                                             width: 110,
                                             height: 110 * (4 / 3),
                                             fit: BoxFit.fill),
@@ -158,9 +161,12 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                   if (controller.edit) {
                                     controller.productClicked(index);
                                   } else {
-                                    Get.to(() => ProductDetail(Product.fromJson(
-                                        controller
-                                            .recentViewProductList[index])));
+                                    Get.to(
+                                      () => ProductDetail(
+                                        productId: controller
+                                            .recentViewProductList[index]['id'],
+                                      ),
+                                    );
                                   }
                                 },
                               ),
@@ -234,11 +240,9 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                 ),
               );
             } else {
-              print("2");
               return progressBar();
             }
           } else {
-            print("1");
             return progressBar();
           }
         },
