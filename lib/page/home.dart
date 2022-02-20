@@ -27,7 +27,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   int _currentIndex = 0;
   HomeController homeController = HomeController();
   FocusNode focusNode = FocusNode();
@@ -45,9 +46,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     DBHelper().db;
-    homeController.scrollController = ScrollController();
     selectedPage = [
-      DeepyHome(homeController.scrollController),
+      DeepyHome(),
       Category(),
       Chatting(),
       Chatting(),
@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70),
@@ -204,4 +205,7 @@ class _HomePageState extends State<HomePage> {
           }),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -40,12 +40,12 @@ class HomeController extends GetxController {
       currentIndex = index;
       currentIconUrl[currentIndex] = navigationOnTapIconUrl[currentIndex];
     }
-    if (index == home) {
-      if (scrollController.hasClients) {
-        scrollController.animateTo(0.0,
-            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-      }
-    }
+    // if (index == home) {
+    //   if (scrollController.hasClients) {
+    //     scrollController.animateTo(0.0,
+    //         duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+    //   }
+    // }
     update();
   }
 
