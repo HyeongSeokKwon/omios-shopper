@@ -3,14 +3,13 @@ import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
-import 'package:cloth_collection/page/productDetail/photoViewer.dart';
-import 'package:cloth_collection/page/productDetail/widget/productRecommentcard.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/rating_bar.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/image_slide.dart';
+import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,8 +18,8 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 class ProductDetail extends StatefulWidget {
-  final Product product;
-  ProductDetail(this.product);
+  final int productId;
+  ProductDetail({required this.productId});
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
@@ -34,14 +33,16 @@ class _ProductDetailState extends State<ProductDetail>
 
   late TabController _controller;
   late NavigatorState navigator;
+  late Future recommandProductFuture;
+
   @override
   void initState() {
     super.initState();
     recentViewController.dataInit();
     recentViewController.insertRecentView(
-      widget.product.id,
+      widget.productId,
     );
-
+    recommandProductFuture = productDetailController.getRecommandProductInfo();
     _controller = TabController(length: 4, vsync: this);
 
     pageController.addListener(() {
@@ -121,7 +122,7 @@ class _ProductDetailState extends State<ProductDetail>
   Widget _buildScroll() {
     return FutureBuilder(
       future: productDetailController
-          .getProductDetailInfo(widget.product.id)
+          .getProductDetailInfo(widget.productId)
           .catchError((e) {
         showAlertDialog(context, e);
         ErrorCard();
@@ -144,7 +145,7 @@ class _ProductDetailState extends State<ProductDetail>
                   _buildDivider(),
                   _buildSampleReivew(),
                   _buildDivider(),
-                  _buildProductRecommend(),
+                  recommandProductArea(),
                 ],
               ),
             );
@@ -618,45 +619,6 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  Widget _buildProductRecommend() {
-    return Padding(
-      padding: EdgeInsets.only(top: 25 * Scale.height),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-            child: Text("여기 마켓의 다른상품은 어때요?",
-                style: textStyle(const Color(0xff333333), FontWeight.w500,
-                    "NotoSansKR", 18.0)),
-          ),
-          SizedBox(height: 22),
-          Container(
-            height: 300,
-            child: ListView(
-              // 스크롤 방향 설정. 수평적으로 스크롤되도록 설정
-              scrollDirection: Axis.horizontal,
-              // 컨테이너들을 ListView의 자식들로 추가
-              children: <Widget>[
-                SizedBox(width: 22 * Scale.width),
-                ProductRecommentCard(widget.product),
-                SizedBox(width: 22 * Scale.width),
-                ProductRecommentCard(widget.product),
-                SizedBox(width: 22 * Scale.width),
-                ProductRecommentCard(widget.product),
-                SizedBox(width: 22 * Scale.width),
-                ProductRecommentCard(widget.product),
-                SizedBox(width: 22 * Scale.width),
-                ProductRecommentCard(widget.product),
-              ],
-            ),
-          ),
-          SizedBox(height: 80),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomNaviagationBar() {
     return Container(
       height: 120 * Scale.height,
@@ -739,6 +701,52 @@ class _ProductDetailState extends State<ProductDetail>
         ],
       ),
     );
+  }
+
+  Widget recommandProductArea() {
+    return FutureBuilder(
+        future: recommandProductFuture,
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                    child: Text("다른상품은 어때요?",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w500, "NotoSansKR", 18.0)),
+                  ),
+                  SizedBox(height: 22 * Scale.height),
+                  Container(
+                    height: 300 * Scale.height,
+                    child: ListView.builder(
+                        itemCount: 6,
+                        scrollDirection: Axis.horizontal,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5 * Scale.width),
+                            child: ProductCard(
+                                product: Product.fromJson(snapshot.data[index]),
+                                imageWidth: 100),
+                          );
+                        }),
+                  ),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return ErrorCard();
+            } else {
+              return progressBar();
+            }
+          } else {
+            return progressBar();
+          }
+        });
   }
 }
 

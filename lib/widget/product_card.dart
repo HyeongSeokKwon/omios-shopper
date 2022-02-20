@@ -18,7 +18,7 @@ class ProductCard extends StatelessWidget {
       onTap: () {
         Vibrate.feedback(VIBRATETYPE);
 
-        Get.to(() => ProductDetail(product));
+        Get.to(() => ProductDetail(productId: product.id));
       },
       child: Container(
         child: Column(

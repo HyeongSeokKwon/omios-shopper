@@ -61,6 +61,17 @@ class ProductDetailController extends GetxController {
     }
   }
 
+  Future<dynamic> getRecommandProductInfo() async {
+    Map<String, String> queryParams = {};
+    queryParams['main_category'] = "1";
+    queryParams['sub_category'] = "7";
+    var response =
+        await httpservice.httpGet("product/", queryParams).catchError((e) {
+      throw e;
+    });
+    return response['data']['results'];
+  }
+
   void reviewTabClicked(int tab) {
     reviewTabIndex = tab;
     update(['review']);
