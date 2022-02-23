@@ -40,10 +40,10 @@ class HttpService {
         throw BadRequestException("400 :");
 
       case 401:
-        // var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
-        // return responseJson;
+        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        return responseJson;
 
-        throw UnauthorisedException("401 :");
+      //throw UnauthorisedException("401 :");
 
       case 403:
         throw UnauthorisedException("403 :");
@@ -66,13 +66,13 @@ class HttpService {
     accessToken = pref.getString('accessToken');
   }
 
-  void setRefreshToken(var changedRefreshToken) async {
+  Future<void> setRefreshToken(var changedRefreshToken) async {
     pref = await SharedPreferences.getInstance();
     pref.setString('refreshToken', changedRefreshToken);
     refreshToken = changedRefreshToken;
   }
 
-  void setAccessToken(var changedAccessToken) async {
+  Future<void> setAccessToken(var changedAccessToken) async {
     pref = await SharedPreferences.getInstance();
     pref.setString('accessToken', changedAccessToken);
     accessToken = changedAccessToken;
@@ -94,13 +94,14 @@ class HttpService {
     }
   }
 
-  void updateToken() async {
+  Future<void> updateToken() async {
     // refresh token으로 accessToken 갱신시키는 함수
     var responseJson;
     if (isAccessExpired()) {
       //access token 만료 되었으면
       if (!isRefreshExpired()) {
         // refresh token 만료 되지 않았으면
+        print("refreshToken으로 token 갱신");
         try {
           var response = await http.post(
             Uri.parse(addressUrl + '/token/refresh/'), // refresh token 으로 재발급
@@ -112,8 +113,8 @@ class HttpService {
 
           responseJson = _response(response);
           print(responseJson);
-          setAccessToken(responseJson['data']['access']);
-          setRefreshToken(responseJson['data']['refresh']);
+          await setAccessToken(responseJson['data']['access']);
+          await setRefreshToken(responseJson['data']['refresh']);
         } on SocketException {
           throw FetchDataException("연결된 인터넷이 없습니다.");
         } catch (e) {
@@ -133,9 +134,9 @@ class HttpService {
     var responseJson;
     print(Uri.http(addressUrlx, baseUrl, queryParams));
     try {
-      updateToken();
-      response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams),
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
+      await updateToken().then((value) async => response = await http.get(
+          Uri.http(addressUrlx, baseUrl, queryParams),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'}));
 
       //responseBody = utf8.decode(response.bodyBytes);
 
@@ -152,18 +153,29 @@ class HttpService {
     var responseJson;
 
     if (addtionalUrl != "/token/") {
-      updateToken();
-    }
+      await updateToken().then(((value) async {
+        try {
+          response = await http.post(Uri.parse(addressUrl + addtionalUrl),
+              headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+              body: body);
 
-    try {
-      response = await http.post(Uri.parse(addressUrl + addtionalUrl),
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
-          body: body);
+          responseJson = _response(response);
+          return responseJson;
+        } on SocketException {
+          throw FetchDataException('연결된 인터넷이 없습니다.');
+        }
+      }));
+    } else {
+      try {
+        response = await http.post(Uri.parse(addressUrl + addtionalUrl),
+            headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+            body: body);
 
-      responseJson = _response(response);
-      return responseJson;
-    } on SocketException {
-      throw FetchDataException('연결된 인터넷이 없습니다.');
+        responseJson = _response(response);
+        return responseJson;
+      } on SocketException {
+        throw FetchDataException('연결된 인터넷이 없습니다.');
+      }
     }
   }
 
