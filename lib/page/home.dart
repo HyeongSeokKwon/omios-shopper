@@ -58,7 +58,6 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     focusNode.dispose();
-    homeController.scrollController.dispose();
     homeController.dispose();
     super.dispose();
   }
