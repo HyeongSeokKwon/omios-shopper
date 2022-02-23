@@ -1,6 +1,7 @@
-import 'package:cloth_collection/http/httpService.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
+
+import 'package:cloth_collection/http/httpService.dart';
 
 class HomeController extends GetxController {
   final int home = 0;
@@ -30,7 +31,6 @@ class HomeController extends GetxController {
     "assets/images/svg/feedTapped.svg",
     "assets/images/svg/myPageTapped.svg"
   ];
-  late ScrollController scrollController;
 
   int currentIndex = 0;
 
@@ -40,12 +40,6 @@ class HomeController extends GetxController {
       currentIndex = index;
       currentIconUrl[currentIndex] = navigationOnTapIconUrl[currentIndex];
     }
-    // if (index == home) {
-    //   if (scrollController.hasClients) {
-    //     scrollController.animateTo(0.0,
-    //         duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-    //   }
-    // }
     update();
   }
 
