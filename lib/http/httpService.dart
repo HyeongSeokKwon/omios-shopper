@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
@@ -40,10 +39,8 @@ class HttpService {
         throw BadRequestException("400 :");
 
       case 401:
-        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
-        return responseJson;
 
-      //throw UnauthorisedException("401 :");
+        throw UnauthorisedException("401 :");
 
       case 403:
         throw UnauthorisedException("403 :");
@@ -118,7 +115,7 @@ class HttpService {
         } on SocketException {
           throw FetchDataException("연결된 인터넷이 없습니다.");
         } catch (e) {
-          Get.snackbar('Snackbar', 'Snackbar',
+          Get.snackbar('Snackbar', e.toString(),
               snackPosition: SnackPosition.TOP);
           Get.offAll(Login());
         }
