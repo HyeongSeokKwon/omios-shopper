@@ -39,8 +39,8 @@ class HttpService {
         throw BadRequestException("400 :");
 
       case 401:
-
-        throw UnauthorisedException("401 :");
+        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        return responseJson;
 
       case 403:
         throw UnauthorisedException("403 :");
@@ -145,26 +145,33 @@ class HttpService {
     }
   }
 
-  Future<dynamic> httpPost(String addtionalUrl, var body) async {
+  Future<dynamic> httpPublicGet(String baseUrl,
+      [Map<String, dynamic>? queryParams]) async {
+    var response;
+    var responseJson;
+    print(Uri.http(addressUrlx, baseUrl, queryParams));
+    try {
+      await updateToken().then((value) async => response = await http.get(
+            Uri.http(addressUrlx, baseUrl, queryParams),
+          ));
+
+      //responseBody = utf8.decode(response.bodyBytes);
+
+      responseJson = _response(response);
+
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException("연결된 인터넷이 없습니다!!");
+    }
+  }
+
+  Future<dynamic> httpPost(String additionalUrl, var body) async {
     var response;
     var responseJson;
 
-    if (addtionalUrl != "/token/") {
-      await updateToken().then(((value) async {
-        try {
-          response = await http.post(Uri.parse(addressUrl + addtionalUrl),
-              headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
-              body: body);
-
-          responseJson = _response(response);
-          return responseJson;
-        } on SocketException {
-          throw FetchDataException('연결된 인터넷이 없습니다.');
-        }
-      }));
-    } else {
+    await updateToken().then(((value) async {
       try {
-        response = await http.post(Uri.parse(addressUrl + addtionalUrl),
+        response = await http.post(Uri.parse(addressUrl + additionalUrl),
             headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
             body: body);
 
@@ -173,6 +180,21 @@ class HttpService {
       } on SocketException {
         throw FetchDataException('연결된 인터넷이 없습니다.');
       }
+    }));
+  }
+
+  Future<dynamic> httpPublicPost(String additionalUrl, var body) async {
+    var response;
+    var responseJson;
+
+    try {
+      response =
+          await http.post(Uri.parse(addressUrl + additionalUrl), body: body);
+
+      responseJson = _response(response);
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException('연결된 인터넷이 없습니다.');
     }
   }
 
