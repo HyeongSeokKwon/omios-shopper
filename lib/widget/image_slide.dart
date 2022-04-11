@@ -32,7 +32,7 @@ class _ImageSlideHasDotState extends State<ImageSlideHasDot> {
               return Container(
                 child: GestureDetector(
                   child: CachedNetworkImage(
-                    imageUrl: "${widget.imageList[index]['url']}",
+                    imageUrl: "${widget.imageList[index]['image_url']}",
                     fit: BoxFit.fill,
                     width: 414 * Scale.width,
                     height: 1.2 * 414 * Scale.width,

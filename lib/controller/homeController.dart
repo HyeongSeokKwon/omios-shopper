@@ -1,4 +1,3 @@
-
 import 'package:get/state_manager.dart';
 
 import 'package:cloth_collection/http/httpService.dart';
@@ -45,12 +44,12 @@ class HomeController extends GetxController {
 
   Future<dynamic> getTodaysProducts() async {
     Map<String, String> queryParams = {};
-    queryParams['main_category'] = "1";
     queryParams['sub_category'] = "6";
     var response =
-        await httpservice.httpGet("product/", queryParams).catchError((e) {
+        await httpservice.httpGet("/products", queryParams).catchError((e) {
       throw e;
     });
+    print(response);
     print("getTodaysProducts");
     return response['data']['results'];
   }

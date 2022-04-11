@@ -1,5 +1,5 @@
 class OrderProduct {
-  String color;
+  Map<String, dynamic> color;
   String size;
   int count;
   int price;

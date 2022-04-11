@@ -121,12 +121,12 @@ class _ProductDetailState extends State<ProductDetail>
 
   Widget _buildScroll() {
     return FutureBuilder(
-      future: productDetailController
-          .getProductDetailInfo(widget.productId)
-          .catchError((e) {
-        showAlertDialog(context, e);
-        ErrorCard();
-      }),
+      future: productDetailController.getProductDetailInfo(widget.productId),
+      //     .catchError((e) {
+      //   print(e.toString());
+      //   showAlertDialog(context, e);
+      //   ErrorCard();
+      // }),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -264,7 +264,7 @@ class _ProductDetailState extends State<ProductDetail>
                     width: 140 * 3 / 4 * Scale.height,
                     fit: BoxFit.fill,
                     imageUrl:
-                        "${productDetailController.productInfo.images[index]['url']}",
+                        "${productDetailController.productInfo.images[index]['image_url']}",
                   ),
                 ),
               ),
@@ -300,7 +300,7 @@ class _ProductDetailState extends State<ProductDetail>
                           EdgeInsets.symmetric(horizontal: 5 * Scale.width),
                       child: Text(
                           "#" +
-                              "${productDetailController.productInfo.tags[index]} ",
+                              "${productDetailController.productInfo.tags[index]['name']} ",
                           style: textStyle(const Color(0xff0090ff),
                               FontWeight.w400, "NotoSansKR", 13.0)),
                     ),
@@ -308,7 +308,7 @@ class _ProductDetailState extends State<ProductDetail>
                 ),
                 onTap: () {
                   Get.to(() => SearchByText(
-                      productDetailController.productInfo.tags[index]));
+                      productDetailController.productInfo.tags[index]['name']));
                 },
               ),
             );
@@ -887,7 +887,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                                 style: textStyle(const Color(0xffcccccc),
                                     FontWeight.w400, "NotoSansKR", 16.0))
                             : Text(
-                                "${controller.colorData[controller.selectedColorIndex]}",
+                                "${controller.colorData[controller.selectedColorIndex]['display_color_name']}",
                                 style: textStyle(const Color(0xff333333),
                                     FontWeight.w500, "NotoSansKR", 16.0)),
                         SvgPicture.asset(controller.isColorButtonClicked
@@ -929,7 +929,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "${controller.colorData[index]}",
+                              "${controller.colorData[index]["display_color_name"]}",
                               style: textStyle(Color(0xff333333),
                                   FontWeight.w500, "NotoSansKR", 16.0),
                             ),
@@ -1243,7 +1243,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                 children: [
                   SizedBox(height: 14 * Scale.height),
                   Text(
-                    "${widget.productDetailController.productCart[index].color} / ${widget.productDetailController.productCart[index].size}",
+                    "${widget.productDetailController.productCart[index].color['display_color_name']} / ${widget.productDetailController.productCart[index].size}",
                     style: textStyle(const Color(0xff333333), FontWeight.w400,
                         "NotoSansKR", 14.0),
                   ),

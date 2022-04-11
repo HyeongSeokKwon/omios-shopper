@@ -42,16 +42,12 @@ class ProductDetailController extends GetxController {
 
   Future<dynamic> getProductDetailInfo(int productId) async {
     try {
-      var response = await httpservice.httpGet('product/$productId');
+      var response = await httpservice.httpGet('/products/$productId');
+      print(response);
       productInfo = ProductDetailInfo.fromJson(response['data']);
-      for (Map i in productInfo.options) {
-        if (!colorData.contains(i['color'])) {
-          colorData.add(i['color']);
-        }
-      }
-      for (Map i in productInfo.options) {
-        if (!sizeData.contains(i['size'])) {
-          sizeData.add(i['size']);
+      for (Map color in productInfo.colors) {
+        if (color['on_sale'] == true) {
+          colorData.add(color);
         }
       }
 
@@ -63,12 +59,14 @@ class ProductDetailController extends GetxController {
 
   Future<dynamic> getRecommandProductInfo() async {
     Map<String, String> queryParams = {};
-    queryParams['main_category'] = "1";
     queryParams['sub_category'] = "7";
+    print("getRecommandProducts");
     var response =
-        await httpservice.httpGet("product/", queryParams).catchError((e) {
+        await httpservice.httpGet("/products", queryParams).catchError((e) {
+      print(e);
       throw e;
     });
+    print(response);
     return response['data']['results'];
   }
 
@@ -89,13 +87,15 @@ class ProductDetailController extends GetxController {
   }
 
   void clickedSizeButton() {
-    if (isSizeButtonClicked) {
-      sizeCount = 0;
-    } else {
-      sizeCount = sizeData.length;
+    if (selectedColorIndex != -1) {
+      if (isSizeButtonClicked) {
+        sizeCount = 0;
+      } else {
+        sizeCount = sizeData.length;
+      }
+      isSizeButtonClicked = !isSizeButtonClicked;
+      update();
     }
-    isSizeButtonClicked = !isSizeButtonClicked;
-    update();
   }
 
   void selectColor(int index) {
@@ -103,6 +103,14 @@ class ProductDetailController extends GetxController {
       selectedColorIndex = index;
       colorCount = 0;
       sizeCount = sizeData.length;
+
+      sizeData = List.generate(colorData[selectedColorIndex]['options'].length,
+          (index) {
+        if (colorData[selectedColorIndex]['options'][index]['on_sale'] ==
+            true) {
+          return colorData[selectedColorIndex]['options'][index]['size'];
+        }
+      });
       isColorButtonClicked = false;
     } else {
       selectedColorIndex = -1;
@@ -127,13 +135,13 @@ class ProductDetailController extends GetxController {
     int pricePerOption = productInfo.price;
 
     if (selectedSizeIndex != -1 && selectedColorIndex != -1) {
-      for (Map<String, dynamic> i in productInfo.options) {
-        if (i['size'] == sizeData[selectedSizeIndex] &&
-            i['color'] == colorData[selectedColorIndex]) {
-          pricePerOption += i['price_difference'] as int;
-          break;
-        }
-      }
+      // for (Map<String, dynamic> i in productInfo.options) {
+      //   if (i['size'] == sizeData[selectedSizeIndex] &&
+      //       i['color'] == colorData[selectedColorIndex]) {
+      //     pricePerOption += i['price_difference'] as int;
+      //     break;
+      //   }
+      // }
 
       OrderProduct orderProduct = OrderProduct(
           color: colorData[selectedColorIndex],

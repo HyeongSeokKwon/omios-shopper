@@ -67,7 +67,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
                   return PhotoViewGalleryPageOptions(
                     scaleStateController: scaleController,
                     imageProvider: CachedNetworkImageProvider(
-                        "${widget.imageList[index]['url']}"),
+                        "${widget.imageList[index]['image_url']}"),
                     minScale: PhotoViewComputedScale.contained,
                     maxScale: PhotoViewComputedScale.contained * 1.75,
                   );
