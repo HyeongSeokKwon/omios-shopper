@@ -65,8 +65,8 @@ class LoginController extends GetxController {
     loginRequestModel = LoginRequestModel(userId, userPwd);
 
     try {
-      loginResponse =
-          await httpservice.httpPost('/token/', loginRequestModel.toJson());
+      loginResponse = await httpservice.httpPublicPost(
+          '/users/tokens', loginRequestModel.toJson());
       print(loginResponse);
       //만약 ID PW가 틀리면 =>
       if (loginResponse['message'] ==

@@ -23,10 +23,12 @@ class SignUpController extends GetxController {
 
   void validateId(String id) async {
     var response;
+    Map<String, dynamic> queryParams = {};
     RegExp regex = RegExp(r'^[a-zA-Z0-9]+$');
+    print("validate");
     if (regex.hasMatch(id) && id.length >= 4) {
-      response = await httpservice.httpGet("/user/unique/?username=$id");
-
+      queryParams['username'] = id;
+      response = await httpservice.httpPublicGet("/users/unique", queryParams);
       if (response['data']['is_unique'])
         isDuplicationCheck = "accept";
       else
