@@ -121,12 +121,13 @@ class _ProductDetailState extends State<ProductDetail>
 
   Widget _buildScroll() {
     return FutureBuilder(
-      future: productDetailController.getProductDetailInfo(widget.productId),
-      //     .catchError((e) {
-      //   print(e.toString());
-      //   showAlertDialog(context, e);
-      //   ErrorCard();
-      // }),
+      future: productDetailController
+          .getProductDetailInfo(widget.productId)
+          .catchError((e) {
+        print(e.toString());
+        showAlertDialog(context, e);
+        ErrorCard();
+      }),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -328,7 +329,7 @@ class _ProductDetailState extends State<ProductDetail>
             Text(
               "상품 상세 펼치기 ",
               style: textStyle(
-                  Color(0xff555555), FontWeight.w400, "NotoSansKR", 16.0),
+                  Color(0xff555555), FontWeight.w500, "NotoSansKR", 15.0),
             ),
             SvgPicture.asset("assets/images/svg/unfoldInfo.svg")
           ],
@@ -361,6 +362,7 @@ class _ProductDetailState extends State<ProductDetail>
   }
 
   Widget productDetailBottomSheetArea(BuildContext context) {
+    final productInfo = productDetailController.productInfo;
     return Container(
       height: 565 * Scale.height,
       decoration: BoxDecoration(
@@ -399,18 +401,21 @@ class _ProductDetailState extends State<ProductDetail>
                 ],
               ),
             ),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
-            showdetailInfo("subject", "info"),
+            showdetailInfo("스타일", productInfo.style['name']),
+            showdetailInfo("테마", productInfo.theme['name']),
+            showdetailInfo("제조국", productInfo.manufacturingCountry),
+            showdetailInfo("두께감", productInfo.thickness['name']),
+            showdetailInfo("비침", productInfo.seeThrough['name']),
+            showdetailInfo("신축성", productInfo.flexibility['name']),
+            showdetailInfo("안감", productInfo.lining ? "존재" : "없음"),
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: productInfo.materials.length,
+                itemBuilder: ((context, index) {
+                  return showdetailInfo(
+                      productInfo.materials[index]['material'],
+                      productInfo.materials[index]['mixing_rate']);
+                })),
           ],
         ),
       ),

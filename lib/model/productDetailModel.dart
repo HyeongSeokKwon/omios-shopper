@@ -44,21 +44,21 @@ class ProductDetailInfo {
       id: json['id'],
       name: json['name'],
       price: json['price'],
-      lining: json['lining'],
+      lining: json['lining'], //
       materials: json['materials'],
       colors: json['colors'],
       images: json['images'],
-      manufacturingCountry: json['manufacturing_country'],
+      manufacturingCountry: json['manufacturing_country'], //
       mainCategory: json['main_category'],
       subCategory: json['sub_category'],
-      style: json['style'],
-      age: json['age'],
+      style: json['style'], //
+      age: json['age'], //
       tags: json['tags'],
       laundryInformations: json['laundry_informations'],
-      thickness: json['thickness'],
-      seeThrough: json['see_through'],
-      flexibility: json['flexibility'],
-      theme: json["theme"],
+      thickness: json['thickness'], //
+      seeThrough: json['see_through'], //
+      flexibility: json['flexibility'], //
+      theme: json["theme"], //
     );
   }
 }

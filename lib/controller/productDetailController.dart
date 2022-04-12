@@ -132,22 +132,12 @@ class ProductDetailController extends GetxController {
   }
 
   void pushProduct() {
-    int pricePerOption = productInfo.price;
-
     if (selectedSizeIndex != -1 && selectedColorIndex != -1) {
-      // for (Map<String, dynamic> i in productInfo.options) {
-      //   if (i['size'] == sizeData[selectedSizeIndex] &&
-      //       i['color'] == colorData[selectedColorIndex]) {
-      //     pricePerOption += i['price_difference'] as int;
-      //     break;
-      //   }
-      // }
-
       OrderProduct orderProduct = OrderProduct(
           color: colorData[selectedColorIndex],
           size: sizeData[selectedSizeIndex],
           count: 1,
-          price: pricePerOption);
+          price: productInfo.price);
 
       for (int i = 0; i < productCart.length; i++) {
         // 중복 상품 추가 있을때
