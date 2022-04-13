@@ -141,6 +141,7 @@ class _ProductDetailState extends State<ProductDetail>
                   _buildShortProductInfo(),
                   SizedBox(height: 14 * Scale.height),
                   _buildProductInfo(),
+                  _buildDiscountPriceArea(),
                   _buildDivider(),
                   _buildSatisfaction(),
                   _buildDivider(),
@@ -171,7 +172,6 @@ class _ProductDetailState extends State<ProductDetail>
     return Center(
       child: Container(
         width: 391 * Scale.width,
-        height: 122 * Scale.height,
         decoration: BoxDecoration(
           color: const Color(0xffffffff),
           borderRadius: BorderRadius.only(
@@ -189,46 +189,301 @@ class _ProductDetailState extends State<ProductDetail>
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.only(
-              left: 16 * Scale.width,
-              right: 16 * Scale.width,
-              top: 20 * Scale.height),
+          padding: EdgeInsets.symmetric(
+              horizontal: 16 * Scale.width, vertical: 20 * Scale.height),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: [],
+                children: [
+                  Text(
+                    "카테고리",
+                    style: textStyle(const Color(0xff999999), FontWeight.w400,
+                        "NotoSansKR", 13.0),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.0 * Scale.width),
+                    child:
+                        SvgPicture.asset("assets/images/svg/categoryArrow.svg"),
+                  ),
+                  Text(
+                    productDetailController.productInfo.mainCategory['name'],
+                    style: textStyle(const Color(0xff555555), FontWeight.w500,
+                        "NotoSansKR", 13.0),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.0 * Scale.width),
+                    child:
+                        SvgPicture.asset("assets/images/svg/categoryArrow.svg"),
+                  ),
+                  Text(
+                    productDetailController.productInfo.subCategory['name'],
+                    style: textStyle(const Color(0xff555555), FontWeight.w500,
+                        "NotoSansKR", 13.0),
+                  )
+                ],
               ),
+              SizedBox(height: 13.5 * Scale.height),
               Text(
                 "${productDetailController.productInfo.name}",
                 style: textStyle(const Color(0xff555555), FontWeight.w500,
-                    "NotoSansKR", 16.0),
+                    "NotoSansKR", 20.0),
               ),
-              SizedBox(height: 3 * Scale.height),
+              SizedBox(height: 13 * Scale.height),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    setPriceFormat(productDetailController.productInfo.price),
-                    style: textStyle(const Color(0xff333333), FontWeight.w700,
-                        "NotoSansKR", 20.0),
-                  ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      buildRatingBar(14, 4.8),
-                      SizedBox(width: 3 * Scale.width),
                       Text(
-                        "(17)",
+                        "18%",
+                        style: textStyle(const Color(0xffec5363),
+                            FontWeight.w500, "NotoSansKR", 20.0),
+                      ),
+                      SizedBox(width: 5 * Scale.width),
+                      Text(
+                        "${setPriceFormat(productDetailController.productInfo.price)}원",
                         style: textStyle(const Color(0xff333333),
-                            FontWeight.w500, "NotoSansKR", 13.0),
-                      )
+                            FontWeight.w700, "NotoSansKR", 20.0),
+                      ),
+                      SizedBox(width: 10 * Scale.width),
+                      Text(
+                        "${setPriceFormat(productDetailController.productInfo.price)}원",
+                        style: TextStyle(
+                            color: const Color(0xff797979),
+                            decoration: TextDecoration.lineThrough,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "NotoSansKR",
+                            fontSize: 14.0),
+                      ),
                     ],
                   ),
+                  Text(
+                    "(200원 적립)",
+                    style: textStyle(const Color(0xff797979), FontWeight.w400,
+                        "NotoSansKR", 13.0),
+                  ),
                 ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 12 * Scale.height),
+                child: Divider(
+                  thickness: 1,
+                  color: const Color(0xffeeeeee),
+                ),
+              ),
+              Row(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "(회원가)",
+                        style: textStyle(const Color(0xffec5363),
+                            FontWeight.w400, "NotoSansKR", 15.0),
+                      ),
+                      SizedBox(width: 5 * Scale.width),
+                      Text(
+                        "${setPriceFormat(12660)}~${setPriceFormat(24690)}원",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w700, "NotoSansKR", 18.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 8 * Scale.width),
+                  SvgPicture.asset("assets/images/svg/triangleDropdown.svg"),
+                ],
+              ),
+              SizedBox(height: 10 * Scale.height),
+              _buildHashTag(),
+              SizedBox(height: 10 * Scale.height),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  buildRatingBar(16, 4.5),
+                  SizedBox(width: 10 * Scale.width),
+                  Row(
+                    children: [
+                      Text(
+                        "17개 리뷰보기",
+                        style: textStyle(const Color(0xff999999),
+                            FontWeight.w400, "NotoSansKR", 13.0),
+                      ),
+                      SvgPicture.asset("assets/images/svg/categoryArrow.svg")
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(height: 22 * Scale.height),
+              Container(
+                width: 560 * Scale.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset("assets/images/svg/coupon.svg"),
+                    SizedBox(width: 13 * Scale.width),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              style: textStyle(Color(0xffec5363),
+                                  FontWeight.w400, "NotoSansKR", 12.0),
+                              text: "최대 "),
+                          TextSpan(
+                              style: textStyle(const Color(0xffec5363),
+                                  FontWeight.w500, "NotoSansKR", 14.0),
+                              text: "4000원 할인 "),
+                          TextSpan(
+                              style: textStyle(const Color(0xffec5363),
+                                  FontWeight.w400, "NotoSansKR", 12.0),
+                              text: "쿠폰 받기")
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                height: 50 * Scale.height,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  border: Border.all(color: const Color(0xffffe4e7), width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                        color: const Color(0x1ab57878),
+                        offset: Offset(0, 2),
+                        blurRadius: 10,
+                        spreadRadius: 0)
+                  ],
+                  color: const Color(0xfffff7f8),
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDiscountPriceArea() {
+    return Padding(
+      padding: EdgeInsets.only(
+          top: 33 * Scale.height,
+          left: 22 * Scale.width,
+          right: 22 * Scale.width),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "최대 할인가",
+                style: textStyle(const Color(0xff555555), FontWeight.w700,
+                    "NotoSansKR", 14.0),
+              ),
+              Text(
+                "${setPriceFormat(16000)}원",
+                style: textStyle(const Color(0xff555555), FontWeight.w700,
+                    "NotoSansKR", 14.0),
+              ),
+            ],
+          ),
+          SizedBox(height: 13 * Scale.height),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "쿠폰 할인",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+              Text(
+                "-${setPriceFormat(1000)}원",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ],
+          ),
+          SizedBox(height: 13 * Scale.height),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "적립금 사용",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+              Text(
+                "-${setPriceFormat(6000)}원",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ],
+          ),
+          SizedBox(height: 13 * Scale.height),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "맴버십 할인 (골드 : 2%",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+              Text(
+                "-${setPriceFormat(350)}원",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ],
+          ),
+          SizedBox(height: 40 * Scale.height),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("assets/images/svg/parcel.svg"),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          style: textStyle(const Color(0xff666666),
+                              FontWeight.w400, "NotoSansKR", 14.0),
+                          text: "전 상품 모두 "),
+                      TextSpan(
+                          style: textStyle(Color(0xff333333), FontWeight.w500,
+                              "NotoSansKR", 14.0),
+                          text: "무료배송, 무료반품")
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            width: 560 * Scale.width,
+            height: 40 * Scale.width,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: const Color(0xfffafafa),
+            ),
+          ),
+          SizedBox(height: 13 * Scale.height),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                    style: textStyle(const Color(0xff666666), FontWeight.w400,
+                        "NotoSansKR", 13.0),
+                    text: "배송:일반배송 "),
+                TextSpan(
+                    style: textStyle(
+                        Color(0xff333333), FontWeight.w500, "NotoSansKR", 12.0),
+                    text: " (영업일 기준 3~7일)"),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -238,8 +493,6 @@ class _ProductDetailState extends State<ProductDetail>
       children: [
         _buildProductImages(),
         SizedBox(height: 24 * Scale.height),
-        _buildHashTag(),
-        SizedBox(height: 32 * Scale.height),
         _buildDetailInfoButton(),
       ],
     );
@@ -278,44 +531,35 @@ class _ProductDetailState extends State<ProductDetail>
   }
 
   Widget _buildHashTag() {
-    return Padding(
-      padding: EdgeInsets.only(left: 22 * Scale.width),
-      child: Container(
-        height: 30 * Scale.height,
-        child: ListView.builder(
-          itemCount: productDetailController.productInfo.tags.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.only(right: 4 * Scale.width),
-              child: GestureDetector(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                    color: Color.fromRGBO(234, 237, 240, 1),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5 * Scale.width),
-                      child: Text(
-                          "#" +
-                              "${productDetailController.productInfo.tags[index]['name']} ",
-                          style: textStyle(const Color(0xff0090ff),
-                              FontWeight.w400, "NotoSansKR", 13.0)),
-                    ),
+    return Container(
+      height: 25 * Scale.height,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: productDetailController.productInfo.tags.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.only(right: 4 * Scale.width),
+            child: GestureDetector(
+              child: Container(
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+                    child: Text(
+                        "#" +
+                            "${productDetailController.productInfo.tags[index]['name']} ",
+                        style: textStyle(const Color(0xff0090ff),
+                            FontWeight.w400, "NotoSansKR", 14.0)),
                   ),
                 ),
-                onTap: () {
-                  Get.to(() => SearchByText(
-                      productDetailController.productInfo.tags[index]['name']));
-                },
               ),
-            );
-          },
-          scrollDirection: Axis.horizontal,
-        ),
+              onTap: () {
+                Get.to(() => SearchByText(
+                    productDetailController.productInfo.tags[index]['name']));
+              },
+            ),
+          );
+        },
+        scrollDirection: Axis.horizontal,
       ),
     );
   }
@@ -1298,7 +1542,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                         ],
                       ),
                       Text(
-                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].price)}",
+                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].price)}원",
                         style: textStyle(Color(0xff333333), FontWeight.w500,
                             "NotoSansKR", 16.0),
                       ),
