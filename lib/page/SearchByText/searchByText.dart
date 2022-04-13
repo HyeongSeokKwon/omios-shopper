@@ -1,7 +1,6 @@
 import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.dart';
 import 'package:cloth_collection/controller/categoryController.dart';
-import 'package:cloth_collection/controller/searchBytTextController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/category/categoryProductView.dart';
 import 'package:cloth_collection/repository/categoryRepository.dart';
