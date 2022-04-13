@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:cloth_collection/repository/categoryRepository.dart';
+import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.dart';
 import 'package:cloth_collection/repository/searchRepository.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,38 +9,50 @@ part 'search_event.dart';
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  CategoryRepository _categoryRepository = CategoryRepository();
   SearchRepository _searchRepository = SearchRepository();
-  SearchBloc() : super(SearchState.initial()) {
-    on<ChangeSearchingText>(getSearchingResult);
+  InfinityScrollBloc infinityScrollBloc;
+  SearchBloc({required this.infinityScrollBloc})
+      : super(SearchState.initial()) {
+    on<ChangeSearchingText>(getSearchBox);
+    on<ClickedSearchButtonEvent>(getSearchProducts);
   }
 
-  Future<void> getSearchingResult(
+  Future<void> getSearchBox(
       ChangeSearchingText event, Emitter<SearchState> emit) async {
     if (event.text.isNotEmpty) {
-      emit(state.copyWith(searchState: FetchState.loading));
-      Map<String, dynamic> searchBoxResults = await getSearchBox(event.text);
-      Map<String, dynamic> searchProductsResults =
-          await getSearchProducts(event.text);
-
-      _categoryRepository.getCategory();
+      emit(state.copyWith(
+          searchState: FetchState.loading, isClickedSearchingButton: false));
+      Map<String, dynamic> searchBoxResults =
+          await _searchRepository.getSearchBox(event.text);
 
       emit(state.copyWith(
-          searchState: FetchState.success,
-          searchBoxList: searchBoxResults,
-          searchProductList: searchProductsResults));
+        searchState: FetchState.success,
+        searchBoxList: searchBoxResults,
+      ));
     } else {
-      emit(state.copyWith(searchState: FetchState.initial));
+      emit(state.copyWith(
+          searchState: FetchState.initial, isClickedSearchingButton: true));
     }
   }
 
-  Future<dynamic> getSearchBox(String text) async {
-    Map results = await _searchRepository.getSearchBox(text);
-    return results;
-  }
-
-  Future<dynamic> getSearchProducts(String text) async {
-    Map results = await _searchRepository.getSearchProducts(text);
-    return results;
+  Future<void> getSearchProducts(
+      ClickedSearchButtonEvent event, Emitter<SearchState> emit) async {
+    if (event.text.isNotEmpty) {
+      emit(state.copyWith(
+          searchState: FetchState.loading, searchWord: event.text));
+      Map<String, dynamic> searchProductResults =
+          await _searchRepository.getSearchProducts(event.text);
+      infinityScrollBloc.state.getData = searchProductResults;
+      infinityScrollBloc.state.productData = searchProductResults['results'];
+      emit(
+        state.copyWith(
+          searchState: FetchState.success,
+          searchProductList: searchProductResults['results'],
+          isClickedSearchingButton: true,
+        ),
+      );
+    } else {
+      emit(state.copyWith(searchState: FetchState.initial));
+    }
   }
 }

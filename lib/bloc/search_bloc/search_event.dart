@@ -21,3 +21,8 @@ class ClickedSubCategoryEvent extends SearchEvent {
     required this.subId,
   });
 }
+
+class ClickedSearchButtonEvent extends SearchEvent {
+  final String text;
+  ClickedSearchButtonEvent({required this.text});
+}
