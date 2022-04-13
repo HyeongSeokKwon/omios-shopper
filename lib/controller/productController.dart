@@ -56,12 +56,13 @@ class ProductController extends GetxController {
   Future<dynamic> initGetProducts() async {
     var response;
     queryParams = {};
-    queryParams['main_category'] = '$mainCategoryId';
     if (subCategoryId != NOTSELECT) {
       queryParams['sub_category'] = '$subCategoryId';
+    } else {
+      queryParams['main_category'] = '$mainCategoryId';
     }
     response =
-        await httpservice.httpGet("product", queryParams).catchError((e) {
+        await httpservice.httpGet("/products", queryParams).catchError((e) {
       throw e;
     });
 
@@ -85,7 +86,7 @@ class ProductController extends GetxController {
       var page = "page";
       queryParams['page'] = "${nextDataLink![nextDataLink!.indexOf(page) + 5]}";
       response =
-          await httpservice.httpGet("product", queryParams).catchError((e) {
+          await httpservice.httpGet("/products", queryParams).catchError((e) {
         throw e;
       });
     } else {
@@ -137,7 +138,6 @@ class ProductController extends GetxController {
     int endPrice = searchOption.priceRange.end.toInt();
     queryParams = {};
 
-    queryParams['main_category'] = '$mainCategoryId';
     queryParams['minprice'] = '${startPrice * 1000}';
     queryParams['maxprice'] = '${endPrice * 1000}';
 
@@ -145,13 +145,15 @@ class ProductController extends GetxController {
 
     if (subCategoryId != NOTSELECT) {
       queryParams['sub_category'] = '$subCategoryId';
+    } else {
+      queryParams['main_category'] = '$mainCategoryId';
     }
 
     queryParams['color'] = List.generate(
         selectedColor.length, (index) => selectedColor[index].toString());
 
     response =
-        await httpservice.httpGet("product", queryParams).catchError((e) {
+        await httpservice.httpGet("/products", queryParams).catchError((e) {
       throw e;
     });
 
@@ -163,7 +165,7 @@ class ProductController extends GetxController {
   }
 
   Future<List<dynamic>> getColorImage() async {
-    var response = await httpservice.httpGet("product/color");
+    var response = await httpservice.httpGet("/products/colors");
     colorData = response['data'];
     return response['data'];
   }

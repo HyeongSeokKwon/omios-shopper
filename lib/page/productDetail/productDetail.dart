@@ -414,7 +414,7 @@ class _ProductDetailState extends State<ProductDetail>
                 itemBuilder: ((context, index) {
                   return showdetailInfo(
                       productInfo.materials[index]['material'],
-                      productInfo.materials[index]['mixing_rate']);
+                      productInfo.materials[index]['mixing_rate'].toString());
                 })),
           ],
         ),

@@ -28,9 +28,11 @@ class _CategoryProductViewState extends State<CategoryProductView>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        titleSpacing: 0.0,
+        automaticallyImplyLeading: false,
         elevation: 0,
-        leadingWidth: double.infinity,
-        leading: Padding(
+        leadingWidth: 0,
+        title: Padding(
           padding: EdgeInsets.only(left: 17 * Scale.width),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,

@@ -17,7 +17,7 @@ class CategoryController extends GetxController {
 
   Future<List<dynamic>> getCategory() async {
     var response =
-        await httpservice.httpGet("product/main-category").catchError((e) {
+        await httpservice.httpGet("/products/main-categories").catchError((e) {
       throw e;
     });
     return response['data'];
@@ -25,7 +25,7 @@ class CategoryController extends GetxController {
 
   Future<List<dynamic>> getSubCategory(int mainCategoryId) async {
     var response = await httpservice
-        .httpGet("product/main-category/$mainCategoryId/sub-category")
+        .httpGet("/products/main-categories/$mainCategoryId/sub-categories")
         .catchError((e) {
       throw e;
     });
