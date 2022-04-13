@@ -138,8 +138,8 @@ class ProductController extends GetxController {
     int endPrice = searchOption.priceRange.end.toInt();
     queryParams = {};
 
-    queryParams['minprice'] = '${startPrice * 1000}';
-    queryParams['maxprice'] = '${endPrice * 1000}';
+    queryParams['min_price'] = '${startPrice * 1000}';
+    queryParams['max_price'] = '${endPrice * 1000}';
 
     queryParams['sort'] = sortTypesUrl[sortType];
 
