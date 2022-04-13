@@ -19,7 +19,7 @@ class Scale {
 
 String setPriceFormat(int price) {
   final oCcy = new NumberFormat("#,###", "ko_KR");
-  return "${oCcy.format(price)}원";
+  return "${oCcy.format(price)}";
 }
 
 TextStyle textStyle(

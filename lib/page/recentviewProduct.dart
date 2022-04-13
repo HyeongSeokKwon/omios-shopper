@@ -142,9 +142,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                           ),
                                           SizedBox(height: 4 * Scale.height),
                                           Text(
-                                            setPriceFormat(controller
-                                                    .recentViewProductList[
-                                                index]['price']),
+                                            "${setPriceFormat(controller.recentViewProductList[index]['price'])}원",
                                             style: textStyle(
                                                 const Color(0xff333333),
                                                 FontWeight.w700,
