@@ -19,8 +19,8 @@ class InfinityScrollBloc
   Future<void> addData(
       AddDataEvent event, Emitter<InfinityScrollState> emit) async {
     Map<String, dynamic> response;
-    Uri nextLink = Uri.parse(state.getData['next']);
     if (state.getData['next'] != null) {
+      Uri nextLink = Uri.parse(state.getData['next']);
       emit(state.copyWith(getState: FetchState.loading));
       response =
           await _httpService.httpGet(nextLink.path, nextLink.queryParameters);
