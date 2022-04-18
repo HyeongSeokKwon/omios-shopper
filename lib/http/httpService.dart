@@ -168,9 +168,9 @@ class HttpService {
             body: body ?? body);
 
         responseJson = _response(response);
-        print(responseJson);
-        return responseJson;
       }));
+      print(responseJson);
+      return responseJson;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');
     }
