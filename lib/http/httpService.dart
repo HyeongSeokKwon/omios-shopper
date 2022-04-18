@@ -13,14 +13,10 @@ import 'httpException.dart';
 // username = rkdeowls
 // password = rkdeowls
 
-// 1. access token 만료 확인
-// 2. refresh token 만료 확인
-// 3-1. refresh token이 만료가 되었으면, 로그아웃
-// 3-2. refresh token이 만료가 안되었으면, refresh token 이용해서 token 발급
-
 class HttpService {
   static var refreshToken;
   static var accessToken;
+  static var id;
   var addressUrl = 'http://13.209.244.41';
   var addressUrlx = '13.209.244.41';
   late SharedPreferences pref;
@@ -73,6 +69,7 @@ class HttpService {
     pref = await SharedPreferences.getInstance();
     pref.setString('accessToken', changedAccessToken);
     accessToken = changedAccessToken;
+    id = Jwt.parseJwt(accessToken)['user_id'];
   }
 
   bool isAccessExpired() {
@@ -129,13 +126,10 @@ class HttpService {
       [Map<String, dynamic>? queryParams]) async {
     var response;
     var responseJson;
-    print(Uri.http(addressUrlx, baseUrl, queryParams));
     try {
       await updateToken().then((value) async => response = await http.get(
           Uri.http(addressUrlx, baseUrl, queryParams),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'}));
-
-      //responseBody = utf8.decode(response.bodyBytes);
 
       responseJson = _response(response);
 
@@ -149,13 +143,11 @@ class HttpService {
       [Map<String, dynamic>? queryParams]) async {
     var response;
     var responseJson;
-    print(Uri.http(addressUrlx, baseUrl, queryParams));
+
     try {
       await updateToken().then((value) async => response = await http.get(
             Uri.http(addressUrlx, baseUrl, queryParams),
           ));
-
-      //responseBody = utf8.decode(response.bodyBytes);
 
       responseJson = _response(response);
 
@@ -165,22 +157,23 @@ class HttpService {
     }
   }
 
-  Future<dynamic> httpPost(String additionalUrl, var body) async {
+  Future<dynamic> httpPost(String additionalUrl, [var body]) async {
     var response;
     var responseJson;
 
-    await updateToken().then(((value) async {
-      try {
-        response = await http.post(Uri.parse(addressUrl + additionalUrl),
+    try {
+      await updateToken().then(((value) async {
+        response = await http.post(Uri.http(addressUrlx, additionalUrl),
             headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
-            body: body);
+            body: body ?? body);
 
         responseJson = _response(response);
+        print(responseJson);
         return responseJson;
-      } on SocketException {
-        throw FetchDataException('연결된 인터넷이 없습니다.');
-      }
-    }));
+      }));
+    } on SocketException {
+      throw FetchDataException('연결된 인터넷이 없습니다.');
+    }
   }
 
   Future<dynamic> httpPublicPost(String additionalUrl, var body) async {
@@ -200,5 +193,18 @@ class HttpService {
 
   Future<dynamic> httpPatch(String addtionalUrl) async {}
 
-  Future<dynamic> httpDelete(String addtionalUrl) async {}
+  Future<dynamic> httpDelete(String addtionalUrl) async {
+    var response;
+    var responseJson;
+    try {
+      await updateToken().then((value) async => response = await http.delete(
+          Uri.http(addressUrlx, addtionalUrl),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'}));
+      responseJson = _response(response);
+
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException("연결된 인터넷이 없습니다!!");
+    }
+  }
 }

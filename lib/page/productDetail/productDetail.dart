@@ -12,10 +12,13 @@ import 'package:cloth_collection/widget/image_slide.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
+
+import '../../bloc/bloc.dart';
 
 class ProductDetail extends StatefulWidget {
   final int productId;
@@ -34,7 +37,7 @@ class _ProductDetailState extends State<ProductDetail>
   late TabController _controller;
   late NavigatorState navigator;
   late Future recommandProductFuture;
-
+  late Future productDetailInfo;
   @override
   void initState() {
     super.initState();
@@ -42,6 +45,8 @@ class _ProductDetailState extends State<ProductDetail>
     recentViewController.insertRecentView(
       widget.productId,
     );
+    productDetailInfo =
+        productDetailController.getProductDetailInfo(widget.productId);
     recommandProductFuture = productDetailController.getRecommandProductInfo();
     _controller = TabController(length: 4, vsync: this);
 
@@ -69,21 +74,35 @@ class _ProductDetailState extends State<ProductDetail>
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.transparent // status bar 색깔
             ));
-    return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(65 * Scale.height),
-          child: _buildAppBar()),
-      extendBodyBehindAppBar: true,
-      body: SafeArea(
-        top: false,
-        bottom: true,
-        child: SingleChildScrollView(
-          controller: pageController,
-          child: _buildScroll(),
+    return Builder(builder: (context) {
+      return Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(65 * Scale.height),
+            child: _buildAppBar()),
+        extendBodyBehindAppBar: true,
+        body: SafeArea(
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            controller: pageController,
+            child: _buildScroll(),
+          ),
         ),
-      ),
-      bottomNavigationBar: _buildBottomNaviagationBar(),
-    );
+        bottomNavigationBar: FutureBuilder(
+            future: productDetailInfo,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return _buildBottomNaviagationBar();
+                } else {
+                  return ErrorCard();
+                }
+              } else {
+                return progressBar();
+              }
+            }),
+      );
+    });
   }
 
   Widget _buildAppBar() {
@@ -240,19 +259,19 @@ class _ProductDetailState extends State<ProductDetail>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        "18%",
+                        "${productDetailController.productInfo.baseDiscountRate}%",
                         style: textStyle(const Color(0xffec5363),
                             FontWeight.w500, "NotoSansKR", 20.0),
                       ),
                       SizedBox(width: 5 * Scale.width),
                       Text(
-                        "${setPriceFormat(productDetailController.productInfo.price)}원",
+                        "${setPriceFormat(productDetailController.productInfo.baseDiscountedPrice)}원",
                         style: textStyle(const Color(0xff333333),
                             FontWeight.w700, "NotoSansKR", 20.0),
                       ),
                       SizedBox(width: 10 * Scale.width),
                       Text(
-                        "${setPriceFormat(productDetailController.productInfo.price)}원",
+                        "${setPriceFormat(productDetailController.productInfo.salePrice)}원",
                         style: TextStyle(
                             color: const Color(0xff797979),
                             decoration: TextDecoration.lineThrough,
@@ -869,85 +888,101 @@ class _ProductDetailState extends State<ProductDetail>
   }
 
   Widget _buildBottomNaviagationBar() {
-    return Container(
-      height: 120 * Scale.height,
-      decoration: BoxDecoration(
-        color: const Color(0xffffffff),
-        boxShadow: [
-          BoxShadow(offset: Offset(0, 2), blurRadius: 3, spreadRadius: 0)
-        ],
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          InkWell(
-            child: Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: const Color(0xffeeeeee),
-                ),
-                child: Center(
-                  child: SvgPicture.asset("assets/images/svg/heart.svg"),
-                )),
-            onTap: () {
-              Vibrate.feedback(VIBRATETYPE);
-            },
-          ),
-          SizedBox(width: 8 * Scale.width),
-          TextButton(
-            child: Text("구매하기",
-                style: textStyle(const Color(0xffffffff), FontWeight.w500,
-                    "NotoSansKR", 18.0)),
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              fixedSize:
-                  MaterialStateProperty.all<Size>(Size(310 * Scale.width, 52)),
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(const Color(0xffec5363)),
-            ),
-            onPressed: () {
-              Vibrate.feedback(VIBRATETYPE);
-              showModalBottomSheet<void>(
-                isDismissible: false,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                context: context,
-                builder: (context) => Stack(
-                  children: [
-                    GestureDetector(
-                      child: Container(
-                          width: 414 * Scale.width,
-                          height: 896 * Scale.height,
-                          color: Colors.transparent),
-                      onTap: Navigator.of(context).pop,
-                    ),
-                    Positioned(
-                      child: DraggableScrollableSheet(
-                        initialChildSize: 0.6,
-                        maxChildSize: 1.0,
-                        builder: (_, controller) {
-                          return BuyingBottomSheet(
-                            productDetailController: productDetailController,
-                          );
-                        },
+    return BlocProvider<LikeBloc>(
+      create: (context) =>
+          LikeBloc(productDetailController.productInfo.shopperLike),
+      child: Container(
+        height: 120 * Scale.height,
+        decoration: BoxDecoration(
+          color: const Color(0xffffffff),
+          boxShadow: [
+            BoxShadow(offset: Offset(0, 2), blurRadius: 3, spreadRadius: 0)
+          ],
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BlocBuilder<LikeBloc, LikeState>(
+              builder: (context, state) {
+                return InkWell(
+                  child: Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: const Color(0xffeeeeee),
                       ),
-                    )
-                  ],
+                      child: Center(
+                        child: SvgPicture.asset(context
+                                .read<LikeBloc>()
+                                .state
+                                .isLike
+                            ? "assets/images/svg/bottomNavigationLike.svg"
+                            : "assets/images/svg/bottomNavigationUnlike.svg"),
+                      )),
+                  onTap: () {
+                    Vibrate.feedback(VIBRATETYPE);
+                    context.read<LikeBloc>().add(ClickLikeButtonEvent(
+                        productId:
+                            productDetailController.productInfo.id.toString()));
+                  },
+                );
+              },
+            ),
+            SizedBox(width: 8 * Scale.width),
+            TextButton(
+              child: Text("구매하기",
+                  style: textStyle(const Color(0xffffffff), FontWeight.w500,
+                      "NotoSansKR", 18.0)),
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              );
-            },
-          ),
-        ],
+                fixedSize: MaterialStateProperty.all<Size>(
+                    Size(310 * Scale.width, 52)),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(const Color(0xffec5363)),
+              ),
+              onPressed: () {
+                Vibrate.feedback(VIBRATETYPE);
+                showModalBottomSheet<void>(
+                  isDismissible: false,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  context: context,
+                  builder: (context) => Stack(
+                    children: [
+                      GestureDetector(
+                        child: Container(
+                            width: 414 * Scale.width,
+                            height: 896 * Scale.height,
+                            color: Colors.transparent),
+                        onTap: Navigator.of(context).pop,
+                      ),
+                      Positioned(
+                        child: DraggableScrollableSheet(
+                          initialChildSize: 0.6,
+                          maxChildSize: 1.0,
+                          builder: (_, controller) {
+                            return BuyingBottomSheet(
+                              productDetailController: productDetailController,
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
