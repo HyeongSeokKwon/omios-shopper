@@ -1,3 +1,5 @@
+import 'package:cloth_collection/page/orderDetails/orderDetails.dart';
+import 'package:cloth_collection/page/orderHistory/orderHistory.dart';
 import 'package:cloth_collection/page/recentviewProduct.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +97,10 @@ class _MyPageState extends State<MyPage> {
                       "NotoSansKR", 14.0)),
             ],
           ),
+          onTap: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => OrderHistory()));
+          },
         ),
         GestureDetector(
           child: Column(
