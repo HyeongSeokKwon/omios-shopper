@@ -45,8 +45,58 @@ class _OrderHistoryState extends State<OrderHistory> {
         children: [
           summaryInfoArea(),
           filteringArea(),
+          purchaseConfirmationArea(),
+          shippingCompletedArea(),
+          preparingShippingArea(),
+          shippingInProgressArea(),
+          paymentCompletedArea(),
+          waitingDepositArea(),
         ],
       ),
+    );
+  }
+
+  Widget productInfoArea() {
+    return Row(
+      children: [
+        Container(
+          width: 74 * Scale.width,
+          height: 74 * Scale.width * 4 / 3,
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset("assets/images/임시상품1.png")),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 20 * Scale.width,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "킹 갓 가성비 슬렉스",
+              style: textStyle(
+                  const Color(0xff333333), FontWeight.w500, "NotoSansKR", 16.0),
+            ),
+            SizedBox(height: 12 * Scale.height),
+            Text(
+              "블랙 / L | 수량 : 1",
+              style: textStyle(
+                  const Color(0xff797979), FontWeight.w400, "NotoSansKR", 13.0),
+            ),
+            SizedBox(height: 12 * Scale.height),
+            Text(
+              "${setPriceFormat(28900)}원",
+              style: textStyle(
+                  const Color(0xff333333), FontWeight.w400, "NotoSansKR", 15.0),
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -191,6 +241,400 @@ class _OrderHistoryState extends State<OrderHistory> {
         border: Border.all(color: const Color(0xffe2e2e2), width: 1),
         color: const Color(0xffffffff),
       ),
+    );
+  }
+
+  Widget orderStatusWidgetStructure(Widget buttonWidgets, String status) {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 20.0 * Scale.width,
+          right: 20.0 * Scale.width,
+          top: 10 * Scale.height,
+          bottom: 10 * Scale.height),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          orderStatusText(status),
+          SizedBox(height: 10 * Scale.height),
+          productInfoArea(),
+          SizedBox(height: 10 * Scale.height),
+          buttonWidgets,
+        ],
+      ),
+    );
+  }
+
+  Widget orderStatusText(String status) {
+    switch (status) {
+      case "구매확정":
+        return Text(
+          status,
+          style: textStyle(
+              const Color(0xffec5363), FontWeight.w400, "NotoSansKR", 16.0),
+        );
+      case "배송완료":
+        return Text(
+          status,
+          style: textStyle(
+              const Color(0xffec5363), FontWeight.w400, "NotoSansKR", 16.0),
+        );
+      case "배송 준비 중":
+        return Text(
+          status,
+          style: textStyle(
+              const Color(0xff999999), FontWeight.w400, "NotoSansKR", 16.0),
+        );
+      case "배송 중":
+        return Text(
+          status,
+          style: textStyle(
+              const Color(0xff3ca4ff), FontWeight.w400, "NotoSansKR", 16.0),
+        );
+      case "결제 완료":
+        return Text(
+          status,
+          style: textStyle(
+              const Color(0xff3ca4ff), FontWeight.w400, "NotoSansKR", 16.0),
+        );
+      case "입금 대기":
+        return Text(
+          "배송 조회",
+          style: textStyle(
+              const Color(0xffff5548), FontWeight.w400, "NotoSansKR", 16.0),
+        );
+      default:
+        return SizedBox();
+    }
+  }
+
+  Widget purchaseConfirmationButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+              height: 34 * Scale.width,
+              child: Center(
+                child: Text(
+                  "배송 조회",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        ),
+        SizedBox(width: 6 * Scale.width),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.width,
+              child: Center(
+                child: Text(
+                  "리뷰 작성",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        )
+      ],
+    );
+  }
+
+  Widget purchaseConfirmationArea() {
+    return orderStatusWidgetStructure(purchaseConfirmationButtons(), "구매확정");
+  }
+
+  Widget shippingCompletedButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "구매 확정",
+                  style: textStyle(const Color(0xffffffff), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  color: const Color(0xffec5363),
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        ),
+        SizedBox(
+          width: 6 * Scale.width,
+        ),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "교환하기",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        ),
+        SizedBox(
+          width: 6 * Scale.width,
+        ),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "배송 조회",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        ),
+        SizedBox(width: 6 * Scale.width),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "반품 조회",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        )
+      ],
+    );
+  }
+
+  Widget shippingCompletedArea() {
+    return orderStatusWidgetStructure(shippingCompletedButtons(), "배송완료");
+  }
+
+  Widget preparingShippingButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "배송 조회",
+                style: textStyle(const Color(0xff666666), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(
+                color: const Color(0xffe2e2e2),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget preparingShippingArea() {
+    return orderStatusWidgetStructure(preparingShippingButtons(), "배송 준비 중");
+  }
+
+  Widget shippingInProgressButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "주문 취소",
+                style: textStyle(const Color(0xfff20000), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xfffff2f2),
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(
+                color: const Color(0xffffe6e6),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget shippingInProgressArea() {
+    return orderStatusWidgetStructure(shippingInProgressButtons(), "배송 중");
+  }
+
+  Widget paymentCompletedButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "주문 취소",
+                style: textStyle(const Color(0xfff20000), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xfffff2f2),
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(
+                color: const Color(0xffffe6e6),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 6 * Scale.width),
+        Expanded(
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "배송지 변경",
+                style: textStyle(const Color(0xff666666), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(
+                color: const Color(0xffe2e2e2),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 6 * Scale.width),
+        Expanded(
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "옵션 변경",
+                style: textStyle(const Color(0xff666666), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(
+                color: const Color(0xffe2e2e2),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget paymentCompletedArea() {
+    return orderStatusWidgetStructure(paymentCompletedButtons(), "결제 완료");
+  }
+
+  Widget waitingDepositButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "주문 취소",
+                  style: textStyle(const Color(0xfff20000), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  color: const Color(0xfffff2f2),
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffffe6e6), width: 1))),
+        ),
+        SizedBox(
+          width: 6 * Scale.width,
+        ),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "계좌 조회",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        ),
+        SizedBox(
+          width: 6 * Scale.width,
+        ),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "배송지 변경",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        ),
+        SizedBox(width: 6 * Scale.width),
+        Expanded(
+          child: Container(
+              height: 34 * Scale.height,
+              child: Center(
+                child: Text(
+                  "옵션 변경",
+                  style: textStyle(const Color(0xff666666), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                  border:
+                      Border.all(color: const Color(0xffe2e2e2), width: 1))),
+        )
+      ],
+    );
+  }
+
+  Widget waitingDepositArea() {
+    return Column(
+      children: [
+        orderStatusWidgetStructure(waitingDepositButtons(), "입금 대기"),
+      ],
     );
   }
 }

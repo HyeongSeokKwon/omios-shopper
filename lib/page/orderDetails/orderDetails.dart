@@ -1,6 +1,5 @@
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -424,23 +423,23 @@ class _OrderDetailsState extends State<OrderDetails> {
     );
   }
 
-  Widget htmlExample() {
-    final _htmlContent = """ 
-      <div>
-    <h1>This is a title</h1>
-    <p>This is a <strong>paragraph</strong>.</p>
-    <p>I like <i>dogs</i></p>
-    <p>Red text</p>
-    <ul>
-        <li>List item 1</li>
-        <li>List item 2</li>
-        <li>List item 3</li>
-    </ul>
-    <img src='https://www.kindacode.com/wp-content/uploads/2020/11/my-dog.jpg' />
-  </div>
-    """;
-    return Html(data: _htmlContent);
-  }
+  // Widget htmlExample() {
+  //   final _htmlContent = """
+  //     <div>
+  //   <h1>This is a title</h1>
+  //   <p>This is a <strong>paragraph</strong>.</p>
+  //   <p>I like <i>dogs</i></p>
+  //   <p>Red text</p>
+  //   <ul>
+  //       <li>List item 1</li>
+  //       <li>List item 2</li>
+  //       <li>List item 3</li>
+  //   </ul>
+  //   <img src='https://www.kindacode.com/wp-content/uploads/2020/11/my-dog.jpg' />
+  // </div>
+  //   """;
+  //   //return Html(data: _htmlContent);
+  // }
 
   Widget exchangeInfoArea() {
     return Column(
