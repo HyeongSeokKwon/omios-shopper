@@ -4,6 +4,7 @@ import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
+import 'package:cloth_collection/page/qna/qna.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/rating_bar.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
@@ -165,7 +166,7 @@ class _ProductDetailState extends State<ProductDetail>
                   _buildSatisfaction(),
                   _buildDivider(),
                   _buildSampleReivew(),
-                  _buildDivider(),
+                  productQnA(),
                   recommandProductArea(),
                 ],
               ),
@@ -447,7 +448,7 @@ class _ProductDetailState extends State<ProductDetail>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "맴버십 할인 (골드 : 2%",
+                "맴버십 할인 (골드 : 2%)",
                 style: textStyle(const Color(0xff797979), FontWeight.w400,
                     "NotoSansKR", 14.0),
               ),
@@ -983,6 +984,36 @@ class _ProductDetailState extends State<ProductDetail>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget productQnA() {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: ((context) => QnA(productId: widget.productId))));
+      },
+      child: Column(
+        children: [
+          Divider(),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: 20 * Scale.width, vertical: 15 * Scale.height),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "상품문의",
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
+                      "NotoSansKR", 20.0),
+                ),
+                Icon(Icons.keyboard_arrow_right, size: 30),
+              ],
+            ),
+          ),
+          Divider(),
+        ],
       ),
     );
   }
