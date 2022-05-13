@@ -110,7 +110,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                       child: ClipRRect(
                                         child: CachedNetworkImage(
                                             imageUrl:
-                                                "${controller.recentViewProductList[index]['images'][0]['url']}",
+                                                "${controller.recentViewProductList[index]['images'][0]['image_url']}",
                                             width: 110,
                                             height: 110 * (4 / 3),
                                             fit: BoxFit.fill),

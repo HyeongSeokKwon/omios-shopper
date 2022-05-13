@@ -78,7 +78,7 @@ class ProductDetailInfo {
         seeThrough: json['see_through'], //
         flexibility: json['flexibility'], //
         theme: json['theme'], //
-        created: DateTime.parse(json['created']),
+        created: DateTime.parse(json['created_at']),
         onSale: json['on_sale'],
         code: json['code'],
         totalLike: json['total_like'],

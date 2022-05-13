@@ -164,7 +164,7 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
         return BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
             if (context.read<SearchBloc>().state.searchState ==
-                FetchState.success) {
+                ApiState.success) {
               if (context.read<SearchBloc>().state.isClickedSearchingButton ==
                   true) {
                 if (context.read<SearchBloc>().state.isClickedSearchingButton ==
@@ -192,7 +192,7 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                     },
                   );
                 } else if (context.read<InfinityScrollBloc>().state.getState ==
-                    FetchState.loading) {
+                    ApiState.loading) {
                   return Container(
                     child: Center(
                       child: progressBar(),
@@ -429,7 +429,7 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                 );
               }
             } else if (context.read<SearchBloc>().state.searchState ==
-                FetchState.loading) {
+                ApiState.loading) {
               return progressBar();
             } else {
               return SizedBox();
