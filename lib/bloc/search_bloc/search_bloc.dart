@@ -21,17 +21,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       ChangeSearchingText event, Emitter<SearchState> emit) async {
     if (event.text.isNotEmpty) {
       emit(state.copyWith(
-          searchState: FetchState.loading, isClickedSearchingButton: false));
+          searchState: ApiState.loading, isClickedSearchingButton: false));
       Map<String, dynamic> searchBoxResults =
           await _searchRepository.getSearchBox(event.text);
 
       emit(state.copyWith(
-        searchState: FetchState.success,
+        searchState: ApiState.success,
         searchBoxList: searchBoxResults,
       ));
     } else {
       emit(state.copyWith(
-          searchState: FetchState.initial, isClickedSearchingButton: true));
+          searchState: ApiState.initial, isClickedSearchingButton: true));
     }
   }
 
@@ -39,20 +39,20 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       ClickedSearchButtonEvent event, Emitter<SearchState> emit) async {
     if (event.text.isNotEmpty) {
       emit(state.copyWith(
-          searchState: FetchState.loading, searchWord: event.text));
+          searchState: ApiState.loading, searchWord: event.text));
       Map<String, dynamic> searchProductResults =
           await _searchRepository.getSearchProducts(event.text);
       infinityScrollBloc.state.getData = searchProductResults;
       infinityScrollBloc.state.productData = searchProductResults['results'];
       emit(
         state.copyWith(
-          searchState: FetchState.success,
+          searchState: ApiState.success,
           searchProductList: searchProductResults['results'],
           isClickedSearchingButton: true,
         ),
       );
     } else {
-      emit(state.copyWith(searchState: FetchState.initial));
+      emit(state.copyWith(searchState: ApiState.initial));
     }
   }
 }

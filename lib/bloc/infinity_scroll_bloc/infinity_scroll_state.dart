@@ -1,7 +1,7 @@
 part of 'infinity_scroll_bloc.dart';
 
 class InfinityScrollState extends Equatable {
-  final FetchState getState;
+  final ApiState getState;
   Map<String, dynamic> getData;
   List<dynamic> productData;
 
@@ -13,11 +13,11 @@ class InfinityScrollState extends Equatable {
 
   factory InfinityScrollState.initial() {
     return InfinityScrollState(
-        getState: FetchState.initial, getData: {}, productData: []);
+        getState: ApiState.initial, getData: {}, productData: []);
   }
 
   InfinityScrollState copyWith({
-    FetchState? getState,
+    ApiState? getState,
     Map<String, dynamic>? getData,
     List<dynamic>? productData,
   }) {

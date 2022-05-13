@@ -21,12 +21,12 @@ class InfinityScrollBloc
     Map<String, dynamic> response;
     if (state.getData['next'] != null) {
       Uri nextLink = Uri.parse(state.getData['next']);
-      emit(state.copyWith(getState: FetchState.loading));
+      emit(state.copyWith(getState: ApiState.loading));
       response =
           await _httpService.httpGet(nextLink.path, nextLink.queryParameters);
       print(state.productData.length);
       emit(state.copyWith(
-          getState: FetchState.success,
+          getState: ApiState.success,
           productData: List.of(state.productData)
             ..addAll(response['data']['results']),
           getData: response['data']));
@@ -38,7 +38,7 @@ class InfinityScrollBloc
   Future<void> resetData(
       ResetDataEvent event, Emitter<InfinityScrollState> emit) async {
     emit(state.copyWith(
-        getState: FetchState.success,
+        getState: ApiState.success,
         getData: event.getData,
         productData: event.getData['results']));
   }

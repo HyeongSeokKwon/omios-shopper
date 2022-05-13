@@ -1,7 +1,7 @@
 part of 'search_bloc.dart';
 
 class SearchState extends Equatable {
-  final FetchState searchState;
+  final ApiState searchState;
   final String searchWord;
   final Map<String, dynamic> searchBoxList;
   final List<dynamic> searchProductList;
@@ -16,7 +16,7 @@ class SearchState extends Equatable {
 
   factory SearchState.initial() {
     return SearchState(
-      searchState: FetchState.initial,
+      searchState: ApiState.initial,
       searchBoxList: {},
       searchProductList: [],
       isClickedSearchingButton: false,
@@ -25,7 +25,7 @@ class SearchState extends Equatable {
   }
 
   SearchState copyWith(
-      {FetchState? searchState,
+      {ApiState? searchState,
       Map<String, dynamic>? searchBoxList,
       List<dynamic>? searchProductList,
       bool? isClickedSearchingButton,
