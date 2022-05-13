@@ -45,8 +45,9 @@ class HomeController extends GetxController {
   Future<dynamic> getTodaysProducts() async {
     Map<String, String> queryParams = {};
     queryParams['sub_category'] = "6";
-    var response =
-        await httpservice.httpGet("/products", queryParams).catchError((e) {
+    var response = await httpservice
+        .httpPublicGet("/products", queryParams)
+        .catchError((e) {
       throw e;
     });
     print(response);

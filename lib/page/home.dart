@@ -3,7 +3,7 @@ import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/SearchImage.dart';
 import 'package:cloth_collection/page/category/category.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
-import 'package:cloth_collection/page/myPage.dart';
+import 'package:cloth_collection/page/mypage/myPage.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/appbar/category_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/chatting_Appbar.dart';
@@ -57,7 +57,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   void dispose() {
-    focusNode.dispose();
     homeController.dispose();
     super.dispose();
   }

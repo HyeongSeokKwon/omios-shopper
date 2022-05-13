@@ -44,12 +44,6 @@ class _DeepyHomeState extends State<DeepyHome>
   }
 
   @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {

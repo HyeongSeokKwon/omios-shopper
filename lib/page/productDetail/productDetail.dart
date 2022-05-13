@@ -3,6 +3,7 @@ import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
+import 'package:cloth_collection/page/order/order.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/page/qna/qna.dart';
 import 'package:cloth_collection/util/util.dart';
@@ -1493,7 +1494,10 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                               backgroundColor: MaterialStateProperty.all<Color>(
                                   const Color(0xff333333)),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: ((context) => Order())));
+                            },
                           ),
                         ],
                       ),
