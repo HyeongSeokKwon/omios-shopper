@@ -22,6 +22,8 @@ class HttpService {
   late SharedPreferences pref;
 
   dynamic _response(http.Response response) {
+    print(response.body);
+
     switch (response.statusCode) {
       case 200:
         var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
@@ -51,6 +53,11 @@ class HttpService {
       default:
         throw FetchDataException('');
     }
+  }
+
+  int getId() {
+    getToken();
+    return Jwt.parseJwt(accessToken)['user_id'];
   }
 
   void getToken() async {
@@ -98,7 +105,8 @@ class HttpService {
         print("refreshToken으로 token 갱신");
         try {
           var response = await http.post(
-            Uri.parse(addressUrl + '/token/refresh/'), // refresh token 으로 재발급
+            Uri.parse(
+                addressUrl + '/users/tokens/refresh'), // refresh token 으로 재발급
             headers: {"Content-Type": "application/json; charset=UTF-8"},
             body: json.encode(
               {"refresh": refreshToken},
@@ -162,11 +170,14 @@ class HttpService {
     var responseJson;
 
     try {
+      print(Uri.http(addressUrlx, additionalUrl));
       await updateToken().then(((value) async {
         response = await http.post(Uri.http(addressUrlx, additionalUrl),
-            headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+            headers: {
+              HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+              "Content-Type": "application/json; charset=UTF-8"
+            },
             body: body ?? body);
-
         responseJson = _response(response);
       }));
       print(responseJson);
@@ -180,6 +191,7 @@ class HttpService {
     var response;
     var responseJson;
 
+    print(Uri.http(addressUrlx, additionalUrl));
     try {
       response =
           await http.post(Uri.parse(addressUrl + additionalUrl), body: body);
@@ -191,7 +203,24 @@ class HttpService {
     }
   }
 
-  Future<dynamic> httpPatch(String addtionalUrl) async {}
+  Future<dynamic> httpPatch(String addtionalUrl, var body) async {
+    var response;
+    var responseJson;
+    try {
+      await updateToken().then((value) async =>
+          response = await http.patch(Uri.http(addressUrlx, addtionalUrl),
+              headers: {
+                HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+                "Content-Type": "application/json; charset=UTF-8"
+              },
+              body: body));
+      responseJson = _response(response);
+
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException("연결된 인터넷이 없습니다!!");
+    }
+  }
 
   Future<dynamic> httpDelete(String addtionalUrl) async {
     var response;
