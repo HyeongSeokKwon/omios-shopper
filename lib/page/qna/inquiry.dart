@@ -109,11 +109,11 @@ class _InquiryState extends State<Inquiry> {
   Widget questionTypeArea() {
     return BlocBuilder<QnaBloc, QnaState>(
       builder: (context, state) {
-        if (state.questionTypeGetState == FetchState.initial) {
+        if (state.questionTypeGetState == ApiState.initial) {
           context.read<QnaBloc>().add(ClickQuestionTypeEvent());
           return progressBar();
         } else if (context.read<QnaBloc>().state.questionTypeGetState ==
-            FetchState.success) {
+            ApiState.success) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
             child: Column(
@@ -311,7 +311,7 @@ class _InquiryState extends State<Inquiry> {
               ],
             ),
           );
-        } else if (state.questionTypeGetState == FetchState.fail) {
+        } else if (state.questionTypeGetState == ApiState.fail) {
           return ErrorCard();
         } else {
           return progressBar();
@@ -427,7 +427,7 @@ class _InquiryState extends State<Inquiry> {
                     Navigator.of(context).pop();
                   }));
         }
-        if (state.postState == FetchState.success) {
+        if (state.postState == ApiState.success) {
           showDialog(
               context: context,
               builder: (context) => inquiryDialog("등록되었습니다", () {

@@ -55,12 +55,12 @@ class _QnAState extends State<QnA> {
   Widget scrollArea() {
     return BlocBuilder<QnaBloc, QnaState>(
       builder: (context, state) {
-        if (state.qnaGetState == FetchState.initial) {
+        if (state.qnaGetState == ApiState.initial) {
           context.read<QnaBloc>().add(InitQnaPageEvent());
           return SizedBox();
-        } else if (state.qnaGetState == FetchState.fail) {
+        } else if (state.qnaGetState == ApiState.fail) {
           return ErrorCard();
-        } else if (state.qnaGetState == FetchState.success) {
+        } else if (state.qnaGetState == ApiState.success) {
           return SingleChildScrollView(
             child: Column(children: [
               qnaButton(),

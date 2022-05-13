@@ -22,11 +22,11 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
       InitQnaPageEvent event, Emitter<QnaState> emit) async {
     List qnaList;
     try {
-      emit(state.copyWith(qnaGetState: FetchState.loading));
+      emit(state.copyWith(qnaGetState: ApiState.loading));
       qnaList = await _qnaRepository.getQnaList(productId);
-      emit(state.copyWith(qnaGetState: FetchState.success, qnaList: qnaList));
+      emit(state.copyWith(qnaGetState: ApiState.success, qnaList: qnaList));
     } catch (e) {
-      emit(state.copyWith(qnaGetState: FetchState.fail));
+      emit(state.copyWith(qnaGetState: ApiState.fail));
     }
   }
 
@@ -34,13 +34,12 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
       ClickQuestionTypeEvent event, Emitter<QnaState> emit) async {
     List questionType;
     try {
-      emit(state.copyWith(questionTypeGetState: FetchState.loading));
+      emit(state.copyWith(questionTypeGetState: ApiState.loading));
       questionType = await _qnaRepository.getQuestionClassification();
       emit(state.copyWith(
-          questionTypeGetState: FetchState.success,
-          questionType: questionType));
+          questionTypeGetState: ApiState.success, questionType: questionType));
     } catch (e) {
-      emit(state.copyWith(questionTypeGetState: FetchState.fail));
+      emit(state.copyWith(questionTypeGetState: ApiState.fail));
     }
   }
 
@@ -61,7 +60,7 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
     final String inValidInquiryLength = '내용은 최소 1자, 최대 1000자 입니다.';
     emit(state.copyWith(
         inquiry: event.inquery,
-        postState: FetchState.initial,
+        postState: ApiState.initial,
         qnaValidate: ValidateState.initial));
     if (state.selectedQuestionType == -1) {
       emit(state.copyWith(
@@ -97,10 +96,9 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
         response = await _qnaRepository.postQuestion(productId, body);
         print("success");
         emit(state.copyWith(
-            qnaValidate: ValidateState.success, postState: FetchState.success));
+            qnaValidate: ValidateState.success, postState: ApiState.success));
       } catch (e) {
-        emit(state.copyWith(
-            validateErrorReason: '', postState: FetchState.fail));
+        emit(state.copyWith(validateErrorReason: '', postState: ApiState.fail));
       }
     }
   }

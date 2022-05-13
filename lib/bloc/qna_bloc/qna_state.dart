@@ -3,9 +3,9 @@ part of 'qna_bloc.dart';
 enum ValidateState { fail, success, initial }
 
 class QnaState extends Equatable {
-  final FetchState qnaGetState;
-  final FetchState questionTypeGetState;
-  final FetchState postState;
+  final ApiState qnaGetState;
+  final ApiState questionTypeGetState;
+  final ApiState postState;
   final List qnaList;
   final List questionType;
   final bool disClosure;
@@ -29,9 +29,9 @@ class QnaState extends Equatable {
 
   factory QnaState.initial() {
     return QnaState(
-      qnaGetState: FetchState.initial,
-      questionTypeGetState: FetchState.initial,
-      postState: FetchState.initial,
+      qnaGetState: ApiState.initial,
+      questionTypeGetState: ApiState.initial,
+      postState: ApiState.initial,
       qnaList: [],
       questionType: [],
       disClosure: false,
@@ -57,9 +57,9 @@ class QnaState extends Equatable {
       ];
 
   QnaState copyWith({
-    FetchState? postState,
-    FetchState? qnaGetState,
-    FetchState? questionTypeGetState,
+    ApiState? postState,
+    ApiState? qnaGetState,
+    ApiState? questionTypeGetState,
     List? qnaList,
     List? questionType,
     bool? disClosure,
