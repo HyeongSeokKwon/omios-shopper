@@ -9,6 +9,7 @@ class QnaState extends Equatable {
   final List qnaList;
   final List questionType;
   final bool disClosure;
+  final bool exceptDisclosure;
   final int selectedQuestionType;
   final String inquiry;
   final ValidateState qnaValidate;
@@ -21,6 +22,7 @@ class QnaState extends Equatable {
     required this.qnaList,
     required this.questionType,
     required this.disClosure,
+    required this.exceptDisclosure,
     required this.selectedQuestionType,
     required this.inquiry,
     required this.qnaValidate,
@@ -35,6 +37,7 @@ class QnaState extends Equatable {
       qnaList: [],
       questionType: [],
       disClosure: false,
+      exceptDisclosure: false,
       inquiry: '',
       selectedQuestionType: -1,
       qnaValidate: ValidateState.initial,
@@ -50,6 +53,7 @@ class QnaState extends Equatable {
         qnaList,
         questionType,
         disClosure,
+        exceptDisclosure,
         selectedQuestionType,
         inquiry,
         qnaValidate,
@@ -63,6 +67,7 @@ class QnaState extends Equatable {
     List? qnaList,
     List? questionType,
     bool? disClosure,
+    bool? exceptDisclosure,
     int? selectedQuestionType,
     String? inquiry,
     ValidateState? qnaValidate,
@@ -75,6 +80,7 @@ class QnaState extends Equatable {
       qnaList: qnaList ?? this.qnaList,
       questionType: questionType ?? this.questionType,
       disClosure: disClosure ?? this.disClosure,
+      exceptDisclosure: exceptDisclosure ?? this.exceptDisclosure,
       selectedQuestionType: selectedQuestionType ?? this.selectedQuestionType,
       inquiry: inquiry ?? this.inquiry,
       qnaValidate: qnaValidate ?? this.qnaValidate,

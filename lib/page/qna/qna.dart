@@ -106,6 +106,7 @@ class _QnaScrollAreaState extends State<QnaScrollArea> {
                   controller: scrollController,
                   child: Column(children: [
                     qnaButton(),
+                    showDisclosure(),
                     qnaListView(),
                   ]),
                 );
@@ -165,48 +166,127 @@ class _QnaScrollAreaState extends State<QnaScrollArea> {
               context.read<InfinityScrollBloc>().state.targetDatas.length,
           itemBuilder: ((context, index) {
             return context.read<InfinityScrollBloc>().state.targetDatas[index]
-                        ['is_secret'] ==
-                    false
+                            ['is_secret'] ==
+                        false ||
+                    context.read<QnaBloc>().state.exceptDisclosure == false
                 ? Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 20.0, vertical: 10 * Scale.height),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "상품명$index",
-                          style: textStyle(Colors.grey[500]!, FontWeight.w400,
-                              "NotoSansKR", 13.0),
-                        ),
-                        SizedBox(height: 5 * Scale.height),
-                        Text(
-                          "Q: ${context.read<InfinityScrollBloc>().state.targetDatas[index]['question']}",
-                          style: textStyle(Colors.black, FontWeight.w500,
-                              "NotoSansKR", 14.0),
-                        ),
-                        SizedBox(height: 5 * Scale.height),
-                        context
-                                    .read<InfinityScrollBloc>()
-                                    .state
-                                    .targetDatas[index]['answer'] !=
-                                null
-                            ? Text(
-                                "A: omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,",
-                                style: textStyle(Colors.black, FontWeight.w400,
+                    child: context
+                                .read<InfinityScrollBloc>()
+                                .state
+                                .targetDatas[index]['is_secret'] ==
+                            false
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "상품명$index",
+                                style: textStyle(Colors.grey[500]!,
+                                    FontWeight.w400, "NotoSansKR", 13.0),
+                              ),
+                              SizedBox(height: 5 * Scale.height),
+                              Text(
+                                "Q: ${context.read<InfinityScrollBloc>().state.targetDatas[index]['question']}",
+                                style: textStyle(Colors.black, FontWeight.w500,
                                     "NotoSansKR", 14.0),
-                              )
-                            : SizedBox(),
-                        SizedBox(height: 5 * Scale.height),
-                        Text(
-                          "${context.read<InfinityScrollBloc>().state.targetDatas[index]['created_at']}",
-                          style: textStyle(Colors.grey[500]!, FontWeight.w400,
-                              "NotoSansKR", 13.0),
-                        ),
-                      ],
-                    ),
+                              ),
+                              SizedBox(height: 5 * Scale.height),
+                              context
+                                          .read<InfinityScrollBloc>()
+                                          .state
+                                          .targetDatas[index]['answer'] !=
+                                      null
+                                  ? Text(
+                                      "A: omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w400, "NotoSansKR", 14.0),
+                                    )
+                                  : SizedBox(),
+                              SizedBox(height: 5 * Scale.height),
+                              Text(
+                                "${context.read<InfinityScrollBloc>().state.targetDatas[index]['created_at']}",
+                                style: textStyle(Colors.grey[500]!,
+                                    FontWeight.w400, "NotoSansKR", 13.0),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "상품명$index",
+                                style: textStyle(Colors.grey[500]!,
+                                    FontWeight.w400, "NotoSansKR", 13.0),
+                              ),
+                              SizedBox(height: 5 * Scale.height),
+                              Text(
+                                "비공개 글입니다.",
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 14.0),
+                              ),
+                              SizedBox(height: 5 * Scale.height),
+                              Text(
+                                "${context.read<InfinityScrollBloc>().state.targetDatas[index]['created_at']}",
+                                style: textStyle(Colors.grey[500]!,
+                                    FontWeight.w400, "NotoSansKR", 13.0),
+                              ),
+                            ],
+                          ),
                   )
                 : SizedBox();
           }),
+        );
+      },
+    );
+  }
+
+  Widget showDisclosure() {
+    return BlocBuilder<QnaBloc, QnaState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: 10 * Scale.height, horizontal: 20 * Scale.width),
+          child: InkWell(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "비밀글 제외",
+                  style: textStyle(
+                      Colors.black, FontWeight.w500, 'NotoSansKR', 14.0),
+                ),
+                Transform.scale(
+                  scale: 0.8,
+                  child: SizedBox(
+                    width: 25 * Scale.width,
+                    height: 25 * Scale.width,
+                    child: Checkbox(
+                      activeColor: Colors.grey[500],
+                      side: BorderSide(
+                          color: Colors.grey[500]!, width: 1 * Scale.width),
+                      value: context.read<QnaBloc>().state.exceptDisclosure,
+                      onChanged: (value) {
+                        context
+                            .read<QnaBloc>()
+                            .add(ClickExceptDisclosure(value: value!));
+                      },
+                    ),
+                  ),
+                ),
+                Text(
+                  "비공개",
+                  style: textStyle(
+                      Colors.grey[600]!, FontWeight.w400, 'NotoSansKR', 13.0),
+                ),
+              ],
+            ),
+            onTap: () {
+              context
+                  .read<QnaBloc>()
+                  .add(ClickExceptDisclosure(value: !state.exceptDisclosure));
+            },
+          ),
         );
       },
     );

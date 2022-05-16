@@ -11,6 +11,11 @@ class InitQnaPageEvent extends QnaEvent {}
 
 class ClickQuestionTypeEvent extends QnaEvent {}
 
+class ClickExceptDisclosure extends QnaEvent {
+  final bool value;
+  const ClickExceptDisclosure({required this.value});
+}
+
 class SelectQuestionTypeEvent extends QnaEvent {
   final int questionTypeIndex;
   const SelectQuestionTypeEvent({required this.questionTypeIndex});

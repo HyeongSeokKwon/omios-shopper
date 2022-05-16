@@ -20,6 +20,7 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
     on<ClickDisClosureEvent>(clickDisclousre);
     on<ClickCompleteEvent>(clickComplete);
     on<ValidateDataEvent>(registQnaData);
+    on<ClickExceptDisclosure>(exceptDisclosure);
   }
 
   Future<void> initQnaList(
@@ -50,6 +51,10 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
     } catch (e) {
       emit(state.copyWith(questionTypeGetState: ApiState.fail));
     }
+  }
+
+  void exceptDisclosure(ClickExceptDisclosure event, Emitter<QnaState> emit) {
+    emit(state.copyWith(exceptDisclosure: event.value));
   }
 
   void selectQuestionType(
