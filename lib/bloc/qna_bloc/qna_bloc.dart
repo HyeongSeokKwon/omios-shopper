@@ -3,13 +3,17 @@ import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/repository/qnaRepository.dart';
 import 'package:equatable/equatable.dart';
 
+import '../infinity_scroll_bloc/infinity_scroll_bloc.dart';
+
 part 'qna_event.dart';
 part 'qna_state.dart';
 
 class QnaBloc extends Bloc<QnaEvent, QnaState> {
+  InfinityScrollBloc infinityScrollBloc;
   final QnaRepository _qnaRepository = QnaRepository();
   final int productId;
-  QnaBloc({required this.productId}) : super(QnaState.initial()) {
+  QnaBloc({required this.productId, required this.infinityScrollBloc})
+      : super(QnaState.initial()) {
     on<InitQnaPageEvent>(initQnaList);
     on<ClickQuestionTypeEvent>(clickQuestionType);
     on<SelectQuestionTypeEvent>(selectQuestionType);
@@ -20,12 +24,17 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
 
   Future<void> initQnaList(
       InitQnaPageEvent event, Emitter<QnaState> emit) async {
-    List qnaList;
+    Map<String, dynamic> qnaData;
     try {
       emit(state.copyWith(qnaGetState: ApiState.loading));
-      qnaList = await _qnaRepository.getQnaList(productId);
-      emit(state.copyWith(qnaGetState: ApiState.success, qnaList: qnaList));
+      qnaData = await _qnaRepository.getQnaList(productId);
+      print("==========");
+      print(qnaData);
+      infinityScrollBloc.state.getData = qnaData;
+      infinityScrollBloc.state.targetDatas = qnaData['results'];
+      emit(state.copyWith(qnaGetState: ApiState.success));
     } catch (e) {
+      print(e.toString());
       emit(state.copyWith(qnaGetState: ApiState.fail));
     }
   }

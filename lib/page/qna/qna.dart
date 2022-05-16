@@ -1,4 +1,5 @@
 import 'package:cloth_collection/bloc/bloc.dart';
+import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.dart';
 import 'package:cloth_collection/page/qna/inquiry.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
@@ -10,6 +11,7 @@ import '../../util/util.dart';
 
 class QnA extends StatefulWidget {
   final int productId;
+
   const QnA({Key? key, required this.productId}) : super(key: key);
   @override
   State<QnA> createState() => _QnAState();
@@ -17,11 +19,14 @@ class QnA extends StatefulWidget {
 
 class _QnAState extends State<QnA> {
   late final QnaBloc qnaBloc;
+  final InfinityScrollBloc infinityScrollBloc = InfinityScrollBloc();
+
   @override
   Widget build(BuildContext context) {
-    qnaBloc = QnaBloc(productId: widget.productId);
+    qnaBloc = QnaBloc(
+        productId: widget.productId, infinityScrollBloc: infinityScrollBloc);
     return BlocProvider(
-      create: (context) => qnaBloc,
+      create: (BuildContext context) => infinityScrollBloc,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -47,30 +52,70 @@ class _QnAState extends State<QnA> {
             ],
           ),
         ),
-        body: scrollArea(),
+        body: QnaScrollArea(
+          qnaBloc: qnaBloc,
+        ),
       ),
     );
   }
+}
+
+class QnaScrollArea extends StatefulWidget {
+  final QnaBloc qnaBloc;
+  QnaScrollArea({Key? key, required this.qnaBloc}) : super(key: key);
+
+  @override
+  State<QnaScrollArea> createState() => _QnaScrollAreaState();
+}
+
+class _QnaScrollAreaState extends State<QnaScrollArea> {
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      print(scrollController.offset);
+      if (scrollController.offset ==
+          scrollController.position.maxScrollExtent) {
+        print("reached to max");
+        context.read<InfinityScrollBloc>().add(AddDataEvent());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return scrollArea();
+  }
 
   Widget scrollArea() {
-    return BlocBuilder<QnaBloc, QnaState>(
-      builder: (context, state) {
-        if (state.qnaGetState == ApiState.initial) {
-          context.read<QnaBloc>().add(InitQnaPageEvent());
-          return SizedBox();
-        } else if (state.qnaGetState == ApiState.fail) {
-          return ErrorCard();
-        } else if (state.qnaGetState == ApiState.success) {
-          return SingleChildScrollView(
-            child: Column(children: [
-              qnaButton(),
-              qnaListView(),
-            ]),
+    return BlocProvider(
+      create: (context) => widget.qnaBloc,
+      child: BlocBuilder<InfinityScrollBloc, InfinityScrollState>(
+        builder: (context, state) {
+          return BlocBuilder<QnaBloc, QnaState>(
+            builder: (context, state) {
+              if (state.qnaGetState == ApiState.initial) {
+                context.read<QnaBloc>().add(InitQnaPageEvent());
+                return SizedBox();
+              } else if (state.qnaGetState == ApiState.fail) {
+                return ErrorCard();
+              } else if (state.qnaGetState == ApiState.success) {
+                return SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(children: [
+                    qnaButton(),
+                    qnaListView(),
+                  ]),
+                );
+              } else {
+                return progressBar();
+              }
+            },
           );
-        } else {
-          return progressBar();
-        }
-      },
+        },
+      ),
     );
   }
 
@@ -81,7 +126,7 @@ class _QnAState extends State<QnA> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => Inquiry(
-              qnaBloc: qnaBloc,
+              qnaBloc: widget.qnaBloc,
             ),
           ));
         },
@@ -116,9 +161,11 @@ class _QnAState extends State<QnA> {
         return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: context.read<QnaBloc>().state.qnaList.length,
+          itemCount:
+              context.read<InfinityScrollBloc>().state.targetDatas.length,
           itemBuilder: ((context, index) {
-            return context.read<QnaBloc>().state.qnaList[index]['is_secret'] ==
+            return context.read<InfinityScrollBloc>().state.targetDatas[index]
+                        ['is_secret'] ==
                     false
                 ? Padding(
                     padding: EdgeInsets.symmetric(
@@ -133,13 +180,15 @@ class _QnAState extends State<QnA> {
                         ),
                         SizedBox(height: 5 * Scale.height),
                         Text(
-                          "Q: ${context.read<QnaBloc>().state.qnaList[index]['question']}",
+                          "Q: ${context.read<InfinityScrollBloc>().state.targetDatas[index]['question']}",
                           style: textStyle(Colors.black, FontWeight.w500,
                               "NotoSansKR", 14.0),
                         ),
                         SizedBox(height: 5 * Scale.height),
-                        context.read<QnaBloc>().state.qnaList[index]
-                                    ['answer'] !=
+                        context
+                                    .read<InfinityScrollBloc>()
+                                    .state
+                                    .targetDatas[index]['answer'] !=
                                 null
                             ? Text(
                                 "A: omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,",
@@ -149,7 +198,7 @@ class _QnAState extends State<QnA> {
                             : SizedBox(),
                         SizedBox(height: 5 * Scale.height),
                         Text(
-                          "${context.read<QnaBloc>().state.qnaList[index]['created_at']}",
+                          "${context.read<InfinityScrollBloc>().state.targetDatas[index]['created_at']}",
                           style: textStyle(Colors.grey[500]!, FontWeight.w400,
                               "NotoSansKR", 13.0),
                         ),

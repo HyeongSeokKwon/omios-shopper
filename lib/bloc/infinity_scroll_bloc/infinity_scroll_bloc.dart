@@ -24,14 +24,14 @@ class InfinityScrollBloc
       emit(state.copyWith(getState: ApiState.loading));
       response =
           await _httpService.httpGet(nextLink.path, nextLink.queryParameters);
-      print(state.productData.length);
+      print(state.targetDatas.length);
       emit(state.copyWith(
           getState: ApiState.success,
-          productData: List.of(state.productData)
+          targetDatas: List.of(state.targetDatas)
             ..addAll(response['data']['results']),
           getData: response['data']));
 
-      print(state.productData.length);
+      print(state.targetDatas.length);
     }
   }
 
@@ -40,6 +40,6 @@ class InfinityScrollBloc
     emit(state.copyWith(
         getState: ApiState.success,
         getData: event.getData,
-        productData: event.getData['results']));
+        targetDatas: event.getData['results']));
   }
 }

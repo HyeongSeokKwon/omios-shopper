@@ -176,7 +176,7 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                     itemCount: context
                         .read<InfinityScrollBloc>()
                         .state
-                        .productData
+                        .targetDatas
                         .length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -187,7 +187,7 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                           product: Product.fromJson(context
                               .read<InfinityScrollBloc>()
                               .state
-                              .productData[index]),
+                              .targetDatas[index]),
                           imageWidth: 190 * Scale.width);
                     },
                   );
