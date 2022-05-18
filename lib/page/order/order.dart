@@ -1,77 +1,186 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloth_collection/bloc/shopper_info_bloc/shopper_info_bloc.dart';
+import 'package:cloth_collection/model/orderProduct.dart';
 import 'package:cloth_collection/page/order/changeShippingAddress.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:cloth_collection/widget/error_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../bloc/bloc.dart';
 import '../../util/util.dart';
 
 class Order extends StatefulWidget {
-  const Order({Key? key}) : super(key: key);
+  final OrderBloc orderBloc;
+  Order({Key? key, required this.orderBloc}) : super(key: key);
 
   @override
   State<Order> createState() => _OrderState();
 }
 
 class _OrderState extends State<Order> {
+  final ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
+  final ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
+  @override
+  void initState() {
+    super.initState();
+    widget.orderBloc.shippingAddressBloc = shippingAddressBloc;
+    widget.orderBloc.shopperInfoBloc = shopperInfoBloc;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leadingWidth: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: SvgPicture.asset("assets/images/svg/moveToBack.svg"),
-            ),
-            Text(
-              "주문/결제",
-              style: textStyle(
-                  const Color(0xff333333), FontWeight.w700, "NotoSansKR", 24.0),
-            ),
-          ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ShopperInfoBloc>(
+          create: ((context) => shopperInfoBloc),
         ),
+        BlocProvider.value(value: widget.orderBloc),
+        BlocProvider<ShippingAddressBloc>(
+            create: (context) => shippingAddressBloc)
+      ],
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0.0,
-        titleSpacing: 0.0,
+        appBar: AppBar(
+          leadingWidth: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: SvgPicture.asset("assets/images/svg/moveToBack.svg"),
+              ),
+              Text(
+                "주문/결제",
+                style: textStyle(const Color(0xff333333), FontWeight.w700,
+                    "NotoSansKR", 24.0),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          titleSpacing: 0.0,
+        ),
+        body: BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+          builder: (context, state) {
+            final shippingAddressBloc = context.read<ShippingAddressBloc>();
+            final shopperInfoBloc = context.read<ShopperInfoBloc>();
+            return BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
+              builder: (context, state) {
+                print(state.getDefaultShippingAddressState);
+                if (shippingAddressBloc.state.getDefaultShippingAddressState ==
+                        ApiState.initial &&
+                    shopperInfoBloc.state.getShopperInfoState ==
+                        ApiState.initial) {
+                  shippingAddressBloc.add(InitDataEvent());
+                  shopperInfoBloc.add(GetShopperInfoEvent());
+                  return progressBar();
+                } else if (shippingAddressBloc
+                            .state.getDefaultShippingAddressState ==
+                        ApiState.success &&
+                    shopperInfoBloc.state.getShopperInfoState ==
+                        ApiState.success) {
+                  return scrollArea();
+                } else if (shippingAddressBloc
+                            .state.getDefaultShippingAddressState ==
+                        ApiState.fail ||
+                    shopperInfoBloc.state.getShopperInfoState ==
+                        ApiState.fail) {
+                  return progressBar();
+                } else {
+                  return progressBar();
+                }
+              },
+            );
+          },
+        ),
+        bottomSheet: BlocConsumer<OrderBloc, OrderState>(
+          listener: ((context, state) {
+            if (state.registOrderState == ApiState.success) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: Text("주문 성공"),
+                    );
+                  });
+            }
+          }),
+          builder: (context, state) {
+            return InkWell(
+              onTap: () {
+                context.read<OrderBloc>().add(RegistOrderEvent());
+              },
+              child: Container(
+                width: double.maxFinite,
+                height: 65 * Scale.height,
+                color: const Color(0xffec5363),
+                child: Center(
+                  child: Text(
+                    "결제하기",
+                    style: textStyle(
+                        Colors.white, FontWeight.w500, "NotoSansKR", 18.0),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
-      body: scrollArea(),
     );
   }
 
   Widget scrollArea() {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          orderProduct(),
-          divider(),
-          shippingAddressArea(),
-        ],
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 45.0 * Scale.height),
+        child: Column(
+          children: [
+            orderProduct(),
+            divider(),
+            shippingAddressArea(),
+            pointArea(),
+            paymentArea(),
+          ],
+        ),
       ),
     );
   }
 
   Widget orderProduct() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.0 * Scale.width),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 20 * Scale.height),
-            child: Text("주문상품",
-                style: textStyle(
-                    Colors.black, FontWeight.w500, 'NotoSansKR', 21.0)),
-          ),
-          productInfo(),
-          SizedBox(
-            height: 14 * Scale.height,
-          ),
-          usingCoupon(),
-        ],
-      ),
+    return BlocBuilder<OrderBloc, OrderState>(
+      builder: (context, state) {
+        print(context.read<OrderBloc>().state.productCart);
+        return ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: context.read<OrderBloc>().state.productCart.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0 * Scale.width),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20 * Scale.height),
+                      child: Text("주문상품",
+                          style: textStyle(Colors.black, FontWeight.w500,
+                              'NotoSansKR', 21.0)),
+                    ),
+                    productInfo(
+                        context.read<OrderBloc>().state.productCart[index]),
+                    SizedBox(
+                      height: 14 * Scale.height,
+                    ),
+                    usingCoupon(),
+                  ],
+                ),
+              );
+            });
+      },
     );
   }
 
@@ -83,15 +192,21 @@ class _OrderState extends State<Order> {
     );
   }
 
-  Widget productInfo() {
+  Widget productInfo(OrderProduct orderProduct) {
     return Row(
       children: [
         Container(
           width: 80 * Scale.width,
           height: 80 * Scale.width * 4 / 3,
           child: ClipRRect(
-              borderRadius: BorderRadius.circular(6.0),
-              child: Image.asset("assets/images/임시상품1.png")),
+            borderRadius: BorderRadius.circular(6.0),
+            child: CachedNetworkImage(
+              imageUrl: orderProduct.imageUrl,
+              fit: BoxFit.fill,
+              width: 414 * Scale.width,
+              height: 1.2 * 414 * Scale.width,
+            ),
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(
               Radius.circular(14),
@@ -101,27 +216,35 @@ class _OrderState extends State<Order> {
         SizedBox(
           width: 20 * Scale.width,
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "킹 갓 가성비 슬렉스",
-              style: textStyle(
-                  const Color(0xff333333), FontWeight.w500, "NotoSansKR", 16.0),
-            ),
-            SizedBox(height: 5 * Scale.height),
-            Text(
-              "블랙 / L  |  수량 : 1개",
-              style: textStyle(
-                  const Color(0xff797979), FontWeight.w400, "NotoSansKR", 13.0),
-            ),
-            SizedBox(height: 12 * Scale.height),
-            Text(
-              "${setPriceFormat(28900)}원",
-              style: textStyle(
-                  const Color(0xff333333), FontWeight.w400, "NotoSansKR", 15.0),
-            ),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${orderProduct.name}",
+                style: textStyle(
+                  const Color(0xff333333),
+                  FontWeight.w500,
+                  "NotoSansKR",
+                  16.0,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 5 * Scale.height),
+              Text(
+                "${orderProduct.color['display_color_name']} / ${orderProduct.size}  |  수량 : ${orderProduct.count}",
+                style: textStyle(const Color(0xff797979), FontWeight.w400,
+                    "NotoSansKR", 13.0),
+              ),
+              SizedBox(height: 12 * Scale.height),
+              Text(
+                "${setPriceFormat(orderProduct.salePrice * orderProduct.count)}원",
+                style: textStyle(const Color(0xff333333), FontWeight.w400,
+                    "NotoSansKR", 15.0),
+              ),
+            ],
+          ),
         )
       ],
     );
@@ -174,124 +297,541 @@ class _OrderState extends State<Order> {
   }
 
   Widget shippingAddressArea() {
+    List<String> requirements = [
+      "없음",
+      "부재시 문앞에 놔주세요",
+      "경비실에 맡겨주세요",
+      "도착시 전화주세요",
+      "도착시 문자주세요",
+      "문앞에 두고 노크해주세요",
+      "도착전에 문자주세요",
+      "직접 입력"
+    ];
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
+        builder: (context, state) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "배송지",
-                style:
-                    textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "배송지",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, 'NotoSansKR', 20),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChangeShippingAddress(
+                              shippingAddressBloc: shippingAddressBloc)));
+                    },
+                    child: SizedBox(
+                      width: 40 * Scale.width,
+                      child: Text(
+                        "변경",
+                        style: textStyle(const Color(0xff888888),
+                            FontWeight.w400, 'NotoSansKR', 13.0),
+                      ),
+                    ),
+                  )
+                ],
               ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16 * Scale.height),
+                child: Divider(
+                    thickness: 1 * Scale.height,
+                    color: const Color(0xffeeeeee)),
+              ),
+              userInfo(),
+              SizedBox(height: 10 * Scale.height),
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ChangeShippingAddress()));
+                  showModalBottomSheet<void>(
+                    isDismissible: false,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    context: context,
+                    builder: (context) => BlocProvider.value(
+                      value: shippingAddressBloc,
+                      child: Stack(
+                        children: [
+                          BlocBuilder<ShippingAddressBloc,
+                              ShippingAddressState>(
+                            builder: (context, state) {
+                              return GestureDetector(
+                                child: Container(
+                                    width: 414 * Scale.width,
+                                    height: 896 * Scale.height,
+                                    color: Colors.transparent),
+                                onTap: Navigator.of(context).pop,
+                              );
+                            },
+                          ),
+                          Positioned(
+                            child: DraggableScrollableSheet(
+                              initialChildSize: 0.6,
+                              maxChildSize: 1.0,
+                              builder: (_, controller) {
+                                return Stack(children: [
+                                  Container(
+                                    width: 414 * Scale.width,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(25.0),
+                                        topRight: Radius.circular(25.0),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 22 * Scale.width),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 25 * Scale.height,
+                                                bottom: 30 * Scale.height),
+                                            child: Text("배송 요청 사항",
+                                                style: textStyle(
+                                                    const Color(0xff333333),
+                                                    FontWeight.w700,
+                                                    "NotoSansKR",
+                                                    21.0)),
+                                          ),
+                                          Expanded(
+                                            child: Center(
+                                              child: ListView.separated(
+                                                itemCount: requirements.length,
+                                                separatorBuilder:
+                                                    (context, index) {
+                                                  return const Divider();
+                                                },
+                                                itemBuilder: ((context, index) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      context
+                                                          .read<
+                                                              ShippingAddressBloc>()
+                                                          .add(SetRequirementEvent(
+                                                              requirement:
+                                                                  requirements[
+                                                                      index]));
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: SizedBox(
+                                                      width: double.infinity,
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 10 *
+                                                                    Scale
+                                                                        .height),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              requirements[
+                                                                  index],
+                                                              style: textStyle(
+                                                                  Colors.black,
+                                                                  FontWeight
+                                                                      .w300,
+                                                                  "NotoSansKR",
+                                                                  16.0),
+                                                            ),
+                                                            context
+                                                                        .read<
+                                                                            ShippingAddressBloc>()
+                                                                        .state
+                                                                        .requirement ==
+                                                                    requirements[
+                                                                        index]
+                                                                ? SvgPicture.asset(
+                                                                    "assets/images/svg/accept.svg")
+                                                                : SizedBox()
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ]);
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
                 },
-                child: SizedBox(
-                  width: 40 * Scale.width,
-                  child: Text(
-                    "변경",
-                    style: textStyle(const Color(0xff888888), FontWeight.w400,
-                        'NotoSansKR', 13.0),
-                  ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                            border: Border.all(
+                                color: const Color(0xffe2e2e2), width: 1),
+                            color: const Color(0xffffffff)),
+                        child: Padding(
+                          padding: EdgeInsets.all(10.0 * Scale.width),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                context
+                                        .read<ShippingAddressBloc>()
+                                        .state
+                                        .requirement
+                                        .isEmpty
+                                    ? "배송시 요청사항을 선택하세요."
+                                    : context
+                                        .read<ShippingAddressBloc>()
+                                        .state
+                                        .requirement,
+                                style: textStyle(Colors.grey[800]!,
+                                    FontWeight.w400, 'NotoSansKR', 14.0),
+                              ),
+                              SvgPicture.asset("assets/images/svg/dropdown.svg",
+                                  width: 12 * Scale.width),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               )
             ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16 * Scale.height),
-            child: Divider(
-                thickness: 1 * Scale.height, color: const Color(0xffeeeeee)),
-          ),
-          userInfo(),
-          SizedBox(height: 10 * Scale.height),
-          SizedBox(
-            height: 40 * Scale.height,
-            child: DropdownButtonFormField(
-              items: [
-                DropdownMenuItem<int>(
-                  value: 0,
-                  child: Container(
-                    width: 100,
-                    child: Text(
-                      "a",
-                    ),
-                  ),
-                ),
-                DropdownMenuItem<int>(
-                  value: 1,
-                  child: Container(
-                    width: 100,
-                    child: Text(
-                      "b",
-                    ),
-                  ),
-                ),
-              ],
-              hint: Text(
-                "배송시 요청사항을 선택하세요",
-                style: textStyle(const Color(0xff555555), FontWeight.w400,
-                    'NotoSansKR', 14.0),
-              ),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12 * Scale.width, vertical: 0),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xffe2e2e2)),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(7),
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xffe2e2e2)),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(7),
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xffe2e2e2)),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(7),
-                  ),
-                ),
-              ),
-              onChanged: (value) {},
-              isExpanded: true,
-              icon: Icon(Icons.keyboard_arrow_down),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
   Widget userInfo() {
+    return BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.read<ShippingAddressBloc>().state.recipient,
+              style: textStyle(
+                  const Color(0xff333333), FontWeight.w500, 'NotoSansKR', 16.0),
+            ),
+            SizedBox(height: 8 * Scale.height),
+            Text(
+              context.read<ShippingAddressBloc>().state.baseAddress +
+                  context.read<ShippingAddressBloc>().state.detailAddress,
+              style: textStyle(
+                  const Color(0xff555555), FontWeight.w400, 'NotoSansKR', 16.0),
+            ),
+            SizedBox(height: 4 * Scale.height),
+            Text(
+              "${context.read<ShippingAddressBloc>().state.recipient} ${context.read<ShippingAddressBloc>().state.mobilePhoneNumber}",
+              style: textStyle(
+                  const Color(0xff999999), FontWeight.w400, 'NotoSansKR', 14.0),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget pointArea() {
+    return BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 20.0, vertical: 40 * Scale.height),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "포인트",
+                style:
+                    textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 20),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
+                child: Divider(
+                  thickness: 1,
+                ),
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 200 * Scale.width,
+                    child: TextFormField(
+                      initialValue: 0.toString(),
+                      onChanged: (text) {},
+                      textInputAction: TextInputAction.next,
+                      maxLength: 30,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.fromLTRB(
+                          10 * Scale.width,
+                          12 * Scale.height,
+                          10 * Scale.width,
+                          12 * Scale.height,
+                        ),
+                        counterText: "",
+                        floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        labelStyle: TextStyle(
+                          color: const Color(0xff666666),
+                          height: 0.6,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "NotoSansKR",
+                          fontStyle: FontStyle.normal,
+                          fontSize: 14 * Scale.height,
+                        ),
+                        hintStyle: textStyle(const Color(0xffcccccc),
+                            FontWeight.w400, "NotoSansKR", 16.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderSide: BorderSide(
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderSide: BorderSide(
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderSide: BorderSide(
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderSide: BorderSide(
+                              color: const Color(0xffcccccc),
+                              width: 1 * Scale.width),
+                        ),
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  SizedBox(width: 5 * Scale.width),
+                  Container(
+                    child: Center(
+                      child: Text("전액사용",
+                          style: textStyle(const Color(0xffec5363),
+                              FontWeight.w400, "NotoSansKR", 15.0),
+                          textAlign: TextAlign.center),
+                    ),
+                    width: 90 * Scale.width,
+                    height: 46 * Scale.height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                      color: const Color(0xfffff7f8),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5 * Scale.height),
+              Row(
+                children: [
+                  Text(
+                    "사용 가능한 포인트",
+                    style: textStyle(
+                        Color(0xff555555), FontWeight.w400, "NotoSansKR", 14.0),
+                  ),
+                  Text(
+                      "${context.read<ShopperInfoBloc>().state.shopperInfo['point']}",
+                      style: textStyle(const Color(0xffec5363), FontWeight.w700,
+                          "NotoSansKR", 14.0))
+                ],
+              ),
+              Row(
+                children: [
+                  SvgPicture.asset('assets/images/svg/info.svg'),
+                  Text(" 주문 금액 1,000원 이상이 될때까지 모두 사용 가능합니다.",
+                      style: textStyle(const Color(0xff999999), FontWeight.w400,
+                          "NotoSansKR", 13.0),
+                      textAlign: TextAlign.left)
+                ],
+              ),
+              SizedBox(height: 60 * Scale.height),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w500, "NotoSansKR", 20.0),
+                        text: "포인트 혜택 "),
+                    TextSpan(
+                        style: textStyle(const Color(0xffec5363),
+                            FontWeight.w500, "NotoSansKR", 20.0),
+                        text: "최대 648원 "),
+                    TextSpan(
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w500, "NotoSansKR", 20.0),
+                        text: "(구매확정 시)")
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
+                child: Divider(
+                  thickness: 1,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("주문적립",
+                      style: textStyle(const Color(0xff555555), FontWeight.w400,
+                          "NotoSansKR", 14.0),
+                      textAlign: TextAlign.left),
+                  Text("148 원",
+                      style: textStyle(const Color(0xff555555), FontWeight.w500,
+                          "NotoSansKR", 14.0),
+                      textAlign: TextAlign.right)
+                ],
+              ),
+              SizedBox(height: 10 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("텍스트리뷰 적립",
+                      style: textStyle(const Color(0xff555555), FontWeight.w400,
+                          "NotoSansKR", 14.0),
+                      textAlign: TextAlign.left),
+                  Text("221 원",
+                      style: textStyle(const Color(0xff555555), FontWeight.w500,
+                          "NotoSansKR", 14.0),
+                      textAlign: TextAlign.right)
+                ],
+              ),
+              SizedBox(height: 10 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("포토리뷰 적립",
+                      style: textStyle(const Color(0xff555555), FontWeight.w400,
+                          "NotoSansKR", 14.0),
+                      textAlign: TextAlign.left),
+                  Text("500 원",
+                      style: textStyle(const Color(0xff555555), FontWeight.w500,
+                          "NotoSansKR", 14.0),
+                      textAlign: TextAlign.right)
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
+                child: Divider(
+                  thickness: 1,
+                ),
+              ),
+              Text("- 주문적립 혜택은 최종결제금액에 따라 변경될 수 있습니다.",
+                  style: textStyle(const Color(0xff999999), FontWeight.w400,
+                      "NotoSansKR", 12.0),
+                  textAlign: TextAlign.left),
+              Text("- 리뷰 적립 혜택은 동일 상품의 텍스트리뷰와 포토리뷰 중 1회만 지급됩니다.",
+                  style: textStyle(const Color(0xff999999), FontWeight.w400,
+                      "NotoSansKR", 12.0),
+                  textAlign: TextAlign.left)
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget paymentArea() {
+    List<String> paymentString = ["카드", "무통장입금", "카카오페이", "토스", "네이버페이", "페이코"];
+    List<Widget> paymentImg = [
+      SvgPicture.asset('assets/images/svg/creditCard.svg'),
+      SvgPicture.asset('assets/images/svg/bankTransfer.svg'),
+      SvgPicture.asset('assets/images/svg/bankTransfer.svg'),
+      SvgPicture.asset('assets/images/svg/bankTransfer.svg'),
+      SvgPicture.asset('assets/images/svg/bankTransfer.svg'),
+      SvgPicture.asset('assets/images/svg/bankTransfer.svg'),
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "권형석",
-          style: textStyle(
-              const Color(0xff333333), FontWeight.w500, 'NotoSansKR', 16.0),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "결제 수단",
+                style:
+                    textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 20),
+              ),
+            ],
+          ),
         ),
-        SizedBox(height: 8 * Scale.height),
-        Text(
-          "인천광역시 서구 청라푸르지오 364동 3603호",
-          style: textStyle(
-              const Color(0xff555555), FontWeight.w400, 'NotoSansKR', 16.0),
+        Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: 16 * Scale.height, horizontal: 20 * Scale.width),
+          child: Divider(
+              thickness: 1 * Scale.height, color: const Color(0xffeeeeee)),
         ),
-        SizedBox(height: 4 * Scale.height),
-        Text(
-          "권형석 010-6651-7392",
-          style: textStyle(
-              const Color(0xff999999), FontWeight.w400, 'NotoSansKR', 14.0),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 10 * Scale.width),
+          itemCount: paymentImg.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4, childAspectRatio: 1.0),
+          itemBuilder: (BuildContext context, int index) {
+            return paymentContainer(paymentString[index], paymentImg[index]);
+          },
         ),
       ],
+    );
+  }
+
+  Widget paymentContainer(String payment, Widget image) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: 4.0 * Scale.width, vertical: 8 * Scale.height),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          border: Border.all(color: const Color(0xfff2f2f2), width: 1),
+          color: const Color(0xfffbfcfe),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              image,
+              SizedBox(height: 15 * Scale.height),
+              Text(
+                payment,
+                style: textStyle(const Color(0xff666666), FontWeight.w400,
+                    'NotoSansKR', 13.0),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -9,14 +9,15 @@ import 'package:flutter_svg/svg.dart';
 import '../../util/util.dart';
 
 class ChangeShippingAddress extends StatelessWidget {
-  final ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
+  final ShippingAddressBloc shippingAddressBloc;
   static const REGIST = "regist";
   static const UPDATE = "update";
-  ChangeShippingAddress({Key? key}) : super(key: key);
+  ChangeShippingAddress({Key? key, required this.shippingAddressBloc})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => shippingAddressBloc,
+    return BlocProvider.value(
+      value: shippingAddressBloc,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -225,17 +226,25 @@ class ChangeShippingAddress extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Container(
-                        width: 70 * Scale.width,
-                        height: 40 * Scale.height,
-                        decoration: BoxDecoration(
-                          color: MAINCOLOR,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "선택",
-                            style: textStyle(Colors.white, FontWeight.w400,
-                                'NotoSansKR', 14.0),
+                      InkWell(
+                        onTap: (() {
+                          context
+                              .read<ShippingAddressBloc>()
+                              .add(SelectAddressEvent(index: index));
+                          Navigator.pop(context);
+                        }),
+                        child: Container(
+                          width: 70 * Scale.width,
+                          height: 40 * Scale.height,
+                          decoration: BoxDecoration(
+                            color: MAINCOLOR,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "선택",
+                              style: textStyle(Colors.white, FontWeight.w400,
+                                  'NotoSansKR', 14.0),
+                            ),
                           ),
                         ),
                       ),

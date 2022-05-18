@@ -80,6 +80,7 @@ class HttpService {
   }
 
   bool isAccessExpired() {
+    print(accessToken);
     if (accessToken == null || Jwt.isExpired(accessToken)) {
       return true;
     } else {

@@ -10,7 +10,7 @@ class QnaRepository extends HttpService {
     try {
       response =
           await super.httpPublicGet("/products/$productId/question-answers");
-      return response['data'];
+      return response;
     } catch (e) {
       throw e;
     }

@@ -6,28 +6,28 @@ List<Map> temporaryProduct = [
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
-    'price': 26000,
+    'sale_price': 26000,
   },
   {
     'id': 2,
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "텍스처 라운드 정장 자켓",
-    'price': 26000,
+    'sale_price': 26000,
   },
   {
     'id': 2,
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
-    'price': 8400,
+    'sale_price': 8400,
   },
   {
     'id': 4,
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "머슬 분또 잠바",
-    'price': 8400,
+    'sale_price': 8400,
   }
 ];
 List<Product> getProduct() {
@@ -37,7 +37,7 @@ List<Product> getProduct() {
       id: product['id'],
       mainImage: product['mainImage'],
       name: product['name'],
-      price: product['price'],
+      salePrice: product['sale_price'],
     ));
   }
   return temporaryProductList;
@@ -51,7 +51,7 @@ Future<List<Product>> getProducts() async {
         id: product['id'],
         mainImage: product['mainImage'],
         name: product['name'],
-        price: product['price'],
+        salePrice: product['sale_price'],
       ),
     );
   }

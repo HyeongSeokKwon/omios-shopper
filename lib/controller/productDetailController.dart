@@ -134,24 +134,34 @@ class ProductDetailController extends GetxController {
   void pushProduct() {
     if (selectedSizeIndex != -1 && selectedColorIndex != -1) {
       OrderProduct orderProduct = OrderProduct(
-          color: colorData[selectedColorIndex],
-          size: sizeData[selectedSizeIndex],
-          count: 1,
-          price: productInfo.price);
+        name: productInfo.name,
+        imageUrl: productInfo.images[0]['image_url'],
+        baseDiscountRate: productInfo.baseDiscountRate,
+        color: colorData[selectedColorIndex],
+        size: sizeData[selectedSizeIndex],
+        count: 1,
+        salePrice: productInfo.salePrice,
+        baseDiscountedPrice: productInfo.baseDiscountedPrice,
+        optionId: productInfo.colors[selectedColorIndex]['options']
+            [selectedSizeIndex]['id'],
+      );
+
+      print(productInfo.colors[selectedColorIndex]['options'][selectedSizeIndex]
+          ['id']);
 
       for (int i = 0; i < productCart.length; i++) {
         // 중복 상품 추가 있을때
         if (productCart[i].size == sizeData[selectedSizeIndex] &&
             productCart[i].color == colorData[selectedColorIndex]) {
           productCart[i].count++;
-          totalPrice = totalPrice + orderProduct.price;
+          totalPrice = totalPrice + orderProduct.salePrice;
           update();
           return;
         }
       }
       productCart.add(orderProduct);
 
-      totalPrice = totalPrice + orderProduct.price;
+      totalPrice = totalPrice + orderProduct.salePrice;
       selectedColorIndex = -1;
       selectedSizeIndex = -1;
       update();
@@ -160,28 +170,29 @@ class ProductDetailController extends GetxController {
 
   void popProduct(int index) {
     totalPrice =
-        totalPrice - (productCart[index].price * productCart[index].count);
+        totalPrice - (productCart[index].salePrice * productCart[index].count);
     productCart.removeAt(index);
     update();
   }
 
   void addProductCount(int index) {
     productCart[index].count++;
-    totalPrice = totalPrice + productCart[index].price;
+    totalPrice = totalPrice + productCart[index].salePrice;
     update();
   }
 
   void substractProductCount(int index) {
     if (productCart[index].count != 1) {
       productCart[index].count--;
-      totalPrice = totalPrice - productCart[index].price;
+      totalPrice = totalPrice - productCart[index].salePrice;
     }
     update();
   }
 
   void getTotalPrice() {
     for (int i = 0; i < productCart.length; i++) {
-      totalPrice = totalPrice + (productCart[i].count * productCart[i].price);
+      totalPrice =
+          totalPrice + (productCart[i].count * productCart[i].salePrice);
     }
 
     update();

@@ -43,7 +43,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       Map<String, dynamic> searchProductResults =
           await _searchRepository.getSearchProducts(event.text);
       infinityScrollBloc.state.getData = searchProductResults;
-      infinityScrollBloc.state.productData = searchProductResults['results'];
+      infinityScrollBloc.state.targetDatas = searchProductResults['results'];
       emit(
         state.copyWith(
           searchState: ApiState.success,

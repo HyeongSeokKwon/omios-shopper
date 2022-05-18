@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
+import 'package:cloth_collection/model/orderProduct.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/order/order.dart';
@@ -142,13 +143,7 @@ class _ProductDetailState extends State<ProductDetail>
 
   Widget _buildScroll() {
     return FutureBuilder(
-      future: productDetailController
-          .getProductDetailInfo(widget.productId)
-          .catchError((e) {
-        print(e.toString());
-        showAlertDialog(context, e);
-        ErrorCard();
-      }),
+      future: productDetailInfo,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -1075,7 +1070,9 @@ class BuyingBottomSheet extends StatefulWidget {
 }
 
 class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
+  final OrderBloc orderBloc = OrderBloc();
   int selectedShow = 1;
+
   @override
   void initState() {
     super.initState();
@@ -1085,96 +1082,104 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
   @override
   Widget build(BuildContext context) {
     var bottomSheetView = [selectedOptionArea(), buyingBottomSheetArea()];
-    return Container(
-      child: bottomSheetView[selectedShow],
+    return BlocProvider(
+      create: (context) => orderBloc,
+      child: Container(
+        child: bottomSheetView[selectedShow],
+      ),
     );
   }
 
   Widget selectedOptionArea() {
-    return Stack(children: [
-      Container(
-        width: 414 * Scale.width,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(25.0),
-            topRight: const Radius.circular(25.0),
-          ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 25 * Scale.height, bottom: 30 * Scale.height),
-                child: Text("옵션 선택하기",
-                    style: textStyle(Color(0xff333333), FontWeight.w700,
-                        "NotoSansKR", 18.0)),
+    return BlocBuilder<OrderBloc, OrderState>(
+      builder: (context, state) {
+        return Stack(children: [
+          Container(
+            width: 414 * Scale.width,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(25.0),
+                topRight: const Radius.circular(25.0),
               ),
-              Expanded(
-                child: Center(
-                  child: ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (_, index) {
-                      return Column(
-                        children: [
-                          colorOptionButtonArea(),
-                          sizeOptionButtonArea(),
-                        ],
-                      );
-                    },
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: 25 * Scale.height, bottom: 30 * Scale.height),
+                    child: Text("옵션 선택하기",
+                        style: textStyle(Color(0xff333333), FontWeight.w700,
+                            "NotoSansKR", 18.0)),
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 35 * Scale.height),
-                child: TextButton(
-                  child: Text("선택완료",
-                      style: textStyle(Color(0xff333333), FontWeight.w500,
-                          "NotoSansKR", 16.0)),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                            color: const Color(0xffcccccc), width: 1),
+                  Expanded(
+                    child: Center(
+                      child: ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (_, index) {
+                          return Column(
+                            children: [
+                              colorOptionButtonArea(),
+                              sizeOptionButtonArea(),
+                            ],
+                          );
+                        },
                       ),
                     ),
-                    fixedSize: MaterialStateProperty.all<Size>(
-                        Size(370 * Scale.width, 52 * Scale.height)),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xfff0f5f9)),
                   ),
-                  onPressed: () {
-                    selectedShow = 1;
-                    widget.productDetailController.pushProduct();
-                    setState(() {});
-                  },
-                ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 35 * Scale.height),
+                    child: TextButton(
+                      child: Text("선택완료",
+                          style: textStyle(Color(0xff333333), FontWeight.w500,
+                              "NotoSansKR", 16.0)),
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                                color: const Color(0xffcccccc), width: 1),
+                          ),
+                        ),
+                        fixedSize: MaterialStateProperty.all<Size>(
+                            Size(370 * Scale.width, 52 * Scale.height)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xfff0f5f9)),
+                      ),
+                      onPressed: () {
+                        selectedShow = 1;
+                        widget.productDetailController.pushProduct();
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-      Positioned(
-        top: 15 * Scale.width,
-        right: 15 * Scale.width,
-        child: GestureDetector(
-          child: SvgPicture.asset("assets/images/svg/close.svg",
-              width: 22 * Scale.width,
-              height: 22 * Scale.width,
-              fit: BoxFit.scaleDown),
-          onTap: () {
-            selectedShow = 1;
-            widget.productDetailController.selectedSizeIndex = -1;
-            widget.productDetailController.selectedColorIndex = -1;
-            setState(() {});
-          },
-        ),
-      )
-    ]);
+          Positioned(
+            top: 15 * Scale.width,
+            right: 15 * Scale.width,
+            child: GestureDetector(
+              child: SvgPicture.asset("assets/images/svg/close.svg",
+                  width: 22 * Scale.width,
+                  height: 22 * Scale.width,
+                  fit: BoxFit.scaleDown),
+              onTap: () {
+                selectedShow = 1;
+                widget.productDetailController.selectedSizeIndex = -1;
+                widget.productDetailController.selectedColorIndex = -1;
+                setState(() {});
+              },
+            ),
+          )
+        ]);
+      },
+    );
   }
 
   Widget colorOptionButtonArea() {
@@ -1478,25 +1483,48 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                       Column(
                         children: [
                           SizedBox(height: 10 * Scale.height),
-                          TextButton(
-                            child: Text("바로구매",
-                                style: textStyle(const Color(0xffffffff),
-                                    FontWeight.w500, "NotoSansKR", 16.0)),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                          BlocBuilder<OrderBloc, OrderState>(
+                            builder: (context, state) {
+                              return TextButton(
+                                child: Text("바로구매",
+                                    style: textStyle(const Color(0xffffffff),
+                                        FontWeight.w500, "NotoSansKR", 16.0)),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  fixedSize: MaterialStateProperty.all<Size>(
+                                      Size(118 * Scale.width,
+                                          52 * Scale.height)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          const Color(0xff333333)),
                                 ),
-                              ),
-                              fixedSize: MaterialStateProperty.all<Size>(
-                                  Size(118 * Scale.width, 52 * Scale.height)),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color(0xff333333)),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: ((context) => Order())));
+                                onPressed: () {
+                                  context.read<OrderBloc>().add(
+                                      AddProductToCartEvent(
+                                          orderProduct: widget
+                                              .productDetailController
+                                              .productCart));
+                                  print(widget
+                                      .productDetailController.productCart);
+                                  print(context
+                                      .read<OrderBloc>()
+                                      .state
+                                      .productCart);
+                                  if (widget.productDetailController.productCart
+                                      .isNotEmpty) {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: ((context) => Order(
+                                                  orderBloc: orderBloc,
+                                                ))));
+                                  }
+                                },
+                              );
                             },
                           ),
                         ],
@@ -1612,7 +1640,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                         ],
                       ),
                       Text(
-                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].price)}원",
+                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].salePrice)}원",
                         style: textStyle(Color(0xff333333), FontWeight.w500,
                             "NotoSansKR", 16.0),
                       ),

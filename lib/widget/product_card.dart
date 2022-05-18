@@ -72,7 +72,7 @@ class ProductCard extends StatelessWidget {
           ),
           SizedBox(height: 4 * Scale.height),
           Text(
-            "${setPriceFormat(product.price)}원",
+            "${setPriceFormat(product.salePrice)}원",
             style: textStyle(
                 const Color(0xff333333), FontWeight.w700, "NotoSansKR", 17.0),
           ),
