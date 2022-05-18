@@ -3,7 +3,9 @@ part of 'shipping_address_bloc.dart';
 class ShippingAddressState extends Equatable {
   final List shippingAddresses;
   final Map<String, dynamic> defaultShippingAddress;
+  final Map<String, dynamic> selectedAddressInKakao; //kakao 주소찾기에서 선택된 주소
   final Map<String, dynamic> selectedAddress;
+
   final ApiState getShippingAddressesState;
   final ApiState getDefaultShippingAddressState;
   final ApiState postShippingAddressState;
@@ -14,10 +16,13 @@ class ShippingAddressState extends Equatable {
   final String recipient;
   final String mobilePhoneNumber;
   final String phoneNumber;
+  final String zipCode;
+  final String baseAddress;
   final String detailAddress;
 
   final ValidateState shippingAddressValidateState;
   final String validateErrMsg;
+  final String requirement;
 
   final bool isDefault;
   final bool noPhoneNumber;
@@ -25,6 +30,7 @@ class ShippingAddressState extends Equatable {
   const ShippingAddressState({
     required this.getShippingAddressesState,
     required this.getDefaultShippingAddressState,
+    required this.selectedAddressInKakao,
     required this.selectedAddress,
     required this.postShippingAddressState,
     required this.patchShippingAddressState,
@@ -35,7 +41,10 @@ class ShippingAddressState extends Equatable {
     required this.recipient,
     required this.mobilePhoneNumber,
     required this.phoneNumber,
+    required this.zipCode,
+    required this.baseAddress,
     required this.detailAddress,
+    required this.requirement,
     required this.isDefault,
     required this.noPhoneNumber,
     required this.shippingAddressValidateState,
@@ -46,6 +55,7 @@ class ShippingAddressState extends Equatable {
     return ShippingAddressState(
         defaultShippingAddress: {},
         shippingAddresses: [],
+        selectedAddressInKakao: {},
         selectedAddress: {},
         deleteShippingAddressState: ApiState.initial,
         getDefaultShippingAddressState: ApiState.initial,
@@ -57,6 +67,9 @@ class ShippingAddressState extends Equatable {
         mobilePhoneNumber: '',
         phoneNumber: '',
         recipient: '',
+        baseAddress: '',
+        zipCode: '',
+        requirement: '',
         isDefault: false,
         noPhoneNumber: false,
         shippingAddressValidateState: ValidateState.initial,
@@ -68,6 +81,7 @@ class ShippingAddressState extends Equatable {
     return [
       shippingAddresses,
       defaultShippingAddress,
+      selectedAddressInKakao,
       selectedAddress,
       getShippingAddressesState,
       getDefaultShippingAddressState,
@@ -79,6 +93,9 @@ class ShippingAddressState extends Equatable {
       mobilePhoneNumber,
       phoneNumber,
       detailAddress,
+      zipCode,
+      baseAddress,
+      requirement,
       isDefault,
       noPhoneNumber,
       shippingAddressValidateState,
@@ -89,6 +106,7 @@ class ShippingAddressState extends Equatable {
   ShippingAddressState copyWith(
       {List? shippingAddresses,
       Map<String, dynamic>? defaultShippingAddress,
+      Map<String, dynamic>? selectedAddressInKakao,
       Map<String, dynamic>? selectedAddress,
       ApiState? getShippingAddressesState,
       ApiState? getDefaultShippingAddressState,
@@ -99,7 +117,10 @@ class ShippingAddressState extends Equatable {
       String? recipient,
       String? mobilePhoneNumber,
       String? phoneNumber,
+      String? zipCode,
+      String? baseAddress,
       String? detailAddress,
+      String? requirement,
       bool? isDefault,
       bool? noPhoneNumber,
       ValidateState? shippingAddressValidateState,
@@ -108,6 +129,8 @@ class ShippingAddressState extends Equatable {
       shippingAddresses: shippingAddresses ?? this.shippingAddresses,
       defaultShippingAddress:
           defaultShippingAddress ?? this.defaultShippingAddress,
+      selectedAddressInKakao:
+          selectedAddressInKakao ?? this.selectedAddressInKakao,
       selectedAddress: selectedAddress ?? this.selectedAddress,
       getShippingAddressesState:
           getShippingAddressesState ?? this.getShippingAddressesState,
@@ -124,6 +147,9 @@ class ShippingAddressState extends Equatable {
       mobilePhoneNumber: mobilePhoneNumber ?? this.mobilePhoneNumber,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       detailAddress: detailAddress ?? this.detailAddress,
+      zipCode: zipCode ?? this.zipCode,
+      baseAddress: baseAddress ?? this.baseAddress,
+      requirement: requirement ?? this.requirement,
       isDefault: isDefault ?? this.isDefault,
       noPhoneNumber: noPhoneNumber ?? this.noPhoneNumber,
       shippingAddressValidateState:

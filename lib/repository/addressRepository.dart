@@ -6,6 +6,17 @@ class AddressRepository extends HttpService {
   late Map response;
   late Map<String, dynamic> queryParams;
 
+  Future<dynamic> getDefaultAddress() async {
+    int id = super.getId();
+
+    try {
+      response = await super.httpGet("/users/shoppers/$id/addresses/default");
+      return response['data'];
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<dynamic> getAddressList() async {
     int id = super.getId();
 

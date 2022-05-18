@@ -21,12 +21,16 @@ class ShippingAddressBloc
     on<ClickNoPhoneNumberEvent>(clickNoPhoneNumber);
     on<InitPatchDataEvent>(initPatchData);
     on<InitDataEvent>(initData);
+    on<SetRequirementEvent>(setRequirement);
+    on<SelectAddressEvent>(selectAddress);
   }
 
-  void initData(InitDataEvent event, Emitter<ShippingAddressState> emit) {
+  Future<void> initData(
+      InitDataEvent event, Emitter<ShippingAddressState> emit) async {
+    Map<String, dynamic> defaultAddress;
     emit(state.copyWith(
         defaultShippingAddress: {},
-        selectedAddress: {},
+        selectedAddressInKakao: {},
         deleteShippingAddressState: ApiState.initial,
         getDefaultShippingAddressState: ApiState.initial,
         getShippingAddressesState: ApiState.initial,
@@ -41,6 +45,27 @@ class ShippingAddressBloc
         noPhoneNumber: false,
         shippingAddressValidateState: ValidateState.initial,
         validateErrMsg: ''));
+    try {
+      emit(state.copyWith(getDefaultShippingAddressState: ApiState.loading));
+      defaultAddress = await _addressRepository.getDefaultAddress();
+      defaultAddress.remove('is_default');
+      if (defaultAddress.isNotEmpty) {
+        emit(state.copyWith(
+            recipient: defaultAddress['receiver_name'],
+            mobilePhoneNumber: defaultAddress['receiver_mobile_number'],
+            phoneNumber: defaultAddress['receiver_phone_number'],
+            zipCode: defaultAddress['zip_code'],
+            baseAddress: defaultAddress['base_address'],
+            detailAddress: defaultAddress['detail_address'],
+            defaultShippingAddress: defaultAddress,
+            getDefaultShippingAddressState: ApiState.success));
+      } else {
+        emit(state.copyWith(getDefaultShippingAddressState: ApiState.success));
+      }
+    } catch (e) {
+      print(e.toString());
+      emit(state.copyWith(getDefaultShippingAddressState: ApiState.fail));
+    }
   }
 
   Future<void> getShippingAddresses(ShowShippingAddressesEvent event,
@@ -80,13 +105,27 @@ class ShippingAddressBloc
     if (phoneNumber.isNotEmpty && !phoneNumberRegExp.hasMatch(phoneNumber)) {
       return '전화번호 형식을 확인해주세요';
     }
-    if (!state.selectedAddress.isNotEmpty) {
+    if (!state.selectedAddressInKakao.isNotEmpty) {
       return '배송지를 선택해주세요';
     }
     if (!detailAddressRegExp.hasMatch(detailAddress)) {
       return '상세 주소 형식을 확인해주세요';
     }
     return '';
+  }
+
+  void selectAddress(
+      SelectAddressEvent event, Emitter<ShippingAddressState> emit) {
+    emit(state.copyWith(
+        recipient: state.shippingAddresses[event.index]['receiver_name'],
+        mobilePhoneNumber: state.shippingAddresses[event.index]
+            ['receiver_mobile_number'],
+        phoneNumber: state.shippingAddresses[event.index]
+            ['receiver_phone_number'],
+        zipCode: state.shippingAddresses[event.index]['zip_code'],
+        baseAddress: state.shippingAddresses[event.index]['base_address'],
+        detailAddress: state.shippingAddresses[event.index]['detail_address'],
+        selectedAddress: state.shippingAddresses[event.index]));
   }
 
   Future<void> registShippingAddress(RegistShippingAddressEvent event,
@@ -121,8 +160,8 @@ class ShippingAddressBloc
     registData['name'] = state.addressKinds;
     registData['receiver_name'] = state.recipient;
     registData['receiver_mobile_number'] = state.mobilePhoneNumber;
-    registData['zip_code'] = state.selectedAddress['zonecode'];
-    registData['base_address'] = state.selectedAddress['address'];
+    registData['zip_code'] = state.selectedAddressInKakao['zonecode'];
+    registData['base_address'] = state.selectedAddressInKakao['address'];
     registData['detail_address'] = state.detailAddress;
     registData['is_default'] = state.isDefault;
 
@@ -172,8 +211,8 @@ class ShippingAddressBloc
     updateData['name'] = state.addressKinds;
     updateData['receiver_name'] = state.recipient;
     updateData['receiver_mobile_number'] = state.mobilePhoneNumber;
-    updateData['zip_code'] = state.selectedAddress['zonecode'];
-    updateData['base_address'] = state.selectedAddress['address'];
+    updateData['zip_code'] = state.selectedAddressInKakao['zonecode'];
+    updateData['base_address'] = state.selectedAddressInKakao['address'];
     updateData['detail_address'] = state.detailAddress;
     updateData['is_default'] = state.isDefault;
 
@@ -232,7 +271,7 @@ class ShippingAddressBloc
                 null
             ? true
             : false,
-        selectedAddress: {
+        selectedAddressInKakao: {
           'zonecode': state.shippingAddresses[event.index]['zip_code'],
           'address': state.shippingAddresses[event.index]['base_address']
         }));
@@ -240,7 +279,7 @@ class ShippingAddressBloc
 
   void setAddessEvent(
       SetAddressEvent event, Emitter<ShippingAddressState> emit) {
-    emit(state.copyWith(selectedAddress: event.addressInfo));
+    emit(state.copyWith(selectedAddressInKakao: event.addressInfo));
   }
 
   void clickIsDefault(
@@ -251,5 +290,10 @@ class ShippingAddressBloc
   void clickNoPhoneNumber(
       ClickNoPhoneNumberEvent event, Emitter<ShippingAddressState> emit) {
     emit(state.copyWith(noPhoneNumber: event.value));
+  }
+
+  void setRequirement(
+      SetRequirementEvent event, Emitter<ShippingAddressState> emit) {
+    emit(state.copyWith(requirement: event.requirement));
   }
 }

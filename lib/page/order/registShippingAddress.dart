@@ -516,12 +516,12 @@ class _RegistShippingAddressState extends State<RegistShippingAddress> {
                                 text: context
                                         .read<ShippingAddressBloc>()
                                         .state
-                                        .selectedAddress
+                                        .selectedAddressInKakao
                                         .isNotEmpty
                                     ? context
                                         .read<ShippingAddressBloc>()
                                         .state
-                                        .selectedAddress['zonecode']
+                                        .selectedAddressInKakao['zonecode']
                                     : ''),
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
@@ -617,12 +617,12 @@ class _RegistShippingAddressState extends State<RegistShippingAddress> {
                                 text: context
                                         .read<ShippingAddressBloc>()
                                         .state
-                                        .selectedAddress
+                                        .selectedAddressInKakao
                                         .isNotEmpty
                                     ? context
                                         .read<ShippingAddressBloc>()
                                         .state
-                                        .selectedAddress['address']
+                                        .selectedAddressInKakao['address']
                                     : ''),
                             textInputAction: TextInputAction.next,
                             maxLength: 30,

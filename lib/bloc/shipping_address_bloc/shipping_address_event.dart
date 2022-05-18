@@ -73,3 +73,13 @@ class ClickIsDefaultEvent extends ShippingAddressEvent {
 }
 
 class InitDataEvent extends ShippingAddressEvent {}
+
+class SetRequirementEvent extends ShippingAddressEvent {
+  final String requirement;
+  const SetRequirementEvent({required this.requirement});
+}
+
+class SelectAddressEvent extends ShippingAddressEvent {
+  final int index;
+  const SelectAddressEvent({required this.index});
+}
