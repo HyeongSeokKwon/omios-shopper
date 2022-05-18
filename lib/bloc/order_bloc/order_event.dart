@@ -12,3 +12,5 @@ class AddProductToCartEvent extends OrderEvent {
 
   const AddProductToCartEvent({required this.orderProduct});
 }
+
+class RegistOrderEvent extends OrderEvent {}
