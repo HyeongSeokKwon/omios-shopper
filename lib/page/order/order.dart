@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloth_collection/bloc/shopper_info_bloc/shopper_info_bloc.dart';
 import 'package:cloth_collection/model/orderProduct.dart';
 import 'package:cloth_collection/page/order/changeShippingAddress.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
-import 'package:cloth_collection/widget/error_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,9 +22,9 @@ class _OrderState extends State<Order> {
   final ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
   @override
   void initState() {
-    super.initState();
     widget.orderBloc.shippingAddressBloc = shippingAddressBloc;
     widget.orderBloc.shopperInfoBloc = shopperInfoBloc;
+    super.initState();
   }
 
   @override
@@ -67,9 +65,11 @@ class _OrderState extends State<Order> {
           builder: (context, state) {
             final shippingAddressBloc = context.read<ShippingAddressBloc>();
             final shopperInfoBloc = context.read<ShopperInfoBloc>();
+
             return BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
               builder: (context, state) {
                 print(state.getDefaultShippingAddressState);
+                print(shopperInfoBloc.state.getShopperInfoState);
                 if (shippingAddressBloc.state.getDefaultShippingAddressState ==
                         ApiState.initial &&
                     shopperInfoBloc.state.getShopperInfoState ==
@@ -135,14 +135,16 @@ class _OrderState extends State<Order> {
   Widget scrollArea() {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.only(bottom: 45.0 * Scale.height),
+        padding: EdgeInsets.only(bottom: 100.0 * Scale.height),
         child: Column(
           children: [
             orderProduct(),
-            divider(),
+            divider(14, 30, 30, const Color(0xfffafafa)),
             shippingAddressArea(),
             pointArea(),
             paymentArea(),
+            divider(14, 50, 30, const Color(0xfffafafa)),
+            amountOfPaymentArea(),
           ],
         ),
       ),
@@ -184,11 +186,15 @@ class _OrderState extends State<Order> {
     );
   }
 
-  Widget divider() {
+  Widget divider(int h, int topEdgeInset, int bottomEdgeInset, Color color) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 30.0 * Scale.height),
-      child:
-          Divider(thickness: 10 * Scale.height, color: const Color(0xfffbfcfe)),
+      padding: EdgeInsets.only(
+          top: topEdgeInset * Scale.height,
+          bottom: bottomEdgeInset * Scale.height),
+      child: Divider(
+        thickness: h * Scale.height,
+        color: color,
+      ),
     );
   }
 
@@ -239,7 +245,7 @@ class _OrderState extends State<Order> {
               ),
               SizedBox(height: 12 * Scale.height),
               Text(
-                "${setPriceFormat(orderProduct.salePrice * orderProduct.count)}원",
+                "${setPriceFormat(orderProduct.baseDiscountedPrice * orderProduct.count)}원",
                 style: textStyle(const Color(0xff333333), FontWeight.w400,
                     "NotoSansKR", 15.0),
               ),
@@ -339,12 +345,7 @@ class _OrderState extends State<Order> {
                   )
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16 * Scale.height),
-                child: Divider(
-                    thickness: 1 * Scale.height,
-                    color: const Color(0xffeeeeee)),
-              ),
+              divider(1, 16, 16, const Color(0xffeeeeee)),
               userInfo(),
               SizedBox(height: 10 * Scale.height),
               InkWell(
@@ -570,12 +571,7 @@ class _OrderState extends State<Order> {
                 style:
                     textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 20),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
-                child: Divider(
-                  thickness: 1,
-                ),
-              ),
+              divider(1, 10, 10, const Color(0xffeeeeee)),
               Row(
                 children: [
                   SizedBox(
@@ -692,12 +688,7 @@ class _OrderState extends State<Order> {
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
-                child: Divider(
-                  thickness: 1,
-                ),
-              ),
+              divider(1, 10, 10, const Color(0xffeeeeee)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -739,12 +730,7 @@ class _OrderState extends State<Order> {
                       textAlign: TextAlign.right)
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
-                child: Divider(
-                  thickness: 1,
-                ),
-              ),
+              divider(1, 10, 10, const Color(0xffeeeeee)),
               Text("- 주문적립 혜택은 최종결제금액에 따라 변경될 수 있습니다.",
                   style: textStyle(const Color(0xff999999), FontWeight.w400,
                       "NotoSansKR", 12.0),
@@ -808,29 +794,110 @@ class _OrderState extends State<Order> {
   }
 
   Widget paymentContainer(String payment, Widget image) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: 4.0 * Scale.width, vertical: 8 * Scale.height),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          border: Border.all(color: const Color(0xfff2f2f2), width: 1),
-          color: const Color(0xfffbfcfe),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              image,
-              SizedBox(height: 15 * Scale.height),
-              Text(
-                payment,
-                style: textStyle(const Color(0xff666666), FontWeight.w400,
-                    'NotoSansKR', 13.0),
+    return BlocBuilder<OrderBloc, OrderState>(
+      builder: (context, state) {
+        context.read<OrderBloc>().add(CalculatePriceInfoEvent());
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 4.0 * Scale.width, vertical: 8 * Scale.height),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+              border: Border.all(color: const Color(0xfff2f2f2), width: 1),
+              color: const Color(0xfffbfcfe),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  image,
+                  SizedBox(height: 15 * Scale.height),
+                  Text(
+                    payment,
+                    style: textStyle(const Color(0xff666666), FontWeight.w400,
+                        'NotoSansKR', 13.0),
+                  ),
+                ],
               ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget amountOfPaymentArea() {
+    return BlocBuilder<OrderBloc, OrderState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "결제 금액",
+                style: textStyle(
+                    Colors.black, FontWeight.w500, 'NotoSansKR', 20.0),
+              ),
+              SizedBox(height: 20 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "총 상품 금액",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                  Text(
+                    setPriceFormat(
+                            context.read<OrderBloc>().state.totalProductPrice) +
+                        "원",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                ],
+              ),
+              divider(1, 10, 10, const Color(0xffeeeeee)),
+              amountOfPaymentContents(
+                  "상품할인",
+                  setPriceFormat(
+                      -context.read<OrderBloc>().state.baseDiscountPrice)),
+              amountOfPaymentContents("쿠폰할인", setPriceFormat(-1000)),
+              amountOfPaymentContents("포인트", setPriceFormat(-1000)),
+              amountOfPaymentContents(
+                  "멤버십 할인",
+                  setPriceFormat(-context
+                      .read<OrderBloc>()
+                      .state
+                      .membershipDiscountPrice)),
+              amountOfPaymentContents(
+                  "배송비",
+                  setPriceFormat(
+                      context.read<OrderBloc>().state.shippingPrice)),
             ],
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget amountOfPaymentContents(String subject, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.0 * Scale.height),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            subject,
+            style: textStyle(
+                const Color(0xff555555), FontWeight.w400, 'NotoSansKR', 16.0),
+          ),
+          Text(
+            value + "원",
+            style: textStyle(
+                const Color(0xff555555), FontWeight.w400, 'NotoSansKR', 16.0),
+          ),
+        ],
       ),
     );
   }

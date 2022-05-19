@@ -3,26 +3,63 @@ part of 'order_bloc.dart';
 class OrderState extends Equatable {
   final List<OrderProduct> productCart;
   final ApiState registOrderState;
+  final int totalProductPrice;
+  final int baseDiscountPrice;
+  final int membershipDiscountPrice;
+
+  final int shippingPrice;
+  final int usedPoint;
 
   OrderState({
     required this.productCart,
     required this.registOrderState,
+    required this.totalProductPrice,
+    required this.baseDiscountPrice,
+    required this.membershipDiscountPrice,
+    required this.shippingPrice,
+    required this.usedPoint,
   });
 
   factory OrderState.initial() {
-    return OrderState(productCart: [], registOrderState: ApiState.initial);
+    return OrderState(
+        productCart: [],
+        registOrderState: ApiState.initial,
+        totalProductPrice: 0,
+        baseDiscountPrice: 0,
+        membershipDiscountPrice: 0,
+        shippingPrice: 3000,
+        usedPoint: 0);
   }
 
   @override
-  List<Object> get props => [productCart, registOrderState];
+  List<Object?> get props => [
+        productCart,
+        registOrderState,
+        totalProductPrice,
+        baseDiscountPrice,
+        membershipDiscountPrice,
+        shippingPrice,
+        usedPoint
+      ];
 
   OrderState copyWith({
     List<OrderProduct>? productCart,
     ApiState? registOrderState,
+    int? totalProductPrice,
+    int? baseDiscountPrice,
+    int? membershipDiscountPrice,
+    int? shippingPrice,
+    int? usedPoint,
   }) {
     return OrderState(
       productCart: productCart ?? this.productCart,
       registOrderState: registOrderState ?? this.registOrderState,
+      totalProductPrice: totalProductPrice ?? this.totalProductPrice,
+      baseDiscountPrice: baseDiscountPrice ?? this.baseDiscountPrice,
+      membershipDiscountPrice:
+          membershipDiscountPrice ?? this.membershipDiscountPrice,
+      shippingPrice: shippingPrice ?? this.shippingPrice,
+      usedPoint: usedPoint ?? this.usedPoint,
     );
   }
 }

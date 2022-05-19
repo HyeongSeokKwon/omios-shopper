@@ -14,3 +14,5 @@ class AddProductToCartEvent extends OrderEvent {
 }
 
 class RegistOrderEvent extends OrderEvent {}
+
+class CalculatePriceInfoEvent extends OrderEvent {}

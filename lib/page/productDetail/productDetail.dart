@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/model/orderProduct.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/order/order.dart';
@@ -1509,12 +1508,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                                           orderProduct: widget
                                               .productDetailController
                                               .productCart));
-                                  print(widget
-                                      .productDetailController.productCart);
-                                  print(context
-                                      .read<OrderBloc>()
-                                      .state
-                                      .productCart);
+
                                   if (widget.productDetailController.productCart
                                       .isNotEmpty) {
                                     Navigator.of(context)

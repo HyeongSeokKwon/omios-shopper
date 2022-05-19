@@ -24,7 +24,7 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
           shopperInfo: info, getShopperInfoState: ApiState.success));
     } catch (e) {
       print(e.toString());
-      emit(state.copyWith(getShopperInfoState: ApiState.success));
+      emit(state.copyWith(getShopperInfoState: ApiState.fail));
     }
   }
 }

@@ -8,17 +8,48 @@ part 'order_event.dart';
 part 'order_state.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
-  late final ShippingAddressBloc shippingAddressBloc;
-  late final ShopperInfoBloc shopperInfoBloc;
+  late ShippingAddressBloc shippingAddressBloc;
+  late ShopperInfoBloc shopperInfoBloc;
   final OrderRepository _orderRepository = OrderRepository();
   OrderBloc() : super(OrderState.initial()) {
     on<AddProductToCartEvent>(addProductToCart);
     on<RegistOrderEvent>(registOrder);
+    on<CalculatePriceInfoEvent>(calculatePriceInfo);
+  }
+
+  void calculatePriceInfo(
+      CalculatePriceInfoEvent event, Emitter<OrderState> emit) {
+    print(shopperInfoBloc.state.shopperInfo);
+    final membershipDiscountRate =
+        shopperInfoBloc.state.shopperInfo['membership']['discount_rate'];
+    int baseDiscountPrice;
+    int totalProductPrice = 0;
+    int baseDiscountedPrice = 0;
+    int membershipDiscountPrice = 0;
+
+    for (OrderProduct value in state.productCart) {
+      totalProductPrice += value.salePrice * value.count;
+      baseDiscountedPrice += value.baseDiscountedPrice * value.count;
+      membershipDiscountPrice +=
+          (value.baseDiscountedPrice * (membershipDiscountRate / 100)).toInt() *
+              value.count;
+    }
+    baseDiscountPrice = totalProductPrice - baseDiscountedPrice;
+    print(baseDiscountPrice);
+    print(totalProductPrice);
+    print(membershipDiscountPrice);
+
+    emit(state.copyWith(
+        baseDiscountPrice: baseDiscountPrice,
+        totalProductPrice: totalProductPrice,
+        membershipDiscountPrice: membershipDiscountPrice));
   }
 
   void addProductToCart(AddProductToCartEvent event, Emitter<OrderState> emit) {
     emit(
-      state.copyWith(productCart: event.orderProduct),
+      state.copyWith(
+        productCart: event.orderProduct,
+      ),
     );
   }
 
