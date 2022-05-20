@@ -9,6 +9,8 @@ class OrderState extends Equatable {
 
   final int shippingPrice;
   final int usedPoint;
+  final int canUsePoint;
+  final int finalPaymentPrice;
 
   OrderState({
     required this.productCart,
@@ -18,17 +20,22 @@ class OrderState extends Equatable {
     required this.membershipDiscountPrice,
     required this.shippingPrice,
     required this.usedPoint,
+    required this.canUsePoint,
+    required this.finalPaymentPrice,
   });
 
   factory OrderState.initial() {
     return OrderState(
-        productCart: [],
-        registOrderState: ApiState.initial,
-        totalProductPrice: 0,
-        baseDiscountPrice: 0,
-        membershipDiscountPrice: 0,
-        shippingPrice: 3000,
-        usedPoint: 0);
+      productCart: [],
+      registOrderState: ApiState.initial,
+      totalProductPrice: 0,
+      baseDiscountPrice: 0,
+      membershipDiscountPrice: 0,
+      shippingPrice: 3000,
+      usedPoint: 0,
+      canUsePoint: 0,
+      finalPaymentPrice: 0,
+    );
   }
 
   @override
@@ -39,7 +46,9 @@ class OrderState extends Equatable {
         baseDiscountPrice,
         membershipDiscountPrice,
         shippingPrice,
-        usedPoint
+        usedPoint,
+        canUsePoint,
+        finalPaymentPrice,
       ];
 
   OrderState copyWith({
@@ -50,6 +59,8 @@ class OrderState extends Equatable {
     int? membershipDiscountPrice,
     int? shippingPrice,
     int? usedPoint,
+    int? canUsePoint,
+    int? finalPaymentPrice,
   }) {
     return OrderState(
       productCart: productCart ?? this.productCart,
@@ -60,6 +71,8 @@ class OrderState extends Equatable {
           membershipDiscountPrice ?? this.membershipDiscountPrice,
       shippingPrice: shippingPrice ?? this.shippingPrice,
       usedPoint: usedPoint ?? this.usedPoint,
+      canUsePoint: canUsePoint ?? this.canUsePoint,
+      finalPaymentPrice: finalPaymentPrice ?? this.finalPaymentPrice,
     );
   }
 }

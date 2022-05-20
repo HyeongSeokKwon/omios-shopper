@@ -16,3 +16,9 @@ class AddProductToCartEvent extends OrderEvent {
 class RegistOrderEvent extends OrderEvent {}
 
 class CalculatePriceInfoEvent extends OrderEvent {}
+
+class ChangeUsingPointEvent extends OrderEvent {
+  final String point;
+
+  const ChangeUsingPointEvent({required this.point});
+}

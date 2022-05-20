@@ -15,4 +15,14 @@ class OrderRepository extends HttpService {
       throw e;
     }
   }
+
+  Future<dynamic> getOrderHistory() async {
+    try {
+      response = await super.httpGet("/orders");
+
+      return response['data'];
+    } catch (e) {
+      throw e;
+    }
+  }
 }

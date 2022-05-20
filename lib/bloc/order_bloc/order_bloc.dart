@@ -15,6 +15,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<AddProductToCartEvent>(addProductToCart);
     on<RegistOrderEvent>(registOrder);
     on<CalculatePriceInfoEvent>(calculatePriceInfo);
+    on<ChangeUsingPointEvent>(usingPoint);
+  }
+
+  void usingPoint(ChangeUsingPointEvent event, Emitter<OrderState> emit) {
+    if (event.point.isEmpty) {
+      emit(state.copyWith(usedPoint: 0));
+      return;
+    }
+    emit(state.copyWith(usedPoint: state.usedPoint + int.parse(event.point)));
   }
 
   void calculatePriceInfo(
@@ -39,10 +48,19 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     print(totalProductPrice);
     print(membershipDiscountPrice);
 
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         baseDiscountPrice: baseDiscountPrice,
         totalProductPrice: totalProductPrice,
-        membershipDiscountPrice: membershipDiscountPrice));
+        membershipDiscountPrice: membershipDiscountPrice,
+        finalPaymentPrice: totalProductPrice -
+            baseDiscountPrice -
+            state.usedPoint -
+            membershipDiscountPrice +
+            state.shippingPrice,
+      ),
+    );
+    emit(state.copyWith(canUsePoint: state.finalPaymentPrice - 1000));
   }
 
   void addProductToCart(AddProductToCartEvent event, Emitter<OrderState> emit) {

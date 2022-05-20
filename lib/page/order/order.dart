@@ -3,6 +3,7 @@ import 'package:cloth_collection/model/orderProduct.dart';
 import 'package:cloth_collection/page/order/changeShippingAddress.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -111,6 +112,7 @@ class _OrderState extends State<Order> {
           builder: (context, state) {
             return InkWell(
               onTap: () {
+                print("ontap");
                 context.read<OrderBloc>().add(RegistOrderEvent());
               },
               child: Container(
@@ -558,8 +560,13 @@ class _OrderState extends State<Order> {
   }
 
   Widget pointArea() {
-    return BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+    return BlocBuilder<OrderBloc, OrderState>(
       builder: (context, state) {
+        TextEditingController pointController = TextEditingController(
+            text: context.read<OrderBloc>().state.usedPoint.toString());
+
+        int orderEarn =
+            (context.read<OrderBloc>().state.finalPaymentPrice * 0.01).toInt();
         return Padding(
           padding: EdgeInsets.symmetric(
               horizontal: 20.0, vertical: 40 * Scale.height),
@@ -576,66 +583,93 @@ class _OrderState extends State<Order> {
                 children: [
                   SizedBox(
                     width: 200 * Scale.width,
-                    child: TextFormField(
-                      initialValue: 0.toString(),
-                      onChanged: (text) {},
-                      textInputAction: TextInputAction.next,
-                      maxLength: 30,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.fromLTRB(
-                          10 * Scale.width,
-                          12 * Scale.height,
-                          10 * Scale.width,
-                          12 * Scale.height,
-                        ),
-                        counterText: "",
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
-                        labelStyle: TextStyle(
-                          color: const Color(0xff666666),
-                          height: 0.6,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14 * Scale.height,
-                        ),
-                        hintStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide: BorderSide(
-                              color: const Color(0xffcccccc),
-                              width: 1 * Scale.width),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide: BorderSide(
-                              color: const Color(0xffcccccc),
-                              width: 1 * Scale.width),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide: BorderSide(
-                              color: const Color(0xffcccccc),
-                              width: 1 * Scale.width),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide: BorderSide(
-                              color: const Color(0xffcccccc),
-                              width: 1 * Scale.width),
-                        ),
-                      ),
-                      textAlign: TextAlign.left,
+                    child: BlocBuilder<OrderBloc, OrderState>(
+                      builder: (context, state) {
+                        return TextFormField(
+                          onChanged: (text) {
+                            context
+                                .read<OrderBloc>()
+                                .add(ChangeUsingPointEvent(point: text));
+                          },
+                          controller: pointController,
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp('[0-9]'))
+                          ],
+                          maxLength: 30,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.fromLTRB(
+                              10 * Scale.width,
+                              12 * Scale.height,
+                              10 * Scale.width,
+                              12 * Scale.height,
+                            ),
+                            counterText: "",
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            labelStyle: TextStyle(
+                              color: const Color(0xff666666),
+                              height: 0.6,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "NotoSansKR",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14 * Scale.height,
+                            ),
+                            hintStyle: textStyle(const Color(0xffcccccc),
+                                FontWeight.w400, "NotoSansKR", 16.0),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(7)),
+                              borderSide: BorderSide(
+                                  color: const Color(0xffcccccc),
+                                  width: 1 * Scale.width),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(7)),
+                              borderSide: BorderSide(
+                                  color: const Color(0xffcccccc),
+                                  width: 1 * Scale.width),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(7)),
+                              borderSide: BorderSide(
+                                  color: const Color(0xffcccccc),
+                                  width: 1 * Scale.width),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(7)),
+                              borderSide: BorderSide(
+                                  color: const Color(0xffcccccc),
+                                  width: 1 * Scale.width),
+                            ),
+                          ),
+                          textAlign: TextAlign.left,
+                        );
+                      },
                     ),
                   ),
                   SizedBox(width: 5 * Scale.width),
                   Container(
-                    child: Center(
-                      child: Text("전액사용",
-                          style: textStyle(const Color(0xffec5363),
-                              FontWeight.w400, "NotoSansKR", 15.0),
-                          textAlign: TextAlign.center),
+                    child: InkWell(
+                      child: Center(
+                        child: Text("전액사용",
+                            style: textStyle(const Color(0xffec5363),
+                                FontWeight.w400, "NotoSansKR", 15.0),
+                            textAlign: TextAlign.center),
+                      ),
+                      onTap: () {
+                        pointController.text = context
+                            .read<OrderBloc>()
+                            .state
+                            .canUsePoint
+                            .toString();
+                        context.read<OrderBloc>().add(
+                            ChangeUsingPointEvent(point: pointController.text));
+                      },
                     ),
                     width: 90 * Scale.width,
                     height: 46 * Scale.height,
@@ -648,15 +682,16 @@ class _OrderState extends State<Order> {
               ),
               SizedBox(height: 5 * Scale.height),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "사용 가능한 포인트",
+                    "사용 가능한 포인트 ",
                     style: textStyle(
                         Color(0xff555555), FontWeight.w400, "NotoSansKR", 14.0),
                   ),
                   Text(
-                      "${context.read<ShopperInfoBloc>().state.shopperInfo['point']}",
-                      style: textStyle(const Color(0xffec5363), FontWeight.w700,
+                      "${setPriceFormat(context.read<OrderBloc>().state.canUsePoint)}원",
+                      style: textStyle(const Color(0xffec5363), FontWeight.w500,
                           "NotoSansKR", 14.0))
                 ],
               ),
@@ -670,23 +705,27 @@ class _OrderState extends State<Order> {
                 ],
               ),
               SizedBox(height: 60 * Scale.height),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                        style: textStyle(const Color(0xff333333),
-                            FontWeight.w500, "NotoSansKR", 20.0),
-                        text: "포인트 혜택 "),
-                    TextSpan(
-                        style: textStyle(const Color(0xffec5363),
-                            FontWeight.w500, "NotoSansKR", 20.0),
-                        text: "최대 648원 "),
-                    TextSpan(
-                        style: textStyle(const Color(0xff333333),
-                            FontWeight.w500, "NotoSansKR", 20.0),
-                        text: "(구매확정 시)")
-                  ],
-                ),
+              BlocBuilder<OrderBloc, OrderState>(
+                builder: (context, state) {
+                  return RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                            style: textStyle(const Color(0xff333333),
+                                FontWeight.w500, "NotoSansKR", 20.0),
+                            text: "포인트 혜택 "),
+                        TextSpan(
+                            style: textStyle(const Color(0xffec5363),
+                                FontWeight.w500, "NotoSansKR", 20.0),
+                            text: "최대 ${setPriceFormat(orderEarn + 500)}원 "),
+                        TextSpan(
+                            style: textStyle(const Color(0xff333333),
+                                FontWeight.w500, "NotoSansKR", 20.0),
+                            text: "(구매확정 시)")
+                      ],
+                    ),
+                  );
+                },
               ),
               divider(1, 10, 10, const Color(0xffeeeeee)),
               Row(
@@ -696,7 +735,7 @@ class _OrderState extends State<Order> {
                       style: textStyle(const Color(0xff555555), FontWeight.w400,
                           "NotoSansKR", 14.0),
                       textAlign: TextAlign.left),
-                  Text("148 원",
+                  Text(setPriceFormat(orderEarn) + "원",
                       style: textStyle(const Color(0xff555555), FontWeight.w500,
                           "NotoSansKR", 14.0),
                       textAlign: TextAlign.right)
@@ -710,7 +749,7 @@ class _OrderState extends State<Order> {
                       style: textStyle(const Color(0xff555555), FontWeight.w400,
                           "NotoSansKR", 14.0),
                       textAlign: TextAlign.left),
-                  Text("221 원",
+                  Text("100 원",
                       style: textStyle(const Color(0xff555555), FontWeight.w500,
                           "NotoSansKR", 14.0),
                       textAlign: TextAlign.right)
@@ -863,7 +902,8 @@ class _OrderState extends State<Order> {
                   setPriceFormat(
                       -context.read<OrderBloc>().state.baseDiscountPrice)),
               amountOfPaymentContents("쿠폰할인", setPriceFormat(-1000)),
-              amountOfPaymentContents("포인트", setPriceFormat(-1000)),
+              amountOfPaymentContents("포인트",
+                  setPriceFormat(-context.read<OrderBloc>().state.usedPoint)),
               amountOfPaymentContents(
                   "멤버십 할인",
                   setPriceFormat(-context
@@ -874,6 +914,24 @@ class _OrderState extends State<Order> {
                   "배송비",
                   setPriceFormat(
                       context.read<OrderBloc>().state.shippingPrice)),
+              divider(1, 10, 10, const Color(0xffeeeeee)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "최종 결제 금액",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                  Text(
+                    setPriceFormat(
+                            context.read<OrderBloc>().state.finalPaymentPrice) +
+                        "원",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                ],
+              ),
             ],
           ),
         );
