@@ -1,5 +1,5 @@
 import 'package:cloth_collection/database/db.dart';
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:get/get.dart';
 
 class RecentViewController extends GetxController {
@@ -7,7 +7,7 @@ class RecentViewController extends GetxController {
   List<dynamic> recentViewProductList = [];
   List<dynamic> selectProductList = [];
   DBHelper dbHelper = DBHelper();
-  HttpService httpservice = HttpService();
+  HttpRepository httpRepository = HttpRepository();
   bool edit = false;
 
   void dataInit() {
@@ -39,7 +39,7 @@ class RecentViewController extends GetxController {
     recentViewList = getRecentView(dbHelper.db);
     for (var i in await recentViewList) {
       try {
-        response = await httpservice.httpGet('products/${i['productId']}');
+        response = await httpRepository.httpGet('products/${i['productId']}');
         recentViewProductList.add(response["data"]);
       } catch (e) {
         deleteRecent(dbHelper.db, i['productId']);

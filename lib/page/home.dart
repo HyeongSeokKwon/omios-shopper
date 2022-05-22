@@ -1,6 +1,5 @@
 import 'package:cloth_collection/controller/homeController.dart';
 import 'package:cloth_collection/database/db.dart';
-import 'package:cloth_collection/page/SearchImage.dart';
 import 'package:cloth_collection/page/category/category.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/mypage/myPage.dart';

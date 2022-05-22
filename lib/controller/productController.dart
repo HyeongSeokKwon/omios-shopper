@@ -1,4 +1,4 @@
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 
@@ -15,7 +15,7 @@ class ProductController extends GetxController {
   static const int PRICEASC = 1;
   static const int PRICEDSC = 2;
 
-  HttpService httpservice = HttpService();
+  HttpRepository httpRepository = HttpRepository();
   List<dynamic> productData = [];
   List<dynamic> colorData = [];
 
@@ -62,7 +62,7 @@ class ProductController extends GetxController {
       queryParams['main_category'] = '$mainCategoryId';
     }
     response =
-        await httpservice.httpGet("/products", queryParams).catchError((e) {
+        await httpRepository.httpGet("/products", queryParams).catchError((e) {
       throw e;
     });
 
@@ -85,8 +85,9 @@ class ProductController extends GetxController {
     if (nextDataLink != null) {
       var page = "page";
       queryParams['page'] = "${nextDataLink![nextDataLink!.indexOf(page) + 5]}";
-      response =
-          await httpservice.httpGet("/products", queryParams).catchError((e) {
+      response = await httpRepository
+          .httpGet("/products", queryParams)
+          .catchError((e) {
         throw e;
       });
     } else {
@@ -153,7 +154,7 @@ class ProductController extends GetxController {
         selectedColor.length, (index) => selectedColor[index].toString());
 
     response =
-        await httpservice.httpGet("/products", queryParams).catchError((e) {
+        await httpRepository.httpGet("/products", queryParams).catchError((e) {
       throw e;
     });
 
@@ -165,7 +166,7 @@ class ProductController extends GetxController {
   }
 
   Future<List<dynamic>> getColorImage() async {
-    var response = await httpservice.httpGet("/products/colors");
+    var response = await httpRepository.httpGet("/products/colors");
     colorData = response['data'];
     return response['data'];
   }

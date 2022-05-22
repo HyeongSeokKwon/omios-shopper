@@ -1,5 +1,5 @@
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:get/get.dart';
-import 'package:cloth_collection/http/httpService.dart';
 
 class SignUpController extends GetxController {
   late String id;
@@ -14,7 +14,7 @@ class SignUpController extends GetxController {
   bool isAgreeSecondTerms = false;
   bool isSatisfy = false;
 
-  HttpService httpservice = HttpService();
+  HttpRepository httpRepository = HttpRepository();
 
   void resetIsDuplicationCheck() {
     isDuplicationCheck = "default";
@@ -28,7 +28,8 @@ class SignUpController extends GetxController {
     print("validate");
     if (regex.hasMatch(id) && id.length >= 4) {
       queryParams['username'] = id;
-      response = await httpservice.httpPublicGet("/users/unique", queryParams);
+      response =
+          await httpRepository.httpPublicGet("/users/unique", queryParams);
       if (response['data']['is_unique'])
         isDuplicationCheck = "accept";
       else

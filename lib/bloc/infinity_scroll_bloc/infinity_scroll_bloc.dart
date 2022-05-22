@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../bloc.dart';
@@ -9,7 +9,7 @@ part 'infinity_scroll_state.dart';
 
 class InfinityScrollBloc
     extends Bloc<InfinityScrollEvent, InfinityScrollState> {
-  HttpService _httpService = HttpService();
+  HttpRepository httpRepository = HttpRepository();
 
   InfinityScrollBloc() : super(InfinityScrollState.initial()) {
     on<AddDataEvent>(addData);
@@ -23,7 +23,7 @@ class InfinityScrollBloc
       Uri nextLink = Uri.parse(state.getData['next']);
       emit(state.copyWith(getState: ApiState.loading));
       response =
-          await _httpService.httpGet(nextLink.path, nextLink.queryParameters);
+          await httpRepository.httpGet(nextLink.path, nextLink.queryParameters);
       print(state.targetDatas.length);
       emit(state.copyWith(
           getState: ApiState.success,

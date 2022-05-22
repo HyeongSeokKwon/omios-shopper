@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 
-class AddressRepository extends HttpService {
+class AddressRepository extends HttpRepository {
   late Map response;
   late Map<String, dynamic> queryParams;
 
   Future<dynamic> getDefaultAddress() async {
-    int id = super.getId();
+    int id = await super.getId();
 
     try {
       response = await super.httpGet("/users/shoppers/$id/addresses/default");
@@ -18,7 +18,7 @@ class AddressRepository extends HttpService {
   }
 
   Future<dynamic> getAddressList() async {
-    int id = super.getId();
+    int id = await super.getId();
 
     try {
       response = await super.httpGet("/users/shoppers/$id/addresses");
@@ -29,7 +29,7 @@ class AddressRepository extends HttpService {
   }
 
   Future<dynamic> postAddress(Map<String, dynamic> body) async {
-    int id = super.getId();
+    int id = await super.getId();
 
     try {
       response = await super
@@ -41,7 +41,7 @@ class AddressRepository extends HttpService {
   }
 
   Future<dynamic> deleteAddress(int addressId) async {
-    int id = super.getId();
+    int id = await super.getId();
 
     try {
       response =
@@ -53,7 +53,7 @@ class AddressRepository extends HttpService {
   }
 
   Future<dynamic> patchAddress(int addressId, Map<String, dynamic> body) async {
-    int id = super.getId();
+    int id = await super.getId();
     try {
       response = await super.httpPatch(
           "/users/shoppers/$id/addresses/$addressId", json.encode(body));

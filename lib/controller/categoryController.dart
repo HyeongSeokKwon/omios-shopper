@@ -1,4 +1,4 @@
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:get/get.dart';
 
 class Category {
@@ -10,22 +10,24 @@ class Category {
 class CategoryController extends GetxController {
   Category mainCategory = Category(id: 1, name: "init");
 
-  HttpService httpservice = HttpService();
+  HttpRepository httpRepository = HttpRepository();
   late Future<List<Category>> categoryList;
   var subCategoryList;
   Map<String, String> queryParams = {};
 
   Future<List<dynamic>> getCategory() async {
-    var response =
-        await httpservice.httpGet("/products/main-categories").catchError((e) {
+    var response = await httpRepository
+        .httpGet("/products/main-categories")
+        .catchError((e) {
       throw e;
     });
     return response['data'];
   }
 
   Future<List<dynamic>> getSubCategory(int mainCategoryId) async {
-    var response = await httpservice
-        .httpGet("/products/main-categories/$mainCategoryId/sub-categories")
+    var response = await httpRepository
+        .httpPublicGet(
+            "/products/main-categories/$mainCategoryId/sub-categories")
         .catchError((e) {
       throw e;
     });

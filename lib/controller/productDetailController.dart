@@ -1,6 +1,6 @@
-import 'package:cloth_collection/http/httpService.dart';
 import 'package:cloth_collection/model/orderProduct.dart';
 import 'package:cloth_collection/model/productDetailModel.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +16,7 @@ class ProductDetailController extends GetxController {
   int reviewTabIndex = 0;
   int selectedColorIndex = -1;
   int selectedSizeIndex = -1;
-  HttpService httpservice = HttpService();
+  HttpRepository httpRepository = HttpRepository();
 
   var colorData = [];
   var sizeData = [];
@@ -42,7 +42,8 @@ class ProductDetailController extends GetxController {
 
   Future<dynamic> getProductDetailInfo(int productId) async {
     try {
-      var response = await httpservice.httpGet('/products/$productId');
+      await httpRepository.getToken();
+      var response = await httpRepository.httpGet('/products/$productId');
       print(response);
       productInfo = ProductDetailInfo.fromJson(response['data']);
       for (Map color in productInfo.colors) {
@@ -61,8 +62,9 @@ class ProductDetailController extends GetxController {
     Map<String, String> queryParams = {};
     queryParams['sub_category'] = "7";
     print("getRecommandProducts");
+    await httpRepository.getToken();
     var response =
-        await httpservice.httpGet("/products", queryParams).catchError((e) {
+        await httpRepository.httpGet("/products", queryParams).catchError((e) {
       print(e);
       throw e;
     });
