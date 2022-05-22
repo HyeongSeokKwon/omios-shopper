@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloth_collection/bloc/auth_bloc/authentication_bloc.dart';
-import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
 import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/login/widget/login_widget.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';

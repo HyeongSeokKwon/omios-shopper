@@ -1,4 +1,6 @@
+import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/login/login.dart';
+import 'package:cloth_collection/page/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,7 +23,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: Login(),
+      initialRoute: '/splash',
+      routes: {
+        '/splash': (context) => const Splash(),
+        '/login': (context) => const Login(),
+        '/home': (context) => HomePage(),
+      },
       builder: (context, child) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
