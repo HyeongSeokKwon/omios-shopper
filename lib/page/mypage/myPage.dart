@@ -5,6 +5,9 @@ import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../login/login.dart';
 
 class MyPage extends StatefulWidget {
   @override
@@ -47,6 +50,7 @@ class _MyPageState extends State<MyPage> {
             ),
             SizedBox(width: 16 * Scale.width),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "ID 님 안녕하세요!",
@@ -68,6 +72,26 @@ class _MyPageState extends State<MyPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: 6 * Scale.height),
+                Container(
+                    child: InkWell(
+                  child: Text("로그아웃",
+                      style: textStyle(Color(0xff797979), FontWeight.w400,
+                          "NotoSansKR", 14.0)),
+                  onTap: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool('autoLogin', false);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => Login(),
+                      ),
+                      (route) =>
+                          false, //if you want to disable back feature set to false
+                    );
+                  },
+                )),
               ],
             ),
           ],
