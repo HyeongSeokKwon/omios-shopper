@@ -1,11 +1,11 @@
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 
-class ShopperRepository extends HttpService {
+class ShopperRepository extends HttpRepository {
   late Map response;
   late Map<String, dynamic> queryParams;
 
   Future<dynamic> getShopperInfo() async {
-    int id = super.getId();
+    int id = await super.getId();
     try {
       response = await super.httpGet('/users/shoppers/$id');
       return response['data'];

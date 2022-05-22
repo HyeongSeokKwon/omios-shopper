@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 
-class QnaRepository extends HttpService {
+class QnaRepository extends HttpRepository {
   late Map response;
   late Map<String, dynamic> queryParams;
 

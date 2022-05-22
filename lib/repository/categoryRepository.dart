@@ -1,6 +1,6 @@
-import 'package:cloth_collection/http/httpService.dart';
+import 'httpRepository.dart';
 
-class CategoryRepository extends HttpService {
+class CategoryRepository extends HttpRepository {
   Future<dynamic> getCategory() async {
     Map response;
     try {

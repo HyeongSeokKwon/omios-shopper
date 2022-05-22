@@ -1,6 +1,6 @@
-import 'package:cloth_collection/http/httpService.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 
-class SearchRepository extends HttpService {
+class SearchRepository extends HttpRepository {
   late Map response;
   late Map<String, dynamic> queryParams;
 

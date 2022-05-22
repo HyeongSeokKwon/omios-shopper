@@ -1,11 +1,10 @@
-import 'package:cloth_collection/http/httpService.dart';
-import 'package:jwt_decode/jwt_decode.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 
-class UserRepository extends HttpService {
+class UserRepository extends HttpRepository {
   late Map response;
 
   Future<dynamic> addLike(String productId) async {
-    int userId = Jwt.parseJwt(HttpService.accessToken)['user_id'];
+    int userId = await super.getId();
 
     try {
       response =
@@ -18,7 +17,7 @@ class UserRepository extends HttpService {
   }
 
   Future<dynamic> deleteLike(String productId) async {
-    int userId = Jwt.parseJwt(HttpService.accessToken)['user_id'];
+    int userId = await super.getId();
 
     try {
       response =

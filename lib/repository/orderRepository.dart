@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:cloth_collection/http/httpService.dart';
+import 'httpRepository.dart';
 
-class OrderRepository extends HttpService {
+class OrderRepository extends HttpRepository {
   late Map response;
   late Map<String, dynamic> queryParams;
 
