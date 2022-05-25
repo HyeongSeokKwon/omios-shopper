@@ -170,9 +170,11 @@ class _OrderState extends State<Order> {
                     Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 20 * Scale.height),
-                      child: Text("주문상품",
-                          style: textStyle(Colors.black, FontWeight.w500,
-                              'NotoSansKR', 21.0)),
+                      child: Text(
+                        "주문상품",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, 'NotoSansKR', 21.0),
+                      ),
                     ),
                     productInfo(
                         context.read<OrderBloc>().state.productCart[index]),

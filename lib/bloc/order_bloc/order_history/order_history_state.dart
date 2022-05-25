@@ -1,29 +1,47 @@
 part of 'order_history_bloc.dart';
 
 class OrderHistoryState extends Equatable {
-  final List<Map<String, dynamic>> orderHistoryList;
+  final List<OrderHistoryData> orderHistoryList;
+  final DateTime? start;
+  final DateTime? end;
   final ApiState getOrderHistoryState;
+
   OrderHistoryState({
     required this.orderHistoryList,
+    this.start,
+    this.end,
     required this.getOrderHistoryState,
   });
 
   factory OrderHistoryState.initial() {
     return OrderHistoryState(
       orderHistoryList: [],
+      start: DateTime(0),
+      end: DateTime(0),
       getOrderHistoryState: ApiState.initial,
     );
   }
 
   @override
-  List<Object> get props => [orderHistoryList, getOrderHistoryState];
+  List<Object?> get props {
+    return [
+      orderHistoryList,
+      start,
+      end,
+      getOrderHistoryState,
+    ];
+  }
 
   OrderHistoryState copyWith({
-    List<Map<String, dynamic>>? orderHistoryList,
+    List<OrderHistoryData>? orderHistoryList,
+    DateTime? start,
+    DateTime? end,
     ApiState? getOrderHistoryState,
   }) {
     return OrderHistoryState(
       orderHistoryList: orderHistoryList ?? this.orderHistoryList,
+      start: start ?? this.start,
+      end: end ?? this.end,
       getOrderHistoryState: getOrderHistoryState ?? this.getOrderHistoryState,
     );
   }

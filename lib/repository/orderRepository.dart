@@ -20,7 +20,7 @@ class OrderRepository extends HttpRepository {
     try {
       response = await super.httpGet("/orders");
 
-      return response['data'];
+      return response;
     } catch (e) {
       throw e;
     }
