@@ -32,7 +32,7 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
       print("==========");
       print(qnaData);
       infinityScrollBloc.state.getData = qnaData;
-      infinityScrollBloc.state.targetDatas = qnaData['results'];
+      infinityScrollBloc.state.targetDatas = qnaData['data']['results'];
       emit(state.copyWith(qnaGetState: ApiState.success));
     } catch (e) {
       print(e.toString());

@@ -193,12 +193,12 @@ class _QnaScrollAreaState extends State<QnaScrollArea> {
                               ),
                               SizedBox(height: 5 * Scale.height),
                               context
-                                          .read<InfinityScrollBloc>()
-                                          .state
-                                          .targetDatas[index]['answer'] !=
-                                      null
+                                      .read<InfinityScrollBloc>()
+                                      .state
+                                      .targetDatas[index]['answer']
+                                      .isNotEmpty
                                   ? Text(
-                                      "A: omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,omios가 작성한 대답,",
+                                      "A: ${context.read<InfinityScrollBloc>().state.targetDatas[index]['answer']}",
                                       style: textStyle(Colors.black,
                                           FontWeight.w400, "NotoSansKR", 14.0),
                                     )
