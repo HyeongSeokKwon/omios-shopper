@@ -1409,23 +1409,24 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
             ),
           ),
           GetBuilder<ProductDetailController>(
-              init: widget.productDetailController,
-              builder: (controller) {
-                return Expanded(
-                  child: Center(
-                    child: ListView.builder(
-                        itemCount: controller.productCart.length,
-                        itemBuilder: (_, index) {
-                          return Column(
-                            children: [
-                              selectedProductBox(index),
-                              SizedBox(height: 8 * Scale.height),
-                            ],
-                          );
-                        }),
-                  ),
-                );
-              }),
+            init: widget.productDetailController,
+            builder: (controller) {
+              return Expanded(
+                child: Center(
+                  child: ListView.builder(
+                      itemCount: controller.productCart.length,
+                      itemBuilder: (_, index) {
+                        return Column(
+                          children: [
+                            selectedProductBox(index),
+                            SizedBox(height: 8 * Scale.height),
+                          ],
+                        );
+                      }),
+                ),
+              );
+            },
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
             child: Column(
@@ -1435,20 +1436,22 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                   padding: EdgeInsets.only(
                       top: 13 * Scale.height, bottom: 26 * Scale.height),
                   child: GetBuilder<ProductDetailController>(
-                      init: widget.productDetailController,
-                      builder: (controller) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("${controller.productCart.length}개 상품 금액",
-                                style: textStyle(const Color(0xff999999),
-                                    FontWeight.w400, "NotoSansKR", 14.0)),
-                            Text("${setPriceFormat(controller.totalPrice)}",
-                                style: textStyle(const Color(0xffec5363),
-                                    FontWeight.w400, "NotoSansKR", 16.0))
-                          ],
-                        );
-                      }),
+                    init: widget.productDetailController,
+                    builder: (controller) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                              "${widget.productDetailController.totalProductCount}개 상품 금액",
+                              style: textStyle(const Color(0xff999999),
+                                  FontWeight.w400, "NotoSansKR", 14.0)),
+                          Text("${setPriceFormat(controller.totalPrice)}원",
+                              style: textStyle(const Color(0xffec5363),
+                                  FontWeight.w400, "NotoSansKR", 16.0))
+                        ],
+                      );
+                    },
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 35 * Scale.height),
@@ -1634,7 +1637,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                         ],
                       ),
                       Text(
-                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].salePrice)}원",
+                        "${setPriceFormat(widget.productDetailController.productCart[index].count * widget.productDetailController.productCart[index].baseDiscountedPrice)}원",
                         style: textStyle(Color(0xff333333), FontWeight.w500,
                             "NotoSansKR", 16.0),
                       ),

@@ -10,6 +10,7 @@ class ProductDetailController extends GetxController {
   int colorCount = 0;
   int sizeCount = 0;
   int totalPrice = 0;
+  int totalProductCount = 0;
   bool isColorButtonClicked = true;
   bool isSizeButtonClicked = false;
 
@@ -156,14 +157,14 @@ class ProductDetailController extends GetxController {
         if (productCart[i].size == sizeData[selectedSizeIndex] &&
             productCart[i].color == colorData[selectedColorIndex]) {
           productCart[i].count++;
-          totalPrice = totalPrice + orderProduct.salePrice;
+          totalPrice = totalPrice + orderProduct.baseDiscountedPrice;
           update();
           return;
         }
       }
       productCart.add(orderProduct);
-
-      totalPrice = totalPrice + orderProduct.salePrice;
+      totalProductCount++;
+      totalPrice = totalPrice + orderProduct.baseDiscountedPrice;
       selectedColorIndex = -1;
       selectedSizeIndex = -1;
       update();
@@ -171,30 +172,33 @@ class ProductDetailController extends GetxController {
   }
 
   void popProduct(int index) {
-    totalPrice =
-        totalPrice - (productCart[index].salePrice * productCart[index].count);
+    totalPrice = totalPrice -
+        (productCart[index].baseDiscountedPrice * productCart[index].count);
+    totalProductCount -= productCart[index].count;
     productCart.removeAt(index);
     update();
   }
 
   void addProductCount(int index) {
     productCart[index].count++;
-    totalPrice = totalPrice + productCart[index].salePrice;
+    totalPrice = totalPrice + productCart[index].baseDiscountedPrice;
+    totalProductCount++;
     update();
   }
 
   void substractProductCount(int index) {
     if (productCart[index].count != 1) {
       productCart[index].count--;
-      totalPrice = totalPrice - productCart[index].salePrice;
+      totalProductCount--;
+      totalPrice = totalPrice - productCart[index].baseDiscountedPrice;
     }
     update();
   }
 
   void getTotalPrice() {
     for (int i = 0; i < productCart.length; i++) {
-      totalPrice =
-          totalPrice + (productCart[i].count * productCart[i].salePrice);
+      totalPrice = totalPrice +
+          (productCart[i].count * productCart[i].baseDiscountedPrice);
     }
 
     update();
