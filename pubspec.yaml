@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   introduction_screen: ^3.0.2
   get: ^4.3.8
   dots_indicator: ^2.0.0
