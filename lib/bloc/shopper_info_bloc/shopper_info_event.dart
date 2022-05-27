@@ -8,3 +8,5 @@ abstract class ShopperInfoEvent extends Equatable {
 }
 
 class GetShopperInfoEvent extends ShopperInfoEvent {}
+
+class GetPointHistoryEvent extends ShopperInfoEvent {}

@@ -1,8 +1,13 @@
+import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/page/mypage/serviceCenter.dart';
 import 'package:cloth_collection/page/orderHistory/orderHistory.dart';
+import 'package:cloth_collection/page/point/point.dart';
 import 'package:cloth_collection/page/recentviewProduct.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:cloth_collection/widget/error_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,24 +22,41 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Container(
-      color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-        child: Column(
-          children: [
-            shortUserInfoArea(),
-            SizedBox(height: 40 * Scale.height),
-            myActivityArea(),
-            SizedBox(height: 30 * Scale.height),
-            pointAndCouponArea(),
-            SizedBox(height: 64 * Scale.height),
-            addtionalAppInfo(),
-          ],
-        ),
+    return BlocProvider(
+      create: (context) => ShopperInfoBloc(),
+      child: BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+        builder: (context, state) {
+          if (state.getShopperInfoState == ApiState.initial) {
+            context.read<ShopperInfoBloc>().add(GetShopperInfoEvent());
+            return progressBar();
+          } else if (state.getShopperInfoState == ApiState.success) {
+            return SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                  child: Column(
+                    children: [
+                      shortUserInfoArea(),
+                      SizedBox(height: 40 * Scale.height),
+                      myActivityArea(),
+                      SizedBox(height: 30 * Scale.height),
+                      pointAndCouponArea(),
+                      SizedBox(height: 64 * Scale.height),
+                      addtionalAppInfo(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          } else if (state.getShopperInfoState == ApiState.fail) {
+            return ErrorCard();
+          } else {
+            return progressBar();
+          }
+        },
       ),
-    ));
+    );
   }
 
   Widget shortUserInfoArea() {
@@ -186,33 +208,57 @@ class _MyPageState extends State<MyPage> {
             ],
             color: const Color(0xffffffff),
           ),
-          child: Padding(
-            padding: EdgeInsets.only(left: 12 * Scale.width),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "포인트",
-                  style: textStyle(
-                    const Color(0xff797979),
-                    FontWeight.w400,
-                    "NotoSansKR",
-                    14.0,
+          child: BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+            builder: (context, state) {
+              return InkWell(
+                onTap: (() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: ((context) => PointPage(
+                            point: state.shopperInfo['point'],
+                          )),
+                    ),
+                  );
+                }),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12 * Scale.width),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "포인트",
+                        style: textStyle(
+                          const Color(0xff797979),
+                          FontWeight.w400,
+                          "NotoSansKR",
+                          14.0,
+                        ),
+                      ),
+                      SizedBox(height: 2 * Scale.height),
+                      BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+                        builder: (context, state) {
+                          return Text(
+                            setPriceFormat(context
+                                    .read<ShopperInfoBloc>()
+                                    .state
+                                    .shopperInfo['point']) +
+                                " P",
+                            style: textStyle(
+                              const Color(0xff333333),
+                              FontWeight.w500,
+                              "NotoSansKR",
+                              16.0,
+                            ),
+                          );
+                        },
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(height: 2 * Scale.height),
-                Text(
-                  "0 P",
-                  style: textStyle(
-                    const Color(0xff333333),
-                    FontWeight.w500,
-                    "NotoSansKR",
-                    16.0,
-                  ),
-                )
-              ],
-            ),
+              );
+            },
           ),
         ),
         Container(

@@ -13,4 +13,14 @@ class ShopperRepository extends HttpRepository {
       throw e;
     }
   }
+
+  Future<dynamic> getPointHistory() async {
+    int id = await super.getId();
+    try {
+      response = await super.httpGet("/users/shoppers/$id/point-histories");
+      return response['data'];
+    } catch (e) {
+      throw e;
+    }
+  }
 }
