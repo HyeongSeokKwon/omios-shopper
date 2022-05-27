@@ -110,7 +110,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                       child: ClipRRect(
                                         child: CachedNetworkImage(
                                             imageUrl:
-                                                "${controller.recentViewProductList[index]['images'][0]['image_url']}",
+                                                "${controller.recentViewProductList[index]['main_image']}",
                                             width: 110,
                                             height: 110 * (4 / 3),
                                             fit: BoxFit.fill),
@@ -124,7 +124,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                       ),
                                     ),
                                     Container(
-                                      width: 110,
+                                      width: 110 * Scale.width,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -142,7 +142,7 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                                           ),
                                           SizedBox(height: 4 * Scale.height),
                                           Text(
-                                            "${setPriceFormat(controller.recentViewProductList[index]['sale_price'])}원",
+                                            "${setPriceFormat(controller.recentViewProductList[index]['base_discounted_price'])}원",
                                             style: textStyle(
                                                 const Color(0xff333333),
                                                 FontWeight.w700,

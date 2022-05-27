@@ -35,15 +35,18 @@ class RecentViewController extends GetxController {
 
   Future<dynamic> getRecentViewProduct() async {
     var response;
+    List idList = [];
     recentViewProductList = [];
+
     recentViewList = getRecentView(dbHelper.db);
     for (var i in await recentViewList) {
-      try {
-        response = await httpRepository.httpGet('/products/${i['productId']}');
-        recentViewProductList.add(response["data"]);
-      } catch (e) {
-        deleteRecent(dbHelper.db, i['productId']);
-      }
+      idList.add(i['productId'].toString());
+    }
+    try {
+      response = await httpRepository.httpGet('/products', {'id': idList});
+      recentViewProductList = response["data"]['results'];
+    } catch (e) {
+      throw (e);
     }
 
     return recentViewProductList;
