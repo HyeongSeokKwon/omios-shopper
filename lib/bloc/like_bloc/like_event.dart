@@ -9,8 +9,12 @@ abstract class LikeEvent extends Equatable {
 
 class ClickLikeButtonEvent extends LikeEvent {
   final String productId;
+  final bool isLike;
 
   ClickLikeButtonEvent({
     required this.productId,
+    required this.isLike,
   });
 }
+
+class GetLikesProduct extends LikeEvent {}

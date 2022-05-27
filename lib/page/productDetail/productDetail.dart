@@ -33,7 +33,7 @@ class _ProductDetailState extends State<ProductDetail>
     with TickerProviderStateMixin {
   final RecentViewController recentViewController = RecentViewController();
   final ProductDetailController productDetailController =
-      Get.put<ProductDetailController>(ProductDetailController());
+      ProductDetailController();
   final PageController pageController = PageController();
 
   late TabController _controller;
@@ -65,8 +65,6 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   void dispose() {
-    recentViewController.dispose();
-    pageController.dispose();
     productDetailController.dispose();
     super.dispose();
   }
@@ -884,9 +882,9 @@ class _ProductDetailState extends State<ProductDetail>
   }
 
   Widget _buildBottomNaviagationBar() {
+    bool isLike = productDetailController.productInfo.shopperLike;
     return BlocProvider<LikeBloc>(
-      create: (context) =>
-          LikeBloc(productDetailController.productInfo.shopperLike),
+      create: (context) => LikeBloc(),
       child: Container(
         height: 120 * Scale.height,
         decoration: BoxDecoration(
@@ -902,29 +900,34 @@ class _ProductDetailState extends State<ProductDetail>
           children: [
             BlocBuilder<LikeBloc, LikeState>(
               builder: (context, state) {
-                return InkWell(
-                  child: Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: const Color(0xffeeeeee),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(context
-                                .read<LikeBloc>()
-                                .state
-                                .isLike
-                            ? "assets/images/svg/bottomNavigationLike.svg"
-                            : "assets/images/svg/bottomNavigationUnlike.svg"),
-                      )),
-                  onTap: () {
-                    Vibrate.feedback(VIBRATETYPE);
-                    context.read<LikeBloc>().add(ClickLikeButtonEvent(
-                        productId:
-                            productDetailController.productInfo.id.toString()));
-                  },
-                );
+                return StatefulBuilder(builder: (context, setState) {
+                  return InkWell(
+                    child: Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          color: const Color(0xffeeeeee),
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset(isLike
+                              ? "assets/images/svg/bottomNavigationLike.svg"
+                              : "assets/images/svg/bottomNavigationUnlike.svg"),
+                        )),
+                    onTap: () {
+                      Vibrate.feedback(VIBRATETYPE);
+                      setState(
+                        () {
+                          isLike = !isLike;
+                        },
+                      );
+                      context.read<LikeBloc>().add(ClickLikeButtonEvent(
+                          productId:
+                              productDetailController.productInfo.id.toString(),
+                          isLike: isLike));
+                    },
+                  );
+                });
               },
             ),
             SizedBox(width: 8 * Scale.width),

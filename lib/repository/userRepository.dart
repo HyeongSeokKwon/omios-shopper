@@ -9,7 +9,7 @@ class UserRepository extends HttpRepository {
     try {
       response =
           await super.httpPost("/users/shoppers/$userId/like/$productId");
-      print('repository');
+
       return response['data'];
     } catch (e) {
       throw (e);
@@ -23,6 +23,15 @@ class UserRepository extends HttpRepository {
       response =
           await super.httpDelete("/users/shoppers/$userId/like/$productId");
       print(response);
+      return response['data'];
+    } catch (e) {
+      throw (e);
+    }
+  }
+
+  Future<dynamic> getAllLikeProducts() async {
+    try {
+      response = await super.httpGet("/products", {'like': null});
       return response['data'];
     } catch (e) {
       throw (e);

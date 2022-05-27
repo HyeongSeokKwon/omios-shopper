@@ -1,24 +1,28 @@
 part of 'like_bloc.dart';
 
 class LikeState extends Equatable {
-  final bool isLike;
+  final ApiState getAllLikeState;
+  final List likeProducts;
 
-  LikeState({required this.isLike});
+  LikeState({required this.getAllLikeState, required this.likeProducts});
 
-  factory LikeState.initial(bool initLike) {
+  factory LikeState.initial([bool? initLike]) {
     return LikeState(
-      isLike: initLike,
+      getAllLikeState: ApiState.initial,
+      likeProducts: [],
     );
   }
 
   @override
-  List<Object> get props => [isLike];
+  List<Object> get props => [getAllLikeState, likeProducts];
 
   LikeState copyWith({
     bool? isLike,
+    ApiState? getAllLikeState,
+    List? likeProducts,
   }) {
     return LikeState(
-      isLike: isLike ?? this.isLike,
-    );
+        getAllLikeState: getAllLikeState ?? this.getAllLikeState,
+        likeProducts: likeProducts ?? this.likeProducts);
   }
 }

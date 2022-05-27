@@ -2,10 +2,11 @@ import 'package:cloth_collection/controller/homeController.dart';
 import 'package:cloth_collection/database/db.dart';
 import 'package:cloth_collection/page/category/category.dart';
 import 'package:cloth_collection/page/deepyHome/deepyHome.dart';
+import 'package:cloth_collection/page/like/like.dart';
 import 'package:cloth_collection/page/mypage/myPage.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/appbar/LikePageAppbar.dart';
 import 'package:cloth_collection/widget/appbar/category_Appbar.dart';
-import 'package:cloth_collection/widget/appbar/chatting_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/deepyHomeAppbar.dart';
 import 'package:cloth_collection/widget/appbar/imageSearch_Appbar.dart';
 import 'package:cloth_collection/widget/appbar/myPage_Appbar.dart';
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage>
   List<PreferredSizeWidget> appBar = [
     DeepyHomeAppbar(),
     CategoryAppbar(),
-    ChattingAppbar(),
+    LikePageAppbar(),
     ImageSearchAppbar(),
     MypageAppbar(),
   ];
@@ -48,7 +49,7 @@ class _HomePageState extends State<HomePage>
     selectedPage = [
       DeepyHome(),
       Category(),
-      Chatting(),
+      LikePage(),
       Chatting(),
       MyPage(),
     ];
@@ -79,12 +80,6 @@ class _HomePageState extends State<HomePage>
             return selectedPage[homeController.currentIndex];
           }),
       bottomNavigationBar: _buildBottomNaviagationBar(),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: const Color(0xffec5363),
-      //   child: SvgPicture.asset("assets/images/svg/imgaeSearch.svg"),
-      // ),
     );
   }
 

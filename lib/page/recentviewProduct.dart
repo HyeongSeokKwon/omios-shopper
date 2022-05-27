@@ -3,10 +3,13 @@ import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
+
+import '../model/productModel.dart';
 
 class RecentviewProduct extends StatefulWidget {
   const RecentviewProduct({Key? key}) : super(key: key);
@@ -99,97 +102,9 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3, childAspectRatio: 0.6),
                     itemBuilder: (context, int index) {
-                      return Stack(
-                        children: [
-                          Center(
-                            child: Container(
-                              child: GestureDetector(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      child: ClipRRect(
-                                        child: CachedNetworkImage(
-                                            imageUrl:
-                                                "${controller.recentViewProductList[index]['main_image']}",
-                                            width: 110,
-                                            height: 110 * (4 / 3),
-                                            fit: BoxFit.fill),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(14),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 110 * Scale.width,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 12 * Scale.height),
-                                          Text(
-                                            "${controller.recentViewProductList[index]['name']}",
-                                            style: textStyle(
-                                                const Color(0xff999999),
-                                                FontWeight.w400,
-                                                "NotoSansKR",
-                                                12.0),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          SizedBox(height: 4 * Scale.height),
-                                          Text(
-                                            "${setPriceFormat(controller.recentViewProductList[index]['base_discounted_price'])}원",
-                                            style: textStyle(
-                                                const Color(0xff333333),
-                                                FontWeight.w700,
-                                                "NotoSansKR",
-                                                17.0),
-                                          ),
-                                          SizedBox(height: 4 * Scale.height),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  if (controller.edit) {
-                                    controller.productClicked(index);
-                                  } else {
-                                    Get.to(
-                                      () => ProductDetail(
-                                        productId: controller
-                                            .recentViewProductList[index]['id'],
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          controller.edit == true
-                              ? Positioned(
-                                  top: 8 * Scale.height,
-                                  right: 20 * Scale.width,
-                                  child: controller.selectProductList.contains(
-                                              controller.recentViewProductList[
-                                                  index]['id']) ==
-                                          false
-                                      ? SvgPicture.asset(
-                                          "assets/images/svg/cartUnCheck.svg",
-                                          width: 10,
-                                          height: 17)
-                                      : SvgPicture.asset(
-                                          "assets/images/svg/cartCheck.svg",
-                                          width: 10,
-                                          height: 17),
-                                )
-                              : Container(),
-                        ],
-                      );
+                      return ProductCard(
+                          product: Product.fromJson(snapshot.data[index]),
+                          imageWidth: 115 * Scale.width);
                     },
                   );
                 },

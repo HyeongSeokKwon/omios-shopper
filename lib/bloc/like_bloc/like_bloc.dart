@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/repository/userRepository.dart';
 import 'package:equatable/equatable.dart';
 
@@ -7,21 +8,20 @@ part 'like_state.dart';
 
 class LikeBloc extends Bloc<LikeEvent, LikeState> {
   UserRepository _userRepository = UserRepository();
-  LikeBloc(bool initLike) : super(LikeState.initial(initLike)) {
+  LikeBloc() : super(LikeState.initial()) {
     on<ClickLikeButtonEvent>(clickLikeButton);
+    on<GetLikesProduct>(getAllLikeProducts);
   }
 
   Future<void> clickLikeButton(
       ClickLikeButtonEvent event, Emitter<LikeState> emit) async {
-    if (state.isLike) {
-      await unlikeRequest(event.productId);
-      emit(state.copyWith(isLike: false));
+    print(event.isLike);
+    if (event.isLike) {
+      await likeRequest(event.productId);
       return;
     }
 
-    await likeRequest(event.productId);
-
-    emit(state.copyWith(isLike: true));
+    await unlikeRequest(event.productId);
   }
 
   Future<void> likeRequest(String productId) async {
@@ -32,5 +32,19 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
   Future<void> unlikeRequest(String productId) async {
     Map response;
     response = await _userRepository.deleteLike(productId);
+  }
+
+  Future<void> getAllLikeProducts(
+      GetLikesProduct event, Emitter<LikeState> emit) async {
+    Map likeData;
+    try {
+      emit(state.copyWith(getAllLikeState: ApiState.loading));
+      likeData = await _userRepository.getAllLikeProducts();
+      emit(state.copyWith(
+          getAllLikeState: ApiState.success,
+          likeProducts: likeData['results']));
+    } catch (e) {
+      emit(state.copyWith(getAllLikeState: ApiState.fail));
+    }
   }
 }

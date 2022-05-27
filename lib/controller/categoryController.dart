@@ -26,8 +26,7 @@ class CategoryController extends GetxController {
 
   Future<List<dynamic>> getSubCategory(int mainCategoryId) async {
     var response = await httpRepository
-        .httpPublicGet(
-            "/products/main-categories/$mainCategoryId/sub-categories")
+        .httpGet("/products/main-categories/$mainCategoryId/sub-categories")
         .catchError((e) {
       throw e;
     });

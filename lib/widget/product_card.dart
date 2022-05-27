@@ -3,8 +3,11 @@ import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
+
+import '../bloc/bloc.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -14,45 +17,85 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Vibrate.feedback(VIBRATETYPE);
+    return BlocProvider(
+      create: (context) => LikeBloc(),
+      child: GestureDetector(
+        onTap: () {
+          Vibrate.feedback(VIBRATETYPE);
 
-        Get.to(() => ProductDetail(productId: product.id));
-      },
-      child: Container(
-        child: Column(
-          children: [
-            _buildProductImage(),
-            _buildProductInfo(),
-          ],
+          Get.to(() => ProductDetail(productId: product.id));
+        },
+        child: Container(
+          child: Column(
+            children: [
+              _buildProductImage(),
+              _buildProductInfo(),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildProductImage() {
-    return Container(
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: CachedNetworkImage(
-            width: imageWidth,
-            height: imageWidth * (4 / 3),
-            fit: BoxFit.fill,
-            imageUrl: "${product.mainImage}",
-            fadeInDuration: Duration(milliseconds: 0),
-            placeholder: (context, url) {
-              return Container(
-                  color: Colors.grey[200],
-                  width: imageWidth,
-                  height: imageWidth * (4 / 3));
-            },
-          )),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(14),
+    bool isLike = product.isLike;
+    return Stack(
+      children: [
+        Container(
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: CachedNetworkImage(
+                width: imageWidth,
+                height: imageWidth * (4 / 3),
+                fit: BoxFit.fill,
+                imageUrl: "${product.mainImage}",
+                fadeInDuration: Duration(milliseconds: 0),
+                placeholder: (context, url) {
+                  return Container(
+                      color: Colors.grey[200],
+                      width: imageWidth,
+                      height: imageWidth * (4 / 3));
+                },
+              )),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(14),
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          child: BlocBuilder<LikeBloc, LikeState>(
+            builder: (context, state) {
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  return InkWell(
+                    onTap: () {
+                      setState(
+                        () {
+                          isLike = !isLike;
+                        },
+                      );
+                      context.read<LikeBloc>().add(ClickLikeButtonEvent(
+                          productId: product.id.toString(), isLike: isLike));
+                    },
+                    child: isLike
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border_outlined,
+                            color: Colors.white,
+                          ),
+                  );
+                },
+              );
+            },
+          ),
+          bottom: 6 * Scale.width,
+          right: 6 * Scale.height,
+        ),
+      ],
     );
   }
 
