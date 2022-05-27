@@ -44,23 +44,22 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
               value.count;
     }
     baseDiscountPrice = totalProductPrice - baseDiscountedPrice;
-    print(baseDiscountPrice);
-    print(totalProductPrice);
-    print(membershipDiscountPrice);
 
     emit(
       state.copyWith(
-        baseDiscountPrice: baseDiscountPrice,
-        totalProductPrice: totalProductPrice,
-        membershipDiscountPrice: membershipDiscountPrice,
-        finalPaymentPrice: totalProductPrice -
-            baseDiscountPrice -
-            state.usedPoint -
-            membershipDiscountPrice +
-            state.shippingPrice,
-      ),
+          baseDiscountPrice: baseDiscountPrice,
+          totalProductPrice: totalProductPrice,
+          membershipDiscountPrice: membershipDiscountPrice,
+          finalPaymentPrice: totalProductPrice -
+              baseDiscountPrice -
+              state.usedPoint -
+              membershipDiscountPrice),
     );
-    emit(state.copyWith(canUsePoint: state.finalPaymentPrice - 1000));
+    emit(state.copyWith(
+        canUsePoint: state.totalProductPrice -
+            membershipDiscountPrice -
+            baseDiscountPrice -
+            1000));
   }
 
   void addProductToCart(AddProductToCartEvent event, Emitter<OrderState> emit) {
@@ -122,12 +121,13 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       items.add(item);
       totalPrice += item['payment_price'] as int;
     }
-    print(totalPrice);
     body['items'] = items;
 
-    body['actual_payment_price'] = totalPrice.toInt(); //결제할 금액
-    body['used_point'] = 0;
-    body['earned_point'] = (totalPrice * 0.01).toInt();
+    body['actual_payment_price'] =
+        totalPrice.toInt() - state.usedPoint; //결제할 금액
+    body['used_point'] = state.usedPoint;
+    body['earned_point'] = (body['actual_payment_price'] * 0.01).toInt();
+    print(totalPrice);
     print(body);
 
     try {
