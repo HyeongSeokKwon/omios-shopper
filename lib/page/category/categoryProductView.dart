@@ -784,14 +784,15 @@ class _ProductViewAreaState extends State<ProductViewArea>
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
                   child: TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: optionTabController,
-                      children: [
-                        colorOptionArea(),
-                        priceOptionArea(),
-                        colorOptionArea(),
-                        colorOptionArea(),
-                      ]),
+                    physics: NeverScrollableScrollPhysics(),
+                    controller: optionTabController,
+                    children: [
+                      colorOptionArea(),
+                      priceOptionArea(),
+                      colorOptionArea(),
+                      colorOptionArea(),
+                    ],
+                  ),
                 ),
               ),
               Padding(
