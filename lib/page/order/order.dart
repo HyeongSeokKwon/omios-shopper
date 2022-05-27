@@ -902,20 +902,21 @@ class _OrderState extends State<Order> {
               amountOfPaymentContents(
                   "상품할인",
                   setPriceFormat(
-                      -context.read<OrderBloc>().state.baseDiscountPrice)),
-              amountOfPaymentContents("쿠폰할인", setPriceFormat(-1000)),
-              amountOfPaymentContents("포인트",
-                  setPriceFormat(-context.read<OrderBloc>().state.usedPoint)),
+                          -context.read<OrderBloc>().state.baseDiscountPrice) +
+                      "원"),
+              amountOfPaymentContents("쿠폰할인", setPriceFormat(-1000) + "원"),
+              amountOfPaymentContents(
+                  "포인트",
+                  setPriceFormat(-context.read<OrderBloc>().state.usedPoint) +
+                      "원"),
               amountOfPaymentContents(
                   "멤버십 할인",
                   setPriceFormat(-context
-                      .read<OrderBloc>()
-                      .state
-                      .membershipDiscountPrice)),
-              amountOfPaymentContents(
-                  "배송비",
-                  setPriceFormat(
-                      context.read<OrderBloc>().state.shippingPrice)),
+                          .read<OrderBloc>()
+                          .state
+                          .membershipDiscountPrice) +
+                      "원"),
+              amountOfPaymentContents("배송비", "전 상품 무료 배송"),
               divider(1, 10, 10, const Color(0xffeeeeee)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -953,7 +954,7 @@ class _OrderState extends State<Order> {
                 const Color(0xff555555), FontWeight.w400, 'NotoSansKR', 16.0),
           ),
           Text(
-            value + "원",
+            value,
             style: textStyle(
                 const Color(0xff555555), FontWeight.w400, 'NotoSansKR', 16.0),
           ),
