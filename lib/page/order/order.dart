@@ -21,6 +21,7 @@ class Order extends StatefulWidget {
 class _OrderState extends State<Order> {
   final ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
   final ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
+  TextEditingController requirementController = TextEditingController();
   @override
   void initState() {
     widget.orderBloc.shippingAddressBloc = shippingAddressBloc;
@@ -113,7 +114,10 @@ class _OrderState extends State<Order> {
             return InkWell(
               onTap: () {
                 print("ontap");
-                context.read<OrderBloc>().add(RegistOrderEvent());
+                print(requirementController.text);
+                context
+                    .read<OrderBloc>()
+                    .add(RegistOrderEvent(requirementController.text));
               },
               child: Container(
                 width: double.maxFinite,
@@ -307,6 +311,7 @@ class _OrderState extends State<Order> {
   }
 
   Widget shippingAddressArea() {
+    TextEditingController textEditingController = TextEditingController();
     List<String> requirements = [
       "없음",
       "부재시 문앞에 놔주세요",
@@ -523,7 +528,49 @@ class _OrderState extends State<Order> {
                     ),
                   ],
                 ),
-              )
+              ),
+              SizedBox(height: 5 * Scale.height),
+              BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
+                builder: (context, state) {
+                  if (state.requirement == '직접 입력') {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 200 * Scale.height,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: const Color(0xffe2e2e2)),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(7),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.0),
+                              child: TextField(
+                                controller: requirementController,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
+                                minLines: 1,
+                                style: textStyle(Colors.grey[800]!,
+                                    FontWeight.w400, 'NotoSansKR', 14.0),
+                                decoration: InputDecoration(
+                                  hintText: "요청 사항을 작성해주세요",
+                                  hintStyle: textStyle(Colors.grey[800]!,
+                                      FontWeight.w400, 'NotoSansKR', 14.0),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                },
+              ),
             ],
           );
         },
@@ -593,7 +640,10 @@ class _OrderState extends State<Order> {
                                 .read<OrderBloc>()
                                 .add(ChangeUsingPointEvent(point: text));
                           },
-                          controller: pointController,
+                          controller: pointController
+                            ..selection = TextSelection.fromPosition(
+                                TextPosition(
+                                    offset: pointController.text.length)),
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.number,
                           inputFormatters: [

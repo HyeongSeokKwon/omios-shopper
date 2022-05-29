@@ -1,15 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/bloc/bloc.dart';
-import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../../model/productModel.dart';
-import '../../util/util.dart';
 
 class LikePage extends StatefulWidget {
   const LikePage({Key? key}) : super(key: key);

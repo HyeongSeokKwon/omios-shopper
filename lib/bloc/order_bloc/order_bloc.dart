@@ -23,7 +23,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(usedPoint: 0));
       return;
     }
-    emit(state.copyWith(usedPoint: state.usedPoint + int.parse(event.point)));
+    emit(state.copyWith(usedPoint: int.parse(event.point)));
   }
 
   void calculatePriceInfo(
@@ -88,11 +88,13 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     shippingAddress['zip_code'] = shippingAddressBloc.state.zipCode;
     shippingAddress['base_address'] = shippingAddressBloc.state.baseAddress;
     shippingAddress['detail_address'] = shippingAddressBloc.state.detailAddress;
+    print(event.requirement);
+    print(shippingAddressBloc.state.requirement);
+    print(shippingAddress['shipping_message']);
     shippingAddress['shipping_message'] =
-        shippingAddressBloc.state.requirement.isEmpty
-            ? "없음"
+        shippingAddressBloc.state.requirement == "직접 입력"
+            ? event.requirement
             : shippingAddressBloc.state.requirement;
-
     body['shipping_address'] = shippingAddress;
 
     for (var value in state.productCart) {

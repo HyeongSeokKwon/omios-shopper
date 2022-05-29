@@ -13,7 +13,10 @@ class AddProductToCartEvent extends OrderEvent {
   const AddProductToCartEvent({required this.orderProduct});
 }
 
-class RegistOrderEvent extends OrderEvent {}
+class RegistOrderEvent extends OrderEvent {
+  final String requirement;
+  RegistOrderEvent(this.requirement);
+}
 
 class CalculatePriceInfoEvent extends OrderEvent {}
 
