@@ -220,6 +220,33 @@ class HttpRepository {
     }
   }
 
+  Future<dynamic> httpPut(String additionalUrl, var body) async {
+    http.Response response;
+    Map<String, dynamic> responseJson;
+
+    try {
+      response = await updateToken().then(((value) async {
+        return await http.put(
+            Uri.http(
+              addressUrl,
+              additionalUrl,
+            ),
+            headers: {
+              "Content-Type": "application/json",
+              HttpHeaders.authorizationHeader: 'Bearer $accessToken'
+            },
+            body: body);
+      }));
+      print(response.body);
+      responseJson = _response(response);
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException('연결된 인터넷이 없습니다.');
+    } on FetchDataException {
+      throw Exception("서버 오류가 발생했습니다.");
+    }
+  }
+
   Future<dynamic> httpDelete(String addtionalUrl) async {
     var response;
     var responseJson;
