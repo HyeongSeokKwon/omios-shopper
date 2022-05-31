@@ -94,7 +94,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     shippingAddress['shipping_message'] =
         shippingAddressBloc.state.requirement == "직접 입력"
             ? event.requirement
-            : shippingAddressBloc.state.requirement;
+            : shippingAddressBloc.state.requirement.isEmpty
+                ? "없음"
+                : shippingAddressBloc.state.requirement;
     body['shipping_address'] = shippingAddress;
 
     for (var value in state.productCart) {
