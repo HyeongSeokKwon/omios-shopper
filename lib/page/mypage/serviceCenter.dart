@@ -91,6 +91,15 @@ class ServiceCenter extends StatelessWidget {
       child: Column(
         children: [
           questionTopThree(),
+          customerServiceArea(),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20 * Scale.height),
+            child: Divider(
+              thickness: 10,
+              color: Colors.grey[50],
+            ),
+          ),
+          qnaArea(),
         ],
       ),
     );
@@ -170,6 +179,156 @@ class ServiceCenter extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  Widget customerServiceArea() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0 * Scale.width),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "고객센터",
+            style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+          ),
+          Text(
+            "주말/공휴일 휴무",
+            style: textStyle(
+                Colors.grey[600]!, FontWeight.w400, 'NotoSansKR', 11.0),
+          ),
+          SizedBox(height: 20 * Scale.height),
+          Text(
+            "상품/배송/교환/환불 문의",
+            style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+          ),
+          Center(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40 * Scale.height,
+                    child: Center(
+                        child: Text(
+                      "카톡상담",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, 'NotoSansKR', 14.0),
+                    )),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(
+                            8,
+                          ),
+                        ),
+                        color: Colors.yellow[600]),
+                  ),
+                ),
+                SizedBox(width: 10 * Scale.width),
+                Expanded(
+                  child: Container(
+                    height: 40 * Scale.height,
+                    child: Center(
+                        child: Text("전화상담",
+                            style: textStyle(Colors.black, FontWeight.w700,
+                                'NotoSansKR', 14.0))),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(
+                          8,
+                        ),
+                      ),
+                      border: Border.all(color: Colors.grey[600]!),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 20 * Scale.height),
+          Text(
+            "앱 버그 및 오류 신고",
+            style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+          ),
+          Container(
+            width: double.maxFinite,
+            height: 40 * Scale.height,
+            child: Center(
+              child: Text(
+                "카톡상담",
+                style: textStyle(
+                    Colors.black, FontWeight.w700, 'NotoSansKR', 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(
+                    8,
+                  ),
+                ),
+                color: Colors.yellow[600]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget qnaArea() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0 * Scale.width),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              qnaKindsButton("전체"),
+              qnaKindsButton("주문/결제"),
+              qnaKindsButton("배송문의"),
+              qnaKindsButton("취소/환불"),
+            ],
+          ),
+          SizedBox(height: 5 * Scale.height),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              qnaKindsButton("교환/반품"),
+              qnaKindsButton("포인트/쿠폰"),
+              qnaKindsButton("로그인/회원정보"),
+            ],
+          ),
+          SizedBox(height: 5 * Scale.height),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              qnaKindsButton("서비스/기타문의"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget qnaKindsButton(String type) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[400]!),
+          borderRadius: BorderRadius.all(
+            Radius.circular(8),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: 3 * Scale.height, horizontal: 10 * Scale.width),
+          child: Center(
+            child: Text(
+              type,
+              style: textStyle(
+                  Colors.grey[500]!, FontWeight.w500, 'NotoSansKR', 13.0),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
