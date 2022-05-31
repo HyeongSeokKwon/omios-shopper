@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/bloc/bloc.dart';
+import 'package:cloth_collection/bloc/order_bloc/order_change_status/bloc/orderstatus_change_bloc.dart';
+import 'package:cloth_collection/page/shippingAddress/changeShippingAddress.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
@@ -21,19 +23,31 @@ class OrderHistory extends StatefulWidget {
 }
 
 class _OrderHistoryState extends State<OrderHistory> {
-  static const String purchaseConfirmation = "결제 완료";
+  static const String purchaseConfirmation = "구매 확정";
   static const String shippingCompledte = "배송 완료";
   static const String preparingShipping = "배송 준비 중";
   static const String shippingInProgress = "배송 중";
   static const String paymentComplete = "결제 완료";
   static const String waitingDeposit = "입금 대기";
 
-  final OrderHistoryBloc orderHistoryBloc = OrderHistoryBloc();
+  ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
+  late OrderHistoryBloc orderHistoryBloc;
+  late OrderstatusChangeBloc orderstatusChangeBloc;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => orderHistoryBloc,
+    orderHistoryBloc = OrderHistoryBloc();
+    orderstatusChangeBloc =
+        OrderstatusChangeBloc(shippingAddressBloc: shippingAddressBloc);
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => orderHistoryBloc),
+        BlocProvider(create: (context) => orderstatusChangeBloc),
+        BlocProvider(
+          create: (context) => shippingAddressBloc,
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -74,14 +88,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               children: [
                 summaryInfoArea(),
                 filteringArea(),
-
                 orderStatusArea(),
-                // purchaseConfirmationArea(),
-                // shippingCompletedArea(),
-                // preparingShippingArea(),
-                // shippingInProgressArea(),
-                // paymentCompletedArea(),
-                // waitingDepositArea(),
               ],
             ),
           );
@@ -164,7 +171,8 @@ class _OrderHistoryState extends State<OrderHistory> {
                                 .items[index2]
                                 .status) {
                               case purchaseConfirmation:
-                                return purchaseConfirmationArea(item);
+                                return purchaseConfirmationArea(
+                                    state.orderHistoryList[index], item);
                               case shippingCompledte:
                                 return shippingCompletedArea(item);
                               case preparingShipping:
@@ -172,7 +180,8 @@ class _OrderHistoryState extends State<OrderHistory> {
                               case shippingInProgress:
                                 return shippingInProgressArea(item);
                               case paymentComplete:
-                                return paymentCompletedArea(item);
+                                return paymentCompletedArea(
+                                    state.orderHistoryList[index], item);
                               case waitingDeposit:
                                 return waitingDepositArea(item);
                               default:
@@ -570,7 +579,8 @@ class _OrderHistoryState extends State<OrderHistory> {
     }
   }
 
-  Widget purchaseConfirmationButtons() {
+  Widget purchaseConfirmationButtons(
+      OrderHistoryData orderHistoryData, Item item) {
     return Row(
       children: [
         Expanded(
@@ -608,9 +618,12 @@ class _OrderHistoryState extends State<OrderHistory> {
     );
   }
 
-  Widget purchaseConfirmationArea(Item item) {
+  Widget purchaseConfirmationArea(
+      OrderHistoryData orderHistoryData, Item item) {
     return orderStatusWidgetStructure(
-        purchaseConfirmationButtons(), purchaseConfirmation, item);
+        purchaseConfirmationButtons(orderHistoryData, item),
+        purchaseConfirmation,
+        item);
   }
 
   Widget shippingCompletedButtons() {
@@ -753,72 +766,215 @@ class _OrderHistoryState extends State<OrderHistory> {
         shippingInProgressButtons(), "배송 중", item);
   }
 
-  Widget paymentCompletedButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 34 * Scale.height,
-            child: Center(
-              child: Text(
-                "주문 취소",
-                style: textStyle(const Color(0xfff20000), FontWeight.w400,
-                    "NotoSansKR", 14.0),
+  Widget paymentCompletedButtons(OrderHistoryData orderHistoryData, Item item) {
+    return BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
+      builder: (context, state) {
+        return Row(
+          children: [
+            Expanded(child: cancelOrderButton(orderHistoryData.id, item)),
+            SizedBox(width: 6 * Scale.width),
+            Expanded(child: changeShippingAddressButton(orderHistoryData)),
+            SizedBox(width: 6 * Scale.width),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  context.read<OrderstatusChangeBloc>().add(
+                      ClickChangeOptionEvent(
+                          productId: item.option['product_id']));
+                  showModalBottomSheet<void>(
+                    isDismissible: false,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    context: context,
+                    builder: (context) =>
+                        BlocProvider<OrderstatusChangeBloc>.value(
+                      value: orderstatusChangeBloc,
+                      child: Stack(
+                        children: [
+                          BlocBuilder<OrderstatusChangeBloc,
+                              OrderstatusChangeState>(
+                            builder: (context, state) {
+                              return GestureDetector(
+                                child: Container(
+                                    width: 414 * Scale.width,
+                                    height: 896 * Scale.height,
+                                    color: Colors.transparent),
+                                onTap: Navigator.of(context).pop,
+                              );
+                            },
+                          ),
+                          BlocBuilder<OrderstatusChangeBloc,
+                              OrderstatusChangeState>(
+                            builder: (context, state) {
+                              return Positioned(
+                                child: DraggableScrollableSheet(
+                                  initialChildSize: 0.6,
+                                  maxChildSize: 1.0,
+                                  builder: (_, controller) {
+                                    return Stack(children: [
+                                      Container(
+                                        width: 414 * Scale.width,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(25.0),
+                                            topRight: Radius.circular(25.0),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 22 * Scale.width),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 25 * Scale.height,
+                                                    bottom: 30 * Scale.height),
+                                                child: Text("옵션 변경",
+                                                    style: textStyle(
+                                                        const Color(0xff333333),
+                                                        FontWeight.w700,
+                                                        "NotoSansKR",
+                                                        21.0)),
+                                              ),
+                                              BlocProvider<
+                                                  OrderHistoryBloc>.value(
+                                                value: orderHistoryBloc,
+                                                child: BlocBuilder<
+                                                    OrderstatusChangeBloc,
+                                                    OrderstatusChangeState>(
+                                                  builder: (context, state) {
+                                                    if (state
+                                                            .getOptionInfoState ==
+                                                        ApiState.success) {
+                                                      return Expanded(
+                                                        child: Center(
+                                                          child: ListView
+                                                              .separated(
+                                                            itemCount: state
+                                                                .optionList
+                                                                .length,
+                                                            separatorBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              return const Divider();
+                                                            },
+                                                            itemBuilder:
+                                                                ((context,
+                                                                    index) {
+                                                              return BlocBuilder<
+                                                                  OrderHistoryBloc,
+                                                                  OrderHistoryState>(
+                                                                builder:
+                                                                    (context,
+                                                                        state) {
+                                                                  return InkWell(
+                                                                    onTap: () {
+                                                                      context.read<OrderstatusChangeBloc>().add(ChangeOptionEvent(
+                                                                          itemId: item
+                                                                              .id,
+                                                                          optionId: context
+                                                                              .read<OrderstatusChangeBloc>()
+                                                                              .state
+                                                                              .optionList[index]['option_id']));
+                                                                      context
+                                                                          .read<
+                                                                              OrderHistoryBloc>()
+                                                                          .add(
+                                                                              InitOrderHistoryEvent());
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: double
+                                                                          .infinity,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(vertical: 10 * Scale.height),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Text(
+                                                                              "${context.read<OrderstatusChangeBloc>().state.optionList[index]['color']} / ${context.read<OrderstatusChangeBloc>().state.optionList[index]['size']}",
+                                                                              style: textStyle(Colors.black, FontWeight.w300, "NotoSansKR", 16.0),
+                                                                            ),
+                                                                            context.read<OrderstatusChangeBloc>().state.optionList[index]['option_id'] == item.option['id']
+                                                                                ? SvgPicture.asset("assets/images/svg/accept.svg")
+                                                                                : SizedBox()
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            }),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else if (state
+                                                                .getOptionInfoState ==
+                                                            ApiState.loading ||
+                                                        state.getOptionInfoState ==
+                                                            ApiState.initial) {
+                                                      return progressBar();
+                                                    } else {
+                                                      return ErrorCard();
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ]);
+                                  },
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 34 * Scale.height,
+                  child: Center(
+                    child: Text(
+                      "옵션 변경",
+                      style: textStyle(const Color(0xff666666), FontWeight.w400,
+                          "NotoSansKR", 14.0),
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(3)),
+                    border: Border.all(
+                      color: const Color(0xffe2e2e2),
+                    ),
+                  ),
+                ),
               ),
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xfffff2f2),
-              borderRadius: BorderRadius.all(Radius.circular(3)),
-              border: Border.all(
-                color: const Color(0xffffe6e6),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 6 * Scale.width),
-        Expanded(
-          child: Container(
-            height: 34 * Scale.height,
-            child: Center(
-              child: Text(
-                "배송지 변경",
-                style: textStyle(const Color(0xff666666), FontWeight.w400,
-                    "NotoSansKR", 14.0),
-              ),
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(3)),
-              border: Border.all(
-                color: const Color(0xffe2e2e2),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 6 * Scale.width),
-        Expanded(
-          child: Container(
-            height: 34 * Scale.height,
-            child: Center(
-              child: Text(
-                "옵션 변경",
-                style: textStyle(const Color(0xff666666), FontWeight.w400,
-                    "NotoSansKR", 14.0),
-              ),
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(3)),
-              border: Border.all(
-                color: const Color(0xffe2e2e2),
-              ),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
-  Widget paymentCompletedArea(Item item) {
-    return orderStatusWidgetStructure(paymentCompletedButtons(), "결제 완료", item);
+  Widget paymentCompletedArea(OrderHistoryData orderHistoryData, Item item) {
+    return orderStatusWidgetStructure(
+        paymentCompletedButtons(orderHistoryData, item), "결제 완료", item);
   }
 
   Widget waitingDepositButtons() {
@@ -901,6 +1057,80 @@ class _OrderHistoryState extends State<OrderHistory> {
       children: [
         orderStatusWidgetStructure(waitingDepositButtons(), "입금 대기", item),
       ],
+    );
+  }
+
+  Widget changeShippingAddressButton(OrderHistoryData data) {
+    return BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
+      builder: (context, state) {
+        return InkWell(
+          onTap: () async {
+            await _moveToShippingAddressSelection(context);
+            context
+                .read<OrderstatusChangeBloc>()
+                .add(ChangeShippingAddressEvent(orderHistoryData: data));
+          },
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "배송지 변경",
+                style: textStyle(const Color(0xff666666), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(color: const Color(0xffe2e2e2), width: 1),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _moveToShippingAddressSelection(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChangeShippingAddress(shippingAddressBloc: shippingAddressBloc),
+      ),
+    );
+  }
+
+  Widget cancelOrderButton(
+    int orderId,
+    Item item,
+  ) {
+    return BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
+      builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            print('click');
+            // context
+            //     .read<OrderstatusChangeBloc>()
+            //     .add(CancelOrderEvent(orderId: orderId, itemId: item.id));
+          },
+          child: Container(
+            height: 34 * Scale.height,
+            child: Center(
+              child: Text(
+                "주문 취소",
+                style: textStyle(const Color(0xfff20000), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xfffff2f2),
+              borderRadius: BorderRadius.all(Radius.circular(3)),
+              border: Border.all(
+                color: const Color(0xffffe6e6),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

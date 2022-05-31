@@ -1,5 +1,5 @@
 import 'package:cloth_collection/bloc/bloc.dart';
-import 'package:cloth_collection/page/order/registShippingAddress.dart';
+import 'package:cloth_collection/page/shippingAddress/registShippingAddress.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
 import 'package:flutter/material.dart';
