@@ -31,14 +31,14 @@ class _OrderHistoryState extends State<OrderHistory> {
   static const String waitingDeposit = "입금 대기";
 
   ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
-  late OrderHistoryBloc orderHistoryBloc;
+  OrderHistoryBloc orderHistoryBloc = OrderHistoryBloc();
   late OrderstatusChangeBloc orderstatusChangeBloc;
 
   @override
   Widget build(BuildContext context) {
-    orderHistoryBloc = OrderHistoryBloc();
-    orderstatusChangeBloc =
-        OrderstatusChangeBloc(shippingAddressBloc: shippingAddressBloc);
+    orderstatusChangeBloc = OrderstatusChangeBloc(
+        shippingAddressBloc: shippingAddressBloc,
+        orderHistoryBloc: orderHistoryBloc);
 
     return MultiBlocProvider(
       providers: [
@@ -489,8 +489,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                   orderHistoryBloc.add(
                     ChangeEndTimeEvent(endTime: DateTime(0)),
                   );
-                  print(state.start);
-                  print(state.end);
+
                   break;
                 default:
               }
@@ -581,6 +580,8 @@ class _OrderHistoryState extends State<OrderHistory> {
 
   Widget purchaseConfirmationButtons(
       OrderHistoryData orderHistoryData, Item item) {
+    const String deliveryTracking = "배송 조회";
+    const String writeReview = "리뷰 작성";
     return Row(
       children: [
         Expanded(
@@ -588,7 +589,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               height: 34 * Scale.width,
               child: Center(
                 child: Text(
-                  "배송 조회",
+                  deliveryTracking,
                   style: textStyle(const Color(0xff666666), FontWeight.w400,
                       "NotoSansKR", 14.0),
                 ),
@@ -604,7 +605,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               height: 34 * Scale.width,
               child: Center(
                 child: Text(
-                  "리뷰 작성",
+                  writeReview,
                   style: textStyle(const Color(0xff666666), FontWeight.w400,
                       "NotoSansKR", 14.0),
                 ),
@@ -627,6 +628,8 @@ class _OrderHistoryState extends State<OrderHistory> {
   }
 
   Widget shippingCompletedButtons() {
+    const String exchange = "교환하기";
+    const String deliveryTracking = "배송 조회";
     return Row(
       children: [
         Expanded(
@@ -653,7 +656,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               height: 34 * Scale.height,
               child: Center(
                 child: Text(
-                  "교환하기",
+                  exchange,
                   style: textStyle(const Color(0xff666666), FontWeight.w400,
                       "NotoSansKR", 14.0),
                 ),
@@ -671,7 +674,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               height: 34 * Scale.height,
               child: Center(
                 child: Text(
-                  "배송 조회",
+                  deliveryTracking,
                   style: textStyle(const Color(0xff666666), FontWeight.w400,
                       "NotoSansKR", 14.0),
                 ),
@@ -848,6 +851,11 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                     OrderstatusChangeBloc,
                                                     OrderstatusChangeState>(
                                                   builder: (context, state) {
+                                                    print(context
+                                                        .read<
+                                                            OrderstatusChangeBloc>()
+                                                        .state
+                                                        .getOptionInfoState);
                                                     if (state
                                                             .getOptionInfoState ==
                                                         ApiState.success) {
@@ -874,21 +882,80 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                                         state) {
                                                                   return InkWell(
                                                                     onTap: () {
-                                                                      context.read<OrderstatusChangeBloc>().add(ChangeOptionEvent(
-                                                                          itemId: item
-                                                                              .id,
-                                                                          optionId: context
+                                                                      if (isSameItemExist(
+                                                                          orderHistoryData,
+                                                                          context
                                                                               .read<OrderstatusChangeBloc>()
                                                                               .state
-                                                                              .optionList[index]['option_id']));
-                                                                      context
-                                                                          .read<
-                                                                              OrderHistoryBloc>()
-                                                                          .add(
-                                                                              InitOrderHistoryEvent());
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
+                                                                              .optionList[index]['option_id'])) {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (context) {
+                                                                              return showAlertDialog(context, "같은 주문에 동일 상품이 존재합니다.");
+                                                                            });
+
+                                                                        return;
+                                                                      } else {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (context) {
+                                                                              if (Platform.isIOS) {
+                                                                                return BlocProvider.value(
+                                                                                  value: orderstatusChangeBloc,
+                                                                                  child: CupertinoAlertDialog(
+                                                                                    content: BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
+                                                                                      builder: (context, state) {
+                                                                                        return Text("${context.read<OrderstatusChangeBloc>().state.optionList[index]['color']} / ${context.read<OrderstatusChangeBloc>().state.optionList[index]['size']} 로 변경하시겠습니까?");
+                                                                                      },
+                                                                                    ),
+                                                                                    actions: <Widget>[
+                                                                                      BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
+                                                                                        builder: (context, state) {
+                                                                                          return CupertinoDialogAction(
+                                                                                            isDefaultAction: true,
+                                                                                            child: Text("확인"),
+                                                                                            onPressed: () {
+                                                                                              context.read<OrderstatusChangeBloc>().add(ChangeOptionEvent(itemId: item.id, optionId: context.read<OrderstatusChangeBloc>().state.optionList[index]['option_id']));
+
+                                                                                              Navigator.of(context).pop();
+                                                                                            },
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                );
+                                                                              } else {
+                                                                                return AlertDialog(
+                                                                                  content: Text(
+                                                                                    "${context.read<OrderstatusChangeBloc>().state.optionList[index]['color'] / context.read<OrderstatusChangeBloc>().state.optionList[index]['size']}로 변경하시겠습니까?",
+                                                                                    style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+                                                                                  ),
+                                                                                  actions: <Widget>[
+                                                                                    TextButton(
+                                                                                      child: Text(
+                                                                                        "확인",
+                                                                                        style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
+                                                                                      ),
+                                                                                      onPressed: () {
+                                                                                        context.read<OrderstatusChangeBloc>().add(ChangeOptionEvent(itemId: item.id, optionId: context.read<OrderstatusChangeBloc>().state.optionList[index]['option_id']));
+                                                                                        context.read<OrderHistoryBloc>().add(InitOrderHistoryEvent());
+                                                                                        Navigator.of(context).pop();
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              }
+                                                                            });
+                                                                      }
                                                                     },
                                                                     child:
                                                                         SizedBox(
@@ -1107,7 +1174,6 @@ class _OrderHistoryState extends State<OrderHistory> {
       builder: (context, state) {
         return InkWell(
           onTap: () {
-            print('click');
             // context
             //     .read<OrderstatusChangeBloc>()
             //     .add(CancelOrderEvent(orderId: orderId, itemId: item.id));
@@ -1132,5 +1198,14 @@ class _OrderHistoryState extends State<OrderHistory> {
         );
       },
     );
+  }
+
+  bool isSameItemExist(OrderHistoryData orderHistoryData, int selectedOption) {
+    for (var value in orderHistoryData.items) {
+      if (value.option['id'] == selectedOption) {
+        return true;
+      }
+    }
+    return false;
   }
 }

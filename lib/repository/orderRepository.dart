@@ -43,6 +43,7 @@ class OrderRepository extends HttpRepository {
     try {
       response = await super
           .httpPut('orders/$orderId/shipping-address', json.encode(body));
+      return response;
     } catch (e) {
       throw e;
     }
@@ -53,6 +54,7 @@ class OrderRepository extends HttpRepository {
       body['option'] = optionId;
       response =
           await super.httpPatch('/orders/items/$itemId', json.encode(body));
+      return response;
     } catch (e) {
       throw e;
     }

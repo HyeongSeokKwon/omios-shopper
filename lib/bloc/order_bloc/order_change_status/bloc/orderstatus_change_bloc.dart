@@ -15,8 +15,10 @@ class OrderstatusChangeBloc
   final OrderRepository _orderRepository = OrderRepository();
   final ProductRepository _productRepository = ProductRepository();
   final ShippingAddressBloc shippingAddressBloc;
+  final OrderHistoryBloc orderHistoryBloc;
 
-  OrderstatusChangeBloc({required this.shippingAddressBloc})
+  OrderstatusChangeBloc(
+      {required this.shippingAddressBloc, required this.orderHistoryBloc})
       : super(OrderstatusChangeState.initial()) {
     on<CancelOrderEvent>(cancelOrder);
     on<ChangeShippingAddressEvent>(changeShippingAddress);
@@ -71,7 +73,6 @@ class OrderstatusChangeBloc
       productResponse =
           await _productRepository.getProductInfo(event.productId);
 
-      print(productResponse['colors']);
       colorOptions = productResponse['colors'];
       for (var colorOption in colorOptions) {
         for (var sizeOption in colorOption['options']) {
@@ -86,8 +87,6 @@ class OrderstatusChangeBloc
           }
         }
       }
-
-      print(options);
       emit(state.copyWith(
           getOptionInfoState: ApiState.success, optionList: options));
     } catch (e) {
@@ -97,14 +96,16 @@ class OrderstatusChangeBloc
 
   Future<void> changeOptions(
       ChangeOptionEvent event, Emitter<OrderstatusChangeState> emit) async {
-    Map productResponse;
+    Map<String, dynamic> changeOptionResponse;
 
     try {
-      emit(state.copyWith(changeOptionState: ApiState.initial));
-      productResponse =
+      emit(state.copyWith(changeOptionState: ApiState.loading));
+      changeOptionResponse =
           await _orderRepository.changeOption(event.itemId, event.optionId);
       emit(state.copyWith(changeOptionState: ApiState.success));
+      orderHistoryBloc.add(InitOrderHistoryEvent());
     } catch (e) {
+      print(e.toString());
       emit(state.copyWith(changeOptionState: ApiState.fail));
     }
   }
