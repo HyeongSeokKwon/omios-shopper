@@ -18,7 +18,7 @@ Widget progressBar() {
   }
 }
 
-dynamic showAlertDialog(BuildContext context, Exception e) {
+dynamic showAlertDialog(BuildContext context, String e) {
   if (Platform.isIOS) {
     return CupertinoAlertDialog(
       content: Text("${e.toString()}"),
@@ -26,6 +26,9 @@ dynamic showAlertDialog(BuildContext context, Exception e) {
         CupertinoDialogAction(
           isDefaultAction: true,
           child: Text("확인"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ],
     );

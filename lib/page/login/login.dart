@@ -31,7 +31,7 @@ class _LoginState extends State<Login> {
     try {
       await Vibrate.canVibrate;
     } on Exception catch (e) {
-      showAlertDialog(context, Exception(e.toString()));
+      showAlertDialog(context, e.toString());
     }
   }
 
