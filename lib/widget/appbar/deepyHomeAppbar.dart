@@ -1,5 +1,6 @@
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/cart.dart';
+import 'package:cloth_collection/page/cart/cart.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -86,7 +87,7 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
               GestureDetector(
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
-                  Get.to(() => Cart());
+                  Get.to(() => CartPage());
                 },
                 child: SvgPicture.asset("assets/images/svg/cart.svg",
                     width: 26 * Scale.width, height: 26 * Scale.width),
