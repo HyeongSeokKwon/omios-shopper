@@ -930,6 +930,13 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                                                           );
                                                                                         },
                                                                                       ),
+                                                                                      CupertinoDialogAction(
+                                                                                        isDefaultAction: true,
+                                                                                        child: Text("취소"),
+                                                                                        onPressed: () {
+                                                                                          Navigator.of(context).pop();
+                                                                                        },
+                                                                                      ),
                                                                                     ],
                                                                                   ),
                                                                                 );
@@ -948,6 +955,15 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                                                       onPressed: () {
                                                                                         context.read<OrderstatusChangeBloc>().add(ChangeOptionEvent(itemId: item.id, optionId: context.read<OrderstatusChangeBloc>().state.optionList[index]['option_id']));
                                                                                         context.read<OrderHistoryBloc>().add(InitOrderHistoryEvent());
+                                                                                        Navigator.of(context).pop();
+                                                                                      },
+                                                                                    ),
+                                                                                    TextButton(
+                                                                                      child: Text(
+                                                                                        "취소",
+                                                                                        style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
+                                                                                      ),
+                                                                                      onPressed: () {
                                                                                         Navigator.of(context).pop();
                                                                                       },
                                                                                     ),
