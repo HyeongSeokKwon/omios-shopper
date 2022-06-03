@@ -140,7 +140,7 @@ class ProductDetailController extends GetxController {
         name: productInfo.name,
         imageUrl: productInfo.images[0]['image_url'],
         baseDiscountRate: productInfo.baseDiscountRate,
-        color: colorData[selectedColorIndex],
+        color: colorData[selectedColorIndex]['display_color_name'],
         size: sizeData[selectedSizeIndex],
         count: 1,
         salePrice: productInfo.salePrice,
@@ -148,9 +148,6 @@ class ProductDetailController extends GetxController {
         optionId: productInfo.colors[selectedColorIndex]['options']
             [selectedSizeIndex]['id'],
       );
-
-      print(productInfo.colors[selectedColorIndex]['options'][selectedSizeIndex]
-          ['id']);
 
       for (int i = 0; i < productCart.length; i++) {
         // 중복 상품 추가 있을때

@@ -1,5 +1,5 @@
 class OrderProduct {
-  Map<String, dynamic> color;
+  String color;
   String size;
   String name;
   String imageUrl;
