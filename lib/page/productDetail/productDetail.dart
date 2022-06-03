@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloth_collection/bloc/cart_bloc/bloc/cart_bloc.dart';
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
@@ -21,6 +22,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 import '../../bloc/bloc.dart';
+import '../../bloc/cart_bloc/bloc/cart_state.dart';
 
 class ProductDetail extends StatefulWidget {
   final int productId;
@@ -1073,6 +1075,7 @@ class BuyingBottomSheet extends StatefulWidget {
 
 class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
   final OrderBloc orderBloc = OrderBloc();
+  final CartBloc cartBloc = CartBloc();
   int selectedShow = 1;
 
   @override
@@ -1084,8 +1087,11 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
   @override
   Widget build(BuildContext context) {
     var bottomSheetView = [selectedOptionArea(), buyingBottomSheetArea()];
-    return BlocProvider(
-      create: (context) => orderBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => orderBloc),
+        BlocProvider(create: (context) => cartBloc)
+      ],
       child: Container(
         child: bottomSheetView[selectedShow],
       ),
@@ -1464,23 +1470,37 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                       Column(
                         children: [
                           SizedBox(height: 10 * Scale.height),
-                          TextButton(
-                            child: Text("장바구니",
-                                style: textStyle(Color(0xff333333),
-                                    FontWeight.w500, "NotoSansKR", 16.0)),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                          BlocBuilder<CartBloc, CartState>(
+                            builder: (context, state) {
+                              return TextButton(
+                                child: Text("장바구니",
+                                    style: textStyle(Color(0xff333333),
+                                        FontWeight.w500, "NotoSansKR", 16.0)),
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  fixedSize: MaterialStateProperty.all<Size>(
+                                      Size(118 * Scale.width,
+                                          52 * Scale.height)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          const Color(0xfff0f5f9)),
                                 ),
-                              ),
-                              fixedSize: MaterialStateProperty.all<Size>(
-                                  Size(118 * Scale.width, 52 * Scale.height)),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color(0xfff0f5f9)),
-                            ),
-                            onPressed: () {},
+                                onPressed: () {
+                                  if (widget.productDetailController.productCart
+                                      .isNotEmpty) {
+                                    context.read<CartBloc>().add(
+                                        ClickShoppingBasketEvent(
+                                            cart: widget.productDetailController
+                                                .productCart));
+                                  }
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -1590,7 +1610,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                 children: [
                   SizedBox(height: 14 * Scale.height),
                   Text(
-                    "${widget.productDetailController.productCart[index].color['display_color_name']} / ${widget.productDetailController.productCart[index].size}",
+                    "${widget.productDetailController.productCart[index].color} / ${widget.productDetailController.productCart[index].size}",
                     style: textStyle(const Color(0xff333333), FontWeight.w400,
                         "NotoSansKR", 14.0),
                   ),
