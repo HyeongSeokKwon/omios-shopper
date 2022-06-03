@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/model/orderProduct.dart';
+import 'package:cloth_collection/page/order/completeOrder.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -101,20 +102,16 @@ class _OrderState extends State<Order> {
         bottomSheet: BlocConsumer<OrderBloc, OrderState>(
           listener: ((context, state) {
             if (state.registOrderState == ApiState.success) {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      content: Text("주문 성공"),
-                    );
-                  });
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => CompleteOrder(
+                        orderBloc: widget.orderBloc,
+                        shippingAddressBloc: shippingAddressBloc,
+                      )));
             }
           }),
           builder: (context, state) {
             return InkWell(
               onTap: () {
-                print("ontap");
-                print(requirementController.text);
                 context
                     .read<OrderBloc>()
                     .add(RegistOrderEvent(requirementController.text));
@@ -247,7 +244,7 @@ class _OrderState extends State<Order> {
               ),
               SizedBox(height: 5 * Scale.height),
               Text(
-                "${orderProduct.color['display_color_name']} / ${orderProduct.size}  |  수량 : ${orderProduct.count}",
+                "${orderProduct.color} / ${orderProduct.size}  |  수량 : ${orderProduct.count}",
                 style: textStyle(const Color(0xff797979), FontWeight.w400,
                     "NotoSansKR", 13.0),
               ),

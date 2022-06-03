@@ -210,6 +210,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
+                      fit: BoxFit.fill,
                       imageUrl: item.option['product_image_url'])),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
@@ -218,7 +219,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               ),
             ),
             SizedBox(
-              width: 20 * Scale.width,
+              width: 13 * Scale.width,
             ),
             Expanded(
               child: Column(
@@ -1144,14 +1145,13 @@ class _OrderHistoryState extends State<OrderHistory> {
   }
 
   Widget changeShippingAddressButton(OrderHistoryData data) {
-    return BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
+    return BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
       builder: (context, state) {
         return InkWell(
           onTap: () async {
             await _moveToShippingAddressSelection(context);
-            context
-                .read<OrderstatusChangeBloc>()
-                .add(ChangeShippingAddressEvent(orderHistoryData: data));
+            context.read<ShippingAddressBloc>().add(ChangeShippingAddressEvent(
+                orderId: data.id, orderHistoryData: data));
           },
           child: Container(
             height: 34 * Scale.height,
