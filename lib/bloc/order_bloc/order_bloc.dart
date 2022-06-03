@@ -112,13 +112,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
               .toInt() *
           value.count;
 
-      // print(value.baseDiscountedPrice);
-      // print(item['membership_discount_price'] = (value.baseDiscountedPrice *
-      //         ((100 -
-      //                 shopperInfoBloc.state.shopperInfo['membership']
-      //                     ['discount_rate']) /
-      //             100))
-      //     .toInt());
       item['payment_price'] =
           (item['base_discounted_price'] - item['membership_discount_price']);
 
@@ -137,7 +130,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       emit(state.copyWith(registOrderState: ApiState.loading));
       response = await _orderRepository.postOrder(body);
-      emit(state.copyWith(registOrderState: ApiState.success));
+      if (response['code'] == 201) {
+        emit(state.copyWith(
+            registOrderState: ApiState.success,
+            orderId: response['data']['id']));
+      }
     } catch (e) {
       emit(state.copyWith(registOrderState: ApiState.fail));
     }

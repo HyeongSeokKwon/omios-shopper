@@ -12,17 +12,19 @@ class OrderState extends Equatable {
   final int canUsePoint;
   final int finalPaymentPrice;
 
-  OrderState({
-    required this.productCart,
-    required this.registOrderState,
-    required this.totalProductPrice,
-    required this.baseDiscountPrice,
-    required this.membershipDiscountPrice,
-    required this.shippingPrice,
-    required this.usedPoint,
-    required this.canUsePoint,
-    required this.finalPaymentPrice,
-  });
+  final int? orderId;
+
+  OrderState(
+      {required this.productCart,
+      required this.registOrderState,
+      required this.totalProductPrice,
+      required this.baseDiscountPrice,
+      required this.membershipDiscountPrice,
+      required this.shippingPrice,
+      required this.usedPoint,
+      required this.canUsePoint,
+      required this.finalPaymentPrice,
+      this.orderId});
 
   factory OrderState.initial() {
     return OrderState(
@@ -49,6 +51,7 @@ class OrderState extends Equatable {
         usedPoint,
         canUsePoint,
         finalPaymentPrice,
+        orderId
       ];
 
   OrderState copyWith({
@@ -61,18 +64,19 @@ class OrderState extends Equatable {
     int? usedPoint,
     int? canUsePoint,
     int? finalPaymentPrice,
+    int? orderId,
   }) {
     return OrderState(
-      productCart: productCart ?? this.productCart,
-      registOrderState: registOrderState ?? this.registOrderState,
-      totalProductPrice: totalProductPrice ?? this.totalProductPrice,
-      baseDiscountPrice: baseDiscountPrice ?? this.baseDiscountPrice,
-      membershipDiscountPrice:
-          membershipDiscountPrice ?? this.membershipDiscountPrice,
-      shippingPrice: shippingPrice ?? this.shippingPrice,
-      usedPoint: usedPoint ?? this.usedPoint,
-      canUsePoint: canUsePoint ?? this.canUsePoint,
-      finalPaymentPrice: finalPaymentPrice ?? this.finalPaymentPrice,
-    );
+        productCart: productCart ?? this.productCart,
+        registOrderState: registOrderState ?? this.registOrderState,
+        totalProductPrice: totalProductPrice ?? this.totalProductPrice,
+        baseDiscountPrice: baseDiscountPrice ?? this.baseDiscountPrice,
+        membershipDiscountPrice:
+            membershipDiscountPrice ?? this.membershipDiscountPrice,
+        shippingPrice: shippingPrice ?? this.shippingPrice,
+        usedPoint: usedPoint ?? this.usedPoint,
+        canUsePoint: canUsePoint ?? this.canUsePoint,
+        finalPaymentPrice: finalPaymentPrice ?? this.finalPaymentPrice,
+        orderId: orderId ?? this.orderId);
   }
 }
