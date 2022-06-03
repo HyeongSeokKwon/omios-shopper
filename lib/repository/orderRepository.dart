@@ -11,7 +11,7 @@ class OrderRepository extends HttpRepository {
     try {
       response = await super.httpPost("/orders", json.encode(body));
 
-      return response['data'];
+      return response;
     } catch (e) {
       throw e;
     }
