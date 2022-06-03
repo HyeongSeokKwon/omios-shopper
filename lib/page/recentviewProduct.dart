@@ -1,6 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
-import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/product_card.dart';
@@ -10,6 +8,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 import '../model/productModel.dart';
+import 'productDetail/productDetail.dart';
 
 class RecentviewProduct extends StatefulWidget {
   const RecentviewProduct({Key? key}) : super(key: key);
@@ -76,10 +75,11 @@ class _RecentviewProductState extends State<RecentviewProduct> {
             Positioned(
               bottom: 0,
               child: GetBuilder<RecentViewController>(
-                  init: recentViewController,
-                  builder: (controller) {
-                    return controller.edit == true ? optionArea() : SizedBox();
-                  }),
+                init: recentViewController,
+                builder: (controller) {
+                  return controller.edit == true ? optionArea() : SizedBox();
+                },
+              ),
             ),
           ],
         ),
@@ -102,9 +102,59 @@ class _RecentviewProductState extends State<RecentviewProduct> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3, childAspectRatio: 0.6),
                     itemBuilder: (context, int index) {
-                      return ProductCard(
-                          product: Product.fromJson(snapshot.data[index]),
-                          imageWidth: 115 * Scale.width);
+                      return Stack(
+                        children: [
+                          Center(
+                            child: InkWell(
+                              onTap: () {
+                                if (controller.edit) {
+                                  controller.productClicked(index);
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProductDetail(
+                                          productId: controller
+                                                  .recentViewProductList[index]
+                                              ['id'],
+                                        ),
+                                      ));
+                                }
+                              },
+                              child: ProductCard(
+                                  product:
+                                      Product.fromJson(snapshot.data[index]),
+                                  imageWidth: 115 * Scale.width),
+                            ),
+                          ),
+                          controller.edit == true
+                              ? Positioned(
+                                  top: 8 * Scale.height,
+                                  right: 20 * Scale.width,
+                                  child: controller.selectProductList.contains(
+                                              controller.recentViewProductList[
+                                                  index]['id']) ==
+                                          false
+                                      ? SvgPicture.asset(
+                                          "assets/images/svg/cartUnCheck.svg",
+                                          width: 10,
+                                          height: 17)
+                                      : SvgPicture.asset(
+                                          "assets/images/svg/cartCheck.svg",
+                                          width: 10,
+                                          height: 17),
+                                )
+                              : Container(),
+                        ],
+                      );
+
+                      // Stack(
+                      //   children: [
+                      //     ProductCard(
+                      //         product: Product.fromJson(snapshot.data[index]),
+                      //         imageWidth: 115 * Scale.width),
+                      //   ],
+                      // );
                     },
                   );
                 },
