@@ -16,11 +16,6 @@ class CancelOrderEvent extends OrderstatusChangeEvent {
   });
 }
 
-class ChangeShippingAddressEvent extends OrderstatusChangeEvent {
-  final OrderHistoryData orderHistoryData;
-  const ChangeShippingAddressEvent({required this.orderHistoryData});
-}
-
 class ClickChangeOptionEvent extends OrderstatusChangeEvent {
   final int productId;
   const ClickChangeOptionEvent({required this.productId});

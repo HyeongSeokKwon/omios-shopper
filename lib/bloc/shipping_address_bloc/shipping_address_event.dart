@@ -83,3 +83,9 @@ class SelectAddressEvent extends ShippingAddressEvent {
   final int index;
   const SelectAddressEvent({required this.index});
 }
+
+class ChangeShippingAddressEvent extends ShippingAddressEvent {
+  final int orderId;
+  final OrderHistoryData? orderHistoryData;
+  ChangeShippingAddressEvent({required this.orderId, this.orderHistoryData});
+}

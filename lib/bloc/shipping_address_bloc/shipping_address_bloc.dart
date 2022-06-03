@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloth_collection/repository/addressRepository.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../model/orderHistoryModel.dart';
 import '../bloc.dart';
 
 part 'shipping_address_event.dart';
@@ -23,6 +24,7 @@ class ShippingAddressBloc
     on<InitDataEvent>(initData);
     on<SetRequirementEvent>(setRequirement);
     on<SelectAddressEvent>(selectAddress);
+    on<ChangeShippingAddressEvent>(changeShippingAddress);
   }
 
   Future<void> initData(
@@ -295,5 +297,25 @@ class ShippingAddressBloc
   void setRequirement(
       SetRequirementEvent event, Emitter<ShippingAddressState> emit) {
     emit(state.copyWith(requirement: event.requirement));
+  }
+
+  Future<void> changeShippingAddress(ChangeShippingAddressEvent event,
+      Emitter<ShippingAddressState> emit) async {
+    Map response;
+    Map body = {};
+
+    body['name'] = state.addressKinds;
+    body['receiver_name'] = state.recipient;
+    body['mobile_number'] = state.mobilePhoneNumber;
+    body['zip_code'] = state.zipCode;
+    body['base_address'] = state.baseAddress;
+    body['detail_address'] = state.detailAddress;
+    body['shipping_message'] = event.orderHistoryData != null
+        ? event.orderHistoryData!.shippingAddress['shipping_message']
+        : state.requirement == ''
+            ? "없음"
+            : state.requirement;
+    response =
+        await _addressRepository.changeShippingAddress(event.orderId, body);
   }
 }

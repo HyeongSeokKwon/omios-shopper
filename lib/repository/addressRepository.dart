@@ -62,4 +62,14 @@ class AddressRepository extends HttpRepository {
       throw e;
     }
   }
+
+  Future<dynamic> changeShippingAddress(int orderId, Map body) async {
+    try {
+      response = await super
+          .httpPut('orders/$orderId/shipping-address', json.encode(body));
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloth_collection/bloc/bloc.dart';
-import 'package:cloth_collection/model/orderHistoryModel.dart';
 import 'package:cloth_collection/repository/orderRepository.dart';
 import 'package:cloth_collection/repository/productRepository.dart';
 import 'package:equatable/equatable.dart';
@@ -21,7 +20,6 @@ class OrderstatusChangeBloc
       {required this.shippingAddressBloc, required this.orderHistoryBloc})
       : super(OrderstatusChangeState.initial()) {
     on<CancelOrderEvent>(cancelOrder);
-    on<ChangeShippingAddressEvent>(changeShippingAddress);
     on<ClickChangeOptionEvent>(clickChangeOption);
     on<ChangeOptionEvent>(changeOptions);
   }
@@ -37,29 +35,6 @@ class OrderstatusChangeBloc
       emit(state.copyWith(cancelOrderState: ApiState.success));
     } catch (e) {
       emit(state.copyWith(cancelOrderState: ApiState.fail));
-    }
-  }
-
-  Future<void> changeShippingAddress(ChangeShippingAddressEvent event,
-      Emitter<OrderstatusChangeState> emit) async {
-    Map response;
-    Map body = {};
-    try {
-      emit(state.copyWith(changeShippingAddressState: ApiState.loading));
-      body['name'] = shippingAddressBloc.state.addressKinds;
-      body['receiver_name'] = shippingAddressBloc.state.recipient;
-      body['mobile_number'] = shippingAddressBloc.state.mobilePhoneNumber;
-      body['zip_code'] = shippingAddressBloc.state.zipCode;
-      body['base_address'] = shippingAddressBloc.state.baseAddress;
-      body['detail_address'] = shippingAddressBloc.state.detailAddress;
-      body['shipping_message'] =
-          event.orderHistoryData.shippingAddress['shipping_message'];
-
-      response = await _orderRepository.changeShippingAddress(
-          event.orderHistoryData.id, body);
-      emit(state.copyWith(changeShippingAddressState: ApiState.success));
-    } catch (e) {
-      emit(state.copyWith(changeShippingAddressState: ApiState.fail));
     }
   }
 
