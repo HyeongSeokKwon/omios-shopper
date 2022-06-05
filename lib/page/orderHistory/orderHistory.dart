@@ -130,37 +130,45 @@ class _OrderHistoryState extends State<OrderHistory> {
                         padding:
                             EdgeInsets.symmetric(horizontal: 20 * Scale.width),
                         child: IntrinsicHeight(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          child: Column(
                             children: [
                               Row(
                                 children: [
                                   Text(
-                                    "${formatter.format(state.orderHistoryList[index].createdAt)} / ",
-                                    style: textStyle(const Color(0xff666666),
-                                        FontWeight.w400, 'NotoSansKR', 14),
-                                  ),
-                                  Text(
-                                    "${state.orderHistoryList[index].number}",
+                                    "${formatter.format(state.orderHistoryList[index].createdAt)}",
                                     style: textStyle(const Color(0xff666666),
                                         FontWeight.w400, 'NotoSansKR', 14),
                                   ),
                                 ],
                               ),
-                              InkWell(
-                                onTap: (() {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => OrderDetails(
-                                              id: state.orderHistoryList[index]
-                                                  .id)));
-                                }),
-                                child: Text(
-                                  "상세보기",
-                                  style: textStyle(const Color(0xff666666),
-                                      FontWeight.w400, 'NotoSansKR', 14),
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${state.orderHistoryList[index].number}",
+                                    style: textStyle(const Color(0xff666666),
+                                        FontWeight.w400, 'NotoSansKR', 14),
+                                  ),
+                                  InkWell(
+                                    onTap: (() {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OrderDetails(
+                                                      id: state
+                                                          .orderHistoryList[
+                                                              index]
+                                                          .id)));
+                                    }),
+                                    child: Text(
+                                      "상세보기",
+                                      style: textStyle(const Color(0xff666666),
+                                          FontWeight.w400, 'NotoSansKR', 14),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
