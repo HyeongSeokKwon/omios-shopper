@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/bloc/order_bloc/order_change_status/bloc/orderstatus_change_bloc.dart';
+import 'package:cloth_collection/page/orderDetails/orderDetails.dart';
 import 'package:cloth_collection/page/shippingAddress/changeShippingAddress.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
@@ -130,16 +131,36 @@ class _OrderHistoryState extends State<OrderHistory> {
                             EdgeInsets.symmetric(horizontal: 20 * Scale.width),
                         child: IntrinsicHeight(
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "${formatter.format(state.orderHistoryList[index].createdAt)} / ",
-                                style: textStyle(const Color(0xff666666),
-                                    FontWeight.w400, 'NotoSansKR', 14),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${formatter.format(state.orderHistoryList[index].createdAt)} / ",
+                                    style: textStyle(const Color(0xff666666),
+                                        FontWeight.w400, 'NotoSansKR', 14),
+                                  ),
+                                  Text(
+                                    "${state.orderHistoryList[index].number}",
+                                    style: textStyle(const Color(0xff666666),
+                                        FontWeight.w400, 'NotoSansKR', 14),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "${state.orderHistoryList[index].number}",
-                                style: textStyle(const Color(0xff666666),
-                                    FontWeight.w400, 'NotoSansKR', 14),
+                              InkWell(
+                                onTap: (() {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => OrderDetails(
+                                              id: state.orderHistoryList[index]
+                                                  .id)));
+                                }),
+                                child: Text(
+                                  "상세보기",
+                                  style: textStyle(const Color(0xff666666),
+                                      FontWeight.w400, 'NotoSansKR', 14),
+                                ),
                               ),
                             ],
                           ),
