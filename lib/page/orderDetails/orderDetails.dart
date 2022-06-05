@@ -1,9 +1,15 @@
+import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
+import 'package:cloth_collection/widget/error_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 
 class OrderDetails extends StatefulWidget {
-  const OrderDetails({Key? key}) : super(key: key);
+  final int id;
+  OrderDetails({Key? key, required this.id}) : super(key: key);
 
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
@@ -40,215 +46,263 @@ class _OrderDetailsState extends State<OrderDetails> {
   }
 
   Widget scrollArea() {
-    return SingleChildScrollView(
-        child: Column(
-      children: [
-        titleArea(),
-        Divider(
-          thickness: 1 * Scale.width,
-          color: Colors.grey,
-        ),
-        purchaseConfirmationArea(),
-        exchangeRequestArea(),
-        discountInfoArea(),
-        paymentInfoArea(),
-        //htmlExample()
-      ],
-    ));
-  }
-
-  Widget titleArea() {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 22 * Scale.width,
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(
-          children: [
-            Text("주문번호 : 48131864",
-                style: textStyle(const Color(0xff333333), FontWeight.w400,
-                    "NotoSansKR", 13.0)),
-            SizedBox(
-              width: 40 * Scale.width,
-            ),
-            Text("주문일자 : 2022.01.28.15:32",
-                style: textStyle(const Color(0xff333333), FontWeight.w400,
-                    "NotoSansKR", 13.0)),
-          ],
-        ),
-      ]),
+    return BlocProvider(
+      create: (context) => OrderHistoryBloc(),
+      child: SingleChildScrollView(
+          child: BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+        builder: (context, state) {
+          if (state.getOrderHistoryState == ApiState.success) {
+            return Column(
+              children: [
+                titleArea(),
+                Divider(
+                  thickness: 1 * Scale.width,
+                  color: Colors.grey,
+                ),
+                productListArea(),
+                discountInfoArea(),
+                paymentInfoArea(),
+                //htmlExample()
+              ],
+            );
+          } else if (state.getOrderHistoryState == ApiState.fail) {
+            return ErrorCard();
+          } else if (state.getOrderHistoryState == ApiState.initial) {
+            context
+                .read<OrderHistoryBloc>()
+                .add(GetOrderHistoryByIdEvent(orderId: widget.id));
+            return progressBar();
+          } else {
+            return progressBar();
+          }
+        },
+      )),
     );
   }
 
-  Widget purchaseConfirmationArea() {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 22 * Scale.width,
-        right: 22 * Scale.width,
-        top: 15 * Scale.width,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "구매확정",
-            style: textStyle(
-                const Color(0xffec5363), FontWeight.w500, "NotoSansKR", 16.0),
+  Widget titleArea() {
+    return BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+      builder: (context, state) {
+        DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 22 * Scale.width,
           ),
-          SizedBox(height: 10 * Scale.height),
-          Row(
+          child: Container(
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("주문번호 ${state.orderHistory?.number}",
+                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                        "NotoSansKR", 13.0)),
+                SizedBox(
+                  width: 40 * Scale.width,
+                ),
+                Text("주문일자 ${formatter.format(state.orderHistory!.createdAt)}",
+                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                        "NotoSansKR", 13.0)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget productListArea() {
+    return BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+      builder: (context, state) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: state.orderHistory!.items.length,
+          itemBuilder: ((context, index) {
+            return purchaseConfirmationArea(index);
+          }),
+        );
+      },
+    );
+  }
+
+  Widget purchaseConfirmationArea(int index) {
+    return BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 22 * Scale.width,
+            right: 22 * Scale.width,
+            top: 15 * Scale.width,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                state.orderHistory!.items[index].status,
+                style: textStyle(const Color(0xffec5363), FontWeight.w500,
+                    "NotoSansKR", 16.0),
+              ),
+              SizedBox(height: 10 * Scale.height),
+              Row(
+                children: [
+                  Container(
+                    width: 74 * Scale.width,
+                    height: 74 * Scale.width * 4 / 3,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset("assets/images/임시상품1.png")),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(14),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20 * Scale.width,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.orderHistory!.items[index]
+                              .option['product_name'],
+                          style: textStyle(const Color(0xff333333),
+                              FontWeight.w500, "NotoSansKR", 16.0),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 12 * Scale.height),
+                        Text(
+                          "${state.orderHistory!.items[index].option['display_color_name']}/${state.orderHistory!.items[index].option['size']} | 수량 : ${state.orderHistory!.items[index].count}",
+                          style: textStyle(const Color(0xff797979),
+                              FontWeight.w400, "NotoSansKR", 13.0),
+                        ),
+                        SizedBox(height: 12 * Scale.height),
+                        Text(
+                          "${setPriceFormat(state.orderHistory!.items[index].paymentPrice)}원",
+                          style: textStyle(const Color(0xff333333),
+                              FontWeight.w400, "NotoSansKR", 15.0),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: 10 * Scale.height),
               Container(
-                width: 74 * Scale.width,
-                height: 74 * Scale.width * 4 / 3,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset("assets/images/임시상품1.png")),
+                width: double.maxFinite,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(14),
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                    color: const Color(0xfffafafa)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "쿠폰할인:  -${setPriceFormat(1640)}원",
+                        style: textStyle(const Color(0xff999999),
+                            FontWeight.w400, "NotoSansKR", 13.0),
+                      ),
+                      SizedBox(height: 4 * Scale.height),
+                      Text(
+                        "등급할인:  -${setPriceFormat(state.orderHistory!.items[index].membershipDiscountPrice)}원",
+                        style: textStyle(const Color(0xff999999),
+                            FontWeight.w400, "NotoSansKR", 13.0),
+                      ),
+                      SizedBox(height: 4 * Scale.height),
+                      Text(
+                        "적립금:  +${setPriceFormat(state.orderHistory!.items[index].earnedPoint)}원 ",
+                        style: textStyle(const Color(0xff999999),
+                            FontWeight.w400, "NotoSansKR", 13.0),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              SizedBox(
-                width: 20 * Scale.width,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: 10 * Scale.height),
+              Row(
                 children: [
-                  Text(
-                    "킹 갓 가성비 슬렉스",
-                    style: textStyle(const Color(0xff333333), FontWeight.w500,
-                        "NotoSansKR", 16.0),
+                  Expanded(
+                    child: Container(
+                      height: 34,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        border: Border.all(
+                            color: const Color(0xffec5363), width: 1),
+                        color: const Color(0xffec5363),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "구매 확정",
+                          style: textStyle(const Color(0xffffffff),
+                              FontWeight.w400, "NotoSansKR", 13.0),
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 12 * Scale.height),
-                  Text(
-                    "블랙 / L | 수량 : 1",
-                    style: textStyle(const Color(0xff797979), FontWeight.w400,
-                        "NotoSansKR", 13.0),
+                  SizedBox(width: 6 * Scale.width),
+                  Expanded(
+                    child: Container(
+                      height: 34,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        border: Border.all(
+                          color: const Color(0xffe2e2e2),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "교환하기",
+                          style: textStyle(const Color(0xff666666),
+                              FontWeight.w400, "NotoSansKR", 13.0),
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 12 * Scale.height),
-                  Text(
-                    "${setPriceFormat(28900)}원",
-                    style: textStyle(const Color(0xff333333), FontWeight.w400,
-                        "NotoSansKR", 15.0),
+                  SizedBox(width: 6 * Scale.width),
+                  Expanded(
+                    child: Container(
+                      height: 34,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        border: Border.all(color: const Color(0xffe2e2e2)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "배송 조회",
+                          style: textStyle(const Color(0xff666666),
+                              FontWeight.w400, "NotoSansKR", 13.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 6 * Scale.width),
+                  Expanded(
+                    child: Container(
+                      height: 34,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        border: Border.all(
+                          color: const Color(0xffe2e2e2),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "반품하기",
+                          style: textStyle(const Color(0xff666666),
+                              FontWeight.w400, "NotoSansKR", 13.0),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               )
             ],
           ),
-          SizedBox(height: 10 * Scale.height),
-          Container(
-            width: double.maxFinite,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(6)),
-                color: const Color(0xfffafafa)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "쿠폰할인:  -${setPriceFormat(1640)}원 (베이식 브랜드 10% 쿠폰)",
-                    style: textStyle(const Color(0xff999999), FontWeight.w400,
-                        "NotoSansKR", 13.0),
-                  ),
-                  SizedBox(height: 4 * Scale.height),
-                  Text(
-                    "등급할인:  -${setPriceFormat(148)}원 (사파이어 3%)",
-                    style: textStyle(const Color(0xff999999), FontWeight.w400,
-                        "NotoSansKR", 13.0),
-                  ),
-                  SizedBox(height: 4 * Scale.height),
-                  Text(
-                    "적립금:  +${setPriceFormat(1640)}원 ",
-                    style: textStyle(const Color(0xff999999), FontWeight.w400,
-                        "NotoSansKR", 13.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 10 * Scale.height),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 34,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(3)),
-                    border:
-                        Border.all(color: const Color(0xffec5363), width: 1),
-                    color: const Color(0xffec5363),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "구매 확정",
-                      style: textStyle(const Color(0xffffffff), FontWeight.w400,
-                          "NotoSansKR", 13.0),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 6 * Scale.width),
-              Expanded(
-                child: Container(
-                  height: 34,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(3)),
-                    border: Border.all(
-                      color: const Color(0xffe2e2e2),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "교환하기",
-                      style: textStyle(const Color(0xff666666), FontWeight.w400,
-                          "NotoSansKR", 13.0),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 6 * Scale.width),
-              Expanded(
-                child: Container(
-                  height: 34,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(3)),
-                    border: Border.all(color: const Color(0xffe2e2e2)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "배송 조회",
-                      style: textStyle(const Color(0xff666666), FontWeight.w400,
-                          "NotoSansKR", 13.0),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 6 * Scale.width),
-              Expanded(
-                child: Container(
-                  height: 34,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(3)),
-                    border: Border.all(
-                      color: const Color(0xffe2e2e2),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "반품하기",
-                      style: textStyle(const Color(0xff666666), FontWeight.w400,
-                          "NotoSansKR", 13.0),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 

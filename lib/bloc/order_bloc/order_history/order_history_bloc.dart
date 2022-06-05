@@ -3,6 +3,7 @@ import 'package:cloth_collection/repository/orderRepository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../model/orderHistoryModel.dart';
+import '../../../page/orderHistory/orderHistory.dart';
 import '../../bloc.dart';
 
 part 'order_history_event.dart';
@@ -14,6 +15,7 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
     on<OrderHistoryEvent>(initOrderHistory);
     on<ChangeStartTimeEvent>(changeStartTime);
     on<ChangeEndTimeEvent>(changeEndTime);
+    on<GetOrderHistoryByIdEvent>(getOrderHistoryById);
   }
 
   Future<void> initOrderHistory(
@@ -54,5 +56,22 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
     print(event.endTime);
     emit(state.copyWith(end: event.endTime));
     print(state.end);
+  }
+
+  Future<void> getOrderHistoryById(
+      GetOrderHistoryByIdEvent event, Emitter<OrderHistoryState> emit) async {
+    Map<String, dynamic> response;
+
+    try {
+      emit(state.copyWith(getOrderHistoryState: ApiState.loading));
+
+      response = await _orderRepository.getOrderHistoryById(event.orderId);
+
+      emit(state.copyWith(
+          getOrderHistoryState: ApiState.success,
+          orderHistory: OrderHistoryData.from(response)));
+    } catch (e) {
+      emit(state.copyWith(getOrderHistoryState: ApiState.fail));
+    }
   }
 }

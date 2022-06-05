@@ -9,6 +9,12 @@ abstract class OrderHistoryEvent extends Equatable {
 
 class InitOrderHistoryEvent extends OrderHistoryEvent {}
 
+class GetOrderHistoryByIdEvent extends OrderHistoryEvent {
+  final int orderId;
+
+  const GetOrderHistoryByIdEvent({required this.orderId});
+}
+
 class ChangeStartTimeEvent extends OrderHistoryEvent {
   final DateTime? startTime;
   const ChangeStartTimeEvent({required this.startTime});

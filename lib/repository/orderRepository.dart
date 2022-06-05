@@ -27,6 +27,16 @@ class OrderRepository extends HttpRepository {
     }
   }
 
+  Future<dynamic> getOrderHistoryById(int id) async {
+    try {
+      response = await super.httpGet("/orders/$id");
+      print(response);
+      return response['data'];
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<dynamic> cancelOrder(int orderId, int itemId) async {
     try {
       body['order_items'] = [itemId];

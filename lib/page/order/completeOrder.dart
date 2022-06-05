@@ -1,3 +1,4 @@
+import 'package:cloth_collection/page/orderDetails/orderDetails.dart';
 import 'package:cloth_collection/page/shippingAddress/changeShippingAddress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,19 +64,11 @@ class CompleteOrder extends StatelessWidget {
     const String message = "주문이 정상적으로 완료되었습니다.";
     return Container(
       width: double.infinity,
-      child: Column(
-        children: [
-          Text(
-            message,
-            style: textStyle(Colors.black, FontWeight.w700, 'NotoSansKR', 18.0),
-          ),
-          SizedBox(height: 10 * Scale.height),
-          Text(
-            "주문번호 XXXXXXXXX",
-            style: textStyle(
-                Colors.grey[400]!, FontWeight.w400, 'NotoSansKR', 15.0),
-          )
-        ],
+      child: Center(
+        child: Text(
+          message,
+          style: textStyle(Colors.black, FontWeight.w700, 'NotoSansKR', 18.0),
+        ),
       ),
     );
   }
@@ -195,24 +188,35 @@ class CompleteOrder extends StatelessWidget {
   Widget pageRouteButtonArea() {
     return Row(
       children: [
-        Expanded(
-          child: Container(
-            height: 50 * Scale.height,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[500]!),
-              borderRadius: BorderRadius.all(
-                Radius.circular(9),
+        Builder(builder: (context) {
+          return Expanded(
+            child: InkWell(
+              onTap: (() {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            OrderDetails(id: orderBloc.state.orderId!)));
+              }),
+              child: Container(
+                height: 50 * Scale.height,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[500]!),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(9),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    "주문 상세보기",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+                  ),
+                ),
               ),
             ),
-            child: Center(
-              child: Text(
-                "주문 상세보기",
-                style: textStyle(
-                    Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
-              ),
-            ),
-          ),
-        ),
+          );
+        }),
         SizedBox(
           width: 10 * Scale.width,
         ),

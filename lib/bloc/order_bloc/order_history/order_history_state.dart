@@ -5,12 +5,14 @@ class OrderHistoryState extends Equatable {
   final DateTime? start;
   final DateTime? end;
   final ApiState getOrderHistoryState;
+  final OrderHistoryData? orderHistory;
 
   OrderHistoryState({
     required this.orderHistoryList,
     this.start,
     this.end,
     required this.getOrderHistoryState,
+    required this.orderHistory,
   });
 
   factory OrderHistoryState.initial() {
@@ -19,17 +21,13 @@ class OrderHistoryState extends Equatable {
       start: DateTime(0),
       end: DateTime(0),
       getOrderHistoryState: ApiState.initial,
+      orderHistory: null,
     );
   }
 
   @override
   List<Object?> get props {
-    return [
-      orderHistoryList,
-      start,
-      end,
-      getOrderHistoryState,
-    ];
+    return [orderHistoryList, start, end, getOrderHistoryState, orderHistory];
   }
 
   OrderHistoryState copyWith({
@@ -37,12 +35,14 @@ class OrderHistoryState extends Equatable {
     DateTime? start,
     DateTime? end,
     ApiState? getOrderHistoryState,
+    OrderHistoryData? orderHistory,
   }) {
     return OrderHistoryState(
       orderHistoryList: orderHistoryList ?? this.orderHistoryList,
       start: start ?? this.start,
       end: end ?? this.end,
       getOrderHistoryState: getOrderHistoryState ?? this.getOrderHistoryState,
+      orderHistory: orderHistory ?? this.orderHistory,
     );
   }
 }
