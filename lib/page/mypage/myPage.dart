@@ -60,72 +60,78 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget shortUserInfoArea() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
+    return BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+      builder: (context, state) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CircleAvatar(
-              radius: 30.0,
-              backgroundImage: AssetImage("assets/images/임시상품1.png"),
-              backgroundColor: Colors.transparent,
-            ),
-            SizedBox(width: 16 * Scale.width),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                Text(
-                  "ID 님 안녕하세요!",
-                  style: textStyle(const Color(0xff333333), FontWeight.w500,
-                      "NotoSansKR", 18.0),
+                CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: AssetImage("assets/images/임시상품1.png"),
+                  backgroundColor: Colors.transparent,
                 ),
-                SizedBox(height: 6 * Scale.height),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          style: textStyle(Color(0xff797979), FontWeight.w500,
-                              "NotoSansKR", 16.0),
-                          text: "루비 "),
-                      TextSpan(
-                          style: textStyle(const Color(0xff999999),
-                              FontWeight.w400, "NotoSansKR", 16.0),
-                          text: "등급 혜택 보기 >")
-                    ],
-                  ),
-                ),
-                SizedBox(height: 6 * Scale.height),
-                Container(
-                    child: InkWell(
-                  child: Text("로그아웃",
-                      style: textStyle(Color(0xff797979), FontWeight.w400,
-                          "NotoSansKR", 14.0)),
-                  onTap: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool('autoLogin', false);
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => Login(),
+                SizedBox(width: 16 * Scale.width),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${context.read<ShopperInfoBloc>().state.shopperInfo['nickname']} 님 안녕하세요!",
+                      style: textStyle(const Color(0xff333333), FontWeight.w500,
+                          "NotoSansKR", 18.0),
+                    ),
+                    SizedBox(height: 6 * Scale.height),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              style: textStyle(Color(0xff797979),
+                                  FontWeight.w500, "NotoSansKR", 16.0),
+                              text: context
+                                  .read<ShopperInfoBloc>()
+                                  .state
+                                  .shopperInfo['membership']['name']),
+                          TextSpan(
+                              style: textStyle(const Color(0xff999999),
+                                  FontWeight.w400, "NotoSansKR", 16.0),
+                              text: "등급 혜택 보기 >")
+                        ],
                       ),
-                      (route) =>
-                          false, //if you want to disable back feature set to false
-                    );
-                  },
-                )),
+                    ),
+                    SizedBox(height: 6 * Scale.height),
+                    Container(
+                        child: InkWell(
+                      child: Text("로그아웃",
+                          style: textStyle(Color(0xff797979), FontWeight.w400,
+                              "NotoSansKR", 14.0)),
+                      onTap: () async {
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.setBool('autoLogin', false);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => Login(),
+                          ),
+                          (route) =>
+                              false, //if you want to disable back feature set to false
+                        );
+                      },
+                    )),
+                  ],
+                ),
               ],
             ),
+            SvgPicture.asset(
+              "assets/images/svg/mypageMove.svg",
+              width: 24 * Scale.width,
+              height: 24 * Scale.width,
+              fit: BoxFit.scaleDown,
+            ),
           ],
-        ),
-        SizedBox(width: 96 * Scale.width),
-        SvgPicture.asset(
-          "assets/images/svg/mypageMove.svg",
-          width: 24 * Scale.width,
-          height: 24 * Scale.width,
-          fit: BoxFit.scaleDown,
-        ),
-      ],
+        );
+      },
     );
   }
 
