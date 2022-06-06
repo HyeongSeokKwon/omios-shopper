@@ -13,3 +13,11 @@ class ClickShoppingBasketEvent extends CartEvent {
 }
 
 class GetCartsProductEvent extends CartEvent {}
+
+class RemoveCartProductsEvent extends CartEvent {
+  final List<int> idList;
+
+  RemoveCartProductsEvent(
+    this.idList,
+  );
+}
