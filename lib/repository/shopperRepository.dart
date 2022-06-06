@@ -5,9 +5,8 @@ class ShopperRepository extends HttpRepository {
   late Map<String, dynamic> queryParams;
 
   Future<dynamic> getShopperInfo() async {
-    int id = await super.getId();
     try {
-      response = await super.httpGet('/users/shoppers/$id');
+      response = await super.httpGet('/users/shoppers');
       return response['data'];
     } catch (e) {
       throw e;
@@ -15,9 +14,8 @@ class ShopperRepository extends HttpRepository {
   }
 
   Future<dynamic> getPointHistory() async {
-    int id = await super.getId();
     try {
-      response = await super.httpGet("/users/shoppers/$id/point-histories");
+      response = await super.httpGet("/users/shoppers/point-histories");
       return response['data'];
     } catch (e) {
       throw e;

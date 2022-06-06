@@ -4,11 +4,8 @@ class UserRepository extends HttpRepository {
   late Map response;
 
   Future<dynamic> addLike(String productId) async {
-    int userId = await super.getId();
-
     try {
-      response =
-          await super.httpPost("/users/shoppers/$userId/like/$productId");
+      response = await super.httpPost("/users/shoppers/like/$productId");
 
       return response['data'];
     } catch (e) {
@@ -17,11 +14,8 @@ class UserRepository extends HttpRepository {
   }
 
   Future<dynamic> deleteLike(String productId) async {
-    int userId = await super.getId();
-
     try {
-      response =
-          await super.httpDelete("/users/shoppers/$userId/like/$productId");
+      response = await super.httpDelete("/users/shoppers/like/$productId");
       print(response);
       return response['data'];
     } catch (e) {
