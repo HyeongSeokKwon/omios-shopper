@@ -4,7 +4,7 @@ import 'httpRepository.dart';
 
 class CartRepository extends HttpRepository {
   Future<dynamic> getItemFromCarts() async {
-    Map response;
+    Map<String, dynamic> response;
     try {
       response = await super.httpGet('/users/shoppers/carts');
       return response['data'];
@@ -13,7 +13,7 @@ class CartRepository extends HttpRepository {
     }
   }
 
-  Future<dynamic> registItemToCarts(Map body) async {
+  Future<dynamic> registItemToCarts(List body) async {
     Map response;
     try {
       response =
