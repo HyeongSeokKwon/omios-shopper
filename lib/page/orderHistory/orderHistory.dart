@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/bloc/order_bloc/order_change_status/bloc/orderstatus_change_bloc.dart';
 import 'package:cloth_collection/page/orderDetails/orderDetails.dart';
+import 'package:cloth_collection/page/orderHistory/exchange.dart';
 import 'package:cloth_collection/page/shippingAddress/changeShippingAddress.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
@@ -89,6 +90,7 @@ class _OrderHistoryState extends State<OrderHistory> {
               children: [
                 summaryInfoArea(),
                 filteringArea(),
+                buttonCollection(),
                 orderStatusArea(),
               ],
             ),
@@ -1252,5 +1254,35 @@ class _OrderHistoryState extends State<OrderHistory> {
       }
     }
     return false;
+  }
+
+  Widget buttonCollection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          "계좌 확인",
+          style: textStyle(Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+        ),
+        InkWell(
+          onTap: (() {
+            Navigator.push(context,
+                MaterialPageRoute(builder: ((context) => ExchangePage())));
+          }),
+          child: Text(
+            "교환",
+            style: textStyle(Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+          ),
+        ),
+        Text(
+          "반품",
+          style: textStyle(Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+        ),
+        Text(
+          "취소",
+          style: textStyle(Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+        ),
+      ],
+    );
   }
 }
