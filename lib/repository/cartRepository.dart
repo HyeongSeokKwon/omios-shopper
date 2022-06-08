@@ -24,6 +24,18 @@ class CartRepository extends HttpRepository {
     }
   }
 
+  Future<dynamic> patchItemFromCart(int cartId, Map body) async {
+    Map response;
+
+    try {
+      response = await super
+          .httpPatch('/users/shoppers/carts/$cartId', json.encode(body));
+      return response['data'];
+    } catch (e) {
+      throw (e);
+    }
+  }
+
   Future<dynamic> deleteItemFromCart(List idList) async {
     Map response;
     Map body = {};
