@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloth_collection/bloc/cart_bloc/bloc/cart_bloc.dart';
 import 'package:cloth_collection/controller/productDetailController.dart';
 import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
@@ -1074,8 +1073,8 @@ class BuyingBottomSheet extends StatefulWidget {
 }
 
 class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
-  final OrderBloc orderBloc = OrderBloc();
-  final CartBloc cartBloc = CartBloc();
+  OrderBloc orderBloc = OrderBloc();
+  late CartBloc cartBloc;
   int selectedShow = 1;
 
   @override
@@ -1086,6 +1085,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    cartBloc = CartBloc(orderBloc: orderBloc);
     var bottomSheetView = [selectedOptionArea(), buyingBottomSheetArea()];
     return MultiBlocProvider(
       providers: [
