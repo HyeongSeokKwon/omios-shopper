@@ -17,10 +17,12 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  CartBloc carbloc = CartBloc();
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CartBloc(),
+      create: (context) => carbloc,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -101,10 +103,6 @@ class _CartPageState extends State<CartPage> {
       child: Column(
         children: [
           productInfoArea(),
-          Container(
-            height: 150,
-            color: Colors.red,
-          ),
         ],
       ),
     );
@@ -120,91 +118,120 @@ class _CartPageState extends State<CartPage> {
           itemCount: state.getCartsData.length,
           itemBuilder: (context, cartIndex) {
             totalPrice = 0;
+
             for (var value in state.getCartsData[cartIndex]['carts']) {
-              totalPrice += value['base_discounted_price'] as int;
+              totalPrice += (value['base_discounted_price'].toInt()) as int;
             }
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10 * Scale.width),
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: Checkbox(
-                            activeColor: Colors.grey[500],
-                            side: BorderSide(
-                                color: Colors.grey[500]!,
-                                width: 1 * Scale.width),
-                            value: false,
-                            onChanged: (value) {},
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 20 * Scale.width),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  productPicture(
-                                      state.getCartsData[cartIndex]['image']),
-                                  SizedBox(width: 10 * Scale.width),
-                                  Expanded(
-                                    child: Text(
-                                      state.getCartsData[cartIndex]
-                                          ['product_name'],
-                                      style: textStyle(Colors.black,
-                                          FontWeight.w500, 'NotoSansKR', 17.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 15 * Scale.height),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: state.getCartsData[cartIndex]['carts'].length,
-                    itemBuilder: (context, optionIndex) {
-                      return Column(
-                        children: [
-                          optionArea(state.getCartsData[cartIndex]['carts']
-                              [optionIndex]),
-                        ],
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(setPriceFormat(totalPrice) + '원',
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                'NotoSansKR', 18)),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            );
+
+            return cartInfoArea(cartIndex, totalPrice);
           },
         );
       },
+    );
+  }
+
+  Widget cartInfoArea(int cartIndex, int totalPrice) {
+    bool isChecked = false;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10 * Scale.width),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: StatefulBuilder(builder: (context, setState) {
+                    return Checkbox(
+                      activeColor: Colors.grey[500],
+                      side: BorderSide(
+                          color: Colors.grey[500]!, width: 1 * Scale.width),
+                      value: isChecked,
+                      onChanged: (value) {
+                        setState(() {
+                          isChecked = !isChecked;
+                          print(isChecked);
+                          context.read<CartBloc>().add(SelectProductEvent(
+                              index: cartIndex, isChecked: isChecked));
+                        });
+                      },
+                    );
+                  }),
+                ),
+              ),
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 20 * Scale.width),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              productPicture(
+                                  state.getCartsData[cartIndex]['image']),
+                              SizedBox(width: 10 * Scale.width),
+                              Expanded(
+                                child: Text(
+                                  state.getCartsData[cartIndex]['product_name'],
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, 'NotoSansKR', 17.0),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 15 * Scale.height),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: state.getCartsData[cartIndex]['carts'].length,
+                itemBuilder: (context, optionIndex) {
+                  return Column(
+                    children: [
+                      optionArea(cartIndex, optionIndex),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                        setPriceFormat(state.getCartsData[cartIndex]
+                                    .containsKey('cart_price')
+                                ? state.getCartsData[cartIndex]['cart_price']
+                                : totalPrice) +
+                            '원',
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, 'NotoSansKR', 18)),
+                  ],
+                ),
+              );
+            },
+          )
+        ],
+      ),
     );
   }
 
@@ -231,93 +258,130 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Widget optionArea(Map optionData) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: 20 * Scale.width, vertical: 4 * Scale.height),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(9),
-                ),
-                color: Colors.grey[100]),
-            child: Padding(
-              padding: EdgeInsets.all(10.0 * Scale.height),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${optionData['display_color_name']} / ${optionData['size']}",
-                    style: textStyle(const Color(0xff333333), FontWeight.w400,
-                        "NotoSansKR", 14.0),
-                  ),
-                  SizedBox(
-                    height: 10 * Scale.height,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget optionArea(int cartIndex, int optionIndex) {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        Map optionData = state.getCartsData[cartIndex]['carts'][optionIndex];
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 20 * Scale.width, vertical: 4 * Scale.height),
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(9),
+                    ),
+                    color: Colors.grey[100]),
+                child: Padding(
+                  padding: EdgeInsets.all(10.0 * Scale.height),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                              child: SvgPicture.asset(
-                                  "assets/images/svg/minus.svg",
-                                  width: 18 * Scale.width,
-                                  height: 18,
-                                  fit: BoxFit.scaleDown),
-                              onTap: () {}),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8 * Scale.width),
-                            child: Text(
-                              optionData['count'].toString(),
-                              style: textStyle(const Color(0xff444444),
-                                  FontWeight.w400, "NotoSansKR", 14.0),
-                            ),
-                          ),
-                          GestureDetector(
-                              child: SvgPicture.asset(
-                                  "assets/images/svg/plus.svg",
-                                  width: 18 * Scale.width,
-                                  height: 18,
-                                  fit: BoxFit.scaleDown),
-                              onTap: () {}),
-                        ],
-                      ),
                       Text(
-                        setPriceFormat(optionData['base_discounted_price']) +
-                            "원",
-                        style: textStyle(Color(0xff333333), FontWeight.w500,
-                            "NotoSansKR", 16.0),
+                        "${optionData['display_color_name']} / ${optionData['size']}",
+                        style: textStyle(const Color(0xff333333),
+                            FontWeight.w400, "NotoSansKR", 14.0),
+                      ),
+                      SizedBox(
+                        height: 10 * Scale.height,
+                      ),
+                      BlocBuilder<CartBloc, CartState>(
+                        builder: (context, state) {
+                          return StatefulBuilder(builder: (context, setState) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      child: SvgPicture.asset(
+                                          "assets/images/svg/minus.svg",
+                                          width: 18 * Scale.width,
+                                          height: 18,
+                                          fit: BoxFit.scaleDown),
+                                      onTap: () {
+                                        if (optionData['count'] != 1) {
+                                          context.read<CartBloc>().add(
+                                              ChangeProductsCountEvent(
+                                                  id: optionData['id'],
+                                                  count:
+                                                      optionData['count'] - 1));
+                                          context
+                                              .read<CartBloc>()
+                                              .add(GetCartsProductEvent());
+                                        }
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8 * Scale.width),
+                                      child: Text(
+                                        optionData['count'].toString(),
+                                        style: textStyle(
+                                            const Color(0xff444444),
+                                            FontWeight.w400,
+                                            "NotoSansKR",
+                                            14.0),
+                                      ),
+                                    ),
+                                    InkWell(
+                                        child: SvgPicture.asset(
+                                            "assets/images/svg/plus.svg",
+                                            width: 18 * Scale.width,
+                                            height: 18,
+                                            fit: BoxFit.scaleDown),
+                                        onTap: () {
+                                          context.read<CartBloc>().add(
+                                                ChangeProductsCountEvent(
+                                                    id: optionData['id'],
+                                                    count: optionData['count'] +
+                                                        1),
+                                              );
+                                          context
+                                              .read<CartBloc>()
+                                              .add(GetCartsProductEvent());
+                                        }),
+                                  ],
+                                ),
+                                Text(
+                                  setPriceFormat(
+                                          optionData['base_discounted_price']) +
+                                      "원",
+                                  style: textStyle(Color(0xff333333),
+                                      FontWeight.w500, "NotoSansKR", 16.0),
+                                ),
+                              ],
+                            );
+                          });
+                        },
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  return Positioned(
+                    top: 12 * Scale.width,
+                    right: 12 * Scale.width,
+                    child: GestureDetector(
+                        child: SvgPicture.asset(
+                            "assets/images/svg/productCancel.svg"),
+                        onTap: () {
+                          context
+                              .read<CartBloc>()
+                              .add(RemoveCartProductsEvent([optionData['id']]));
+                          context.read<CartBloc>().add(GetCartsProductEvent());
+                        }),
+                  );
+                },
+              ),
+            ],
           ),
-          BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              return Positioned(
-                top: 12 * Scale.width,
-                right: 12 * Scale.width,
-                child: GestureDetector(
-                    child:
-                        SvgPicture.asset("assets/images/svg/productCancel.svg"),
-                    onTap: () {
-                      context
-                          .read<CartBloc>()
-                          .add(RemoveCartProductsEvent([optionData['id']]));
-                      context.read<CartBloc>().add(GetCartsProductEvent());
-                    }),
-              );
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

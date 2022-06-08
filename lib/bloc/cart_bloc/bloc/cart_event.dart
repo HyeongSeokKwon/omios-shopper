@@ -21,3 +21,19 @@ class RemoveCartProductsEvent extends CartEvent {
     this.idList,
   );
 }
+
+class ChangeProductsCountEvent extends CartEvent {
+  final int id;
+  final int count;
+
+  const ChangeProductsCountEvent({required this.id, required this.count});
+}
+
+class SelectProductEvent extends CartEvent {
+  final int index;
+  final bool isChecked;
+  const SelectProductEvent({
+    required this.index,
+    required this.isChecked,
+  });
+}

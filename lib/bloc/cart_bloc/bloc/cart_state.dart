@@ -8,13 +8,14 @@ class CartState extends Equatable {
   final ApiState patchCartsState;
   final ApiState deleteCartsState;
   final List getCartsData;
-  CartState({
-    required this.registToCartState,
-    required this.getCartsState,
-    required this.patchCartsState,
-    required this.deleteCartsState,
-    required this.getCartsData,
-  });
+  final List selectedProducts;
+  CartState(
+      {required this.registToCartState,
+      required this.getCartsState,
+      required this.patchCartsState,
+      required this.deleteCartsState,
+      required this.getCartsData,
+      required this.selectedProducts});
 
   factory CartState.initial() {
     return CartState(
@@ -23,6 +24,7 @@ class CartState extends Equatable {
       patchCartsState: ApiState.initial,
       deleteCartsState: ApiState.initial,
       getCartsData: [],
+      selectedProducts: [],
     );
   }
 
@@ -32,7 +34,8 @@ class CartState extends Equatable {
         getCartsState,
         patchCartsState,
         deleteCartsState,
-        getCartsData
+        getCartsData,
+        selectedProducts
       ];
 
   CartState copyWith({
@@ -41,6 +44,7 @@ class CartState extends Equatable {
     ApiState? patchCartsState,
     ApiState? deleteCartsState,
     List? getCartsData,
+    List? selectedProducts,
   }) {
     return CartState(
       registToCartState: registToCartState ?? this.registToCartState,
@@ -48,6 +52,7 @@ class CartState extends Equatable {
       patchCartsState: patchCartsState ?? this.patchCartsState,
       deleteCartsState: deleteCartsState ?? this.deleteCartsState,
       getCartsData: getCartsData ?? this.getCartsData,
+      selectedProducts: selectedProducts ?? this.selectedProducts,
     );
   }
 }
