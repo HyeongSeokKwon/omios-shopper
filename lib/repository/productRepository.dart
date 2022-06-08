@@ -10,4 +10,14 @@ class ProductRepository extends HttpRepository {
       throw (e);
     }
   }
+
+  Future<dynamic> getProductInfoByIdList(List idList) async {
+    Map response;
+    try {
+      response = await super.httpGet("/products", {'id': idList});
+      return response['data'];
+    } catch (e) {
+      throw (e);
+    }
+  }
 }
