@@ -37,3 +37,5 @@ class SelectProductEvent extends CartEvent {
     required this.isChecked,
   });
 }
+
+class ClickBuyButtonEvent extends CartEvent {}

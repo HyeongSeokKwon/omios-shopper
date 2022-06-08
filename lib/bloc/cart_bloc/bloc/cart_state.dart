@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../model/orderProduct.dart';
 import '../../bloc.dart';
 
 class CartState extends Equatable {
@@ -7,15 +8,20 @@ class CartState extends Equatable {
   final ApiState getCartsState;
   final ApiState patchCartsState;
   final ApiState deleteCartsState;
+  final Map getCartsResponse;
   final List getCartsData;
-  final List selectedProducts;
-  CartState(
-      {required this.registToCartState,
-      required this.getCartsState,
-      required this.patchCartsState,
-      required this.deleteCartsState,
-      required this.getCartsData,
-      required this.selectedProducts});
+  final List<int> selectedProductsId;
+  final List<OrderProduct> selectedProduct;
+  CartState({
+    required this.registToCartState,
+    required this.getCartsState,
+    required this.patchCartsState,
+    required this.deleteCartsState,
+    required this.getCartsResponse,
+    required this.getCartsData,
+    required this.selectedProductsId,
+    required this.selectedProduct,
+  });
 
   factory CartState.initial() {
     return CartState(
@@ -23,8 +29,10 @@ class CartState extends Equatable {
       getCartsState: ApiState.initial,
       patchCartsState: ApiState.initial,
       deleteCartsState: ApiState.initial,
+      getCartsResponse: {},
       getCartsData: [],
-      selectedProducts: [],
+      selectedProductsId: [],
+      selectedProduct: [],
     );
   }
 
@@ -34,8 +42,10 @@ class CartState extends Equatable {
         getCartsState,
         patchCartsState,
         deleteCartsState,
+        getCartsResponse,
         getCartsData,
-        selectedProducts
+        selectedProductsId,
+        selectedProduct,
       ];
 
   CartState copyWith({
@@ -43,16 +53,20 @@ class CartState extends Equatable {
     ApiState? getCartsState,
     ApiState? patchCartsState,
     ApiState? deleteCartsState,
+    Map? getCartsResponse,
     List? getCartsData,
-    List? selectedProducts,
+    List<int>? selectedProductsId,
+    List<OrderProduct>? selectedProduct,
   }) {
     return CartState(
       registToCartState: registToCartState ?? this.registToCartState,
       getCartsState: getCartsState ?? this.getCartsState,
       patchCartsState: patchCartsState ?? this.patchCartsState,
       deleteCartsState: deleteCartsState ?? this.deleteCartsState,
+      getCartsResponse: getCartsResponse ?? this.getCartsResponse,
       getCartsData: getCartsData ?? this.getCartsData,
-      selectedProducts: selectedProducts ?? this.selectedProducts,
+      selectedProductsId: selectedProductsId ?? this.selectedProductsId,
+      selectedProduct: selectedProduct ?? this.selectedProduct,
     );
   }
 }

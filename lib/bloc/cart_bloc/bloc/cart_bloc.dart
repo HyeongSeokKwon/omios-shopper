@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/bloc/cart_bloc/bloc/cart_state.dart';
 import 'package:cloth_collection/repository/cartRepository.dart';
+import 'package:cloth_collection/repository/productRepository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../model/orderProduct.dart';
@@ -9,12 +10,15 @@ part 'cart_event.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   final CartRepository _cartRepository = CartRepository();
-  CartBloc() : super(CartState.initial()) {
+  final ProductRepository _productRepository = ProductRepository();
+  OrderBloc orderBloc;
+  CartBloc({required this.orderBloc}) : super(CartState.initial()) {
     on<ClickShoppingBasketEvent>(registItemToCarts);
     on<GetCartsProductEvent>(getCartsProduct);
     on<RemoveCartProductsEvent>(removeCartProducts);
     on<ChangeProductsCountEvent>(changeProductsCount);
     on<SelectProductEvent>(selectProduct);
+    on<ClickBuyButtonEvent>(clickBuyButton);
   }
 
   Future<void> registItemToCarts(
@@ -42,7 +46,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             value['carts'][0]['count'];
       }
       emit(state.copyWith(
-          getCartsState: ApiState.success, getCartsData: response['results']));
+          getCartsState: ApiState.success,
+          getCartsResponse: response,
+          getCartsData: response['results']));
     } catch (e) {
       emit(state.copyWith(
         getCartsState: ApiState.fail,
@@ -58,8 +64,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       response = await _cartRepository.deleteItemFromCart(event.idList);
       response = await _cartRepository.getItemFromCarts();
       emit(state.copyWith(
-          deleteCartsState: ApiState.success,
-          getCartsData: response['results']));
+        deleteCartsState: ApiState.success,
+        getCartsResponse: response,
+        getCartsData: response['results'],
+      ));
     } catch (e) {
       emit(state.copyWith(deleteCartsState: ApiState.fail));
     }
@@ -72,14 +80,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Map body = {};
     body['count'] = event.count;
     try {
-      // emit(state.copyWith(patchCartsState: ApiState.loading));
       response = await _cartRepository.patchItemFromCart(event.id, body);
       getDatareponse = await _cartRepository.getItemFromCarts();
-      print("response");
-      print(response);
-      print("*******************");
+
       emit(state.copyWith(
         patchCartsState: ApiState.success,
+        getCartsResponse: response,
         getCartsData: getDatareponse['results'],
       ));
     } catch (e) {
@@ -87,15 +93,50 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
+  Future<void> clickBuyButton(
+      ClickBuyButtonEvent event, Emitter<CartState> emit) async {
+    Map response;
+    List productIdList = [];
+    List<OrderProduct> orderProducts = [];
+    List productList;
+    try {
+      for (var value in state.selectedProductsId) {
+        productIdList.add(state.getCartsData[value]['product_id'].toString());
+      }
+
+      response = await _productRepository.getProductInfoByIdList(productIdList);
+      print(response);
+      productList = response['results'];
+
+      for (int index = 0; index < productList.length; index++) {
+        for (var option in state.getCartsData[index]['carts']) {
+          orderProducts.add(
+            OrderProduct(
+                color: option['display_color_name'],
+                size: option['size'],
+                name: productList[index]['name'],
+                imageUrl: productList[index]['main_image'],
+                optionId: option['id'],
+                baseDiscountedPrice: productList[index]
+                    ['base_discounted_price'],
+                baseDiscountRate: productList[index]['base_discount_rate'],
+                count: option['count'],
+                salePrice: productList[index]['price']),
+          );
+        }
+      }
+      emit(state.copyWith(selectedProduct: orderProducts));
+      orderBloc.add(AddProductToCartEvent(orderProduct: orderProducts));
+    } catch (e) {}
+  }
+
   void selectProduct(SelectProductEvent event, Emitter<CartState> emit) {
-    List copy = [...state.selectedProducts];
     if (event.isChecked) {
-      copy.add(event.index);
+      state.selectedProductsId.add(event.index);
     } else {
-      copy.remove(event.index);
+      state.selectedProductsId.remove(event.index);
     }
 
-    emit(state.copyWith(selectedProducts: copy));
-    print(state.selectedProducts);
+    print(state.selectedProductsId);
   }
 }
