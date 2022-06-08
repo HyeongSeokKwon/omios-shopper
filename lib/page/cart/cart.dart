@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloth_collection/page/order/order.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,16 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  CartBloc carbloc = CartBloc();
-
+  late CartBloc cartbloc;
+  OrderBloc orderBloc = OrderBloc();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => carbloc,
+    cartbloc = CartBloc(orderBloc: orderBloc);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => cartbloc),
+        BlocProvider(create: (context) => orderBloc),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -60,39 +65,70 @@ class _CartPageState extends State<CartPage> {
             }
           },
         ),
-        bottomSheet: Container(
-          height: 80,
-          color: Colors.white.withOpacity(0.5),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5 * Scale.width),
-            child: Row(children: [
-              Expanded(
-                flex: 1,
-                child: Text(
-                  "Total개  xx,xxx원",
-                  style: textStyle(
-                      Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  height: 50 * Scale.height,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(9)),
-                    color: Colors.red[400],
-                  ),
-                  child: Center(
-                    child: Text(
-                      "바로구매",
-                      style: textStyle(
-                          Colors.white, FontWeight.w400, 'NotoSansKR', 17.0),
+        bottomSheet: BlocBuilder<CartBloc, CartState>(
+          builder: (context, state) {
+            if (state.getCartsState == ApiState.initial) {
+              context.read<CartBloc>().add(GetCartsProductEvent());
+              return progressBar();
+            } else if (state.getCartsState == ApiState.success) {
+              return Container(
+                height: 80,
+                color: Colors.white.withOpacity(0.5),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+                  child: Row(children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        "개  ${setPriceFormat(state.getCartsResponse['total_base_discounted_price'])}",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      flex: 2,
+                      child: BlocBuilder<OrderBloc, OrderState>(
+                        builder: (context, state) {
+                          return InkWell(
+                            onTap: () {
+                              context
+                                  .read<CartBloc>()
+                                  .add(ClickBuyButtonEvent());
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Order(orderBloc: orderBloc)));
+                            },
+                            child: Container(
+                              height: 50 * Scale.height,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(9)),
+                                color: Colors.red[400],
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "바로구매",
+                                  style: textStyle(Colors.white,
+                                      FontWeight.w400, 'NotoSansKR', 17.0),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ]),
                 ),
-              )
-            ]),
-          ),
+              );
+            } else if (state.getCartsState == ApiState.fail) {
+              return ErrorCard();
+            } else {
+              return progressBar();
+            }
+          },
         ),
       ),
     );
@@ -103,6 +139,11 @@ class _CartPageState extends State<CartPage> {
       child: Column(
         children: [
           productInfoArea(),
+          Divider(
+            thickness: 15 * Scale.height,
+            color: Colors.grey[50],
+          ),
+          paymentArea()
         ],
       ),
     );
@@ -373,10 +414,88 @@ class _CartPageState extends State<CartPage> {
                           context
                               .read<CartBloc>()
                               .add(RemoveCartProductsEvent([optionData['id']]));
-                          context.read<CartBloc>().add(GetCartsProductEvent());
                         }),
                   );
                 },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget paymentArea() {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.only(
+              left: 20.0 * Scale.width,
+              right: 20.0 * Scale.width,
+              bottom: 110 * Scale.height),
+          child: Column(
+            children: [
+              SizedBox(height: 30 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "총 상품 금액",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                  Text(
+                    setPriceFormat(context
+                            .read<CartBloc>()
+                            .state
+                            .getCartsResponse['total_sale_price']) +
+                        "원",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "총 할인 금액",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                  Text(
+                    setPriceFormat(-(context
+                                .read<CartBloc>()
+                                .state
+                                .getCartsResponse['total_sale_price'] -
+                            context.read<CartBloc>().state.getCartsResponse[
+                                'total_base_discounted_price'])) +
+                        "원",
+                    style: textStyle(
+                        Colors.black, FontWeight.w400, 'NotoSansKR', 16.0),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15 * Scale.height),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "결제금액",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, 'NotoSansKR', 18.0),
+                  ),
+                  Text(
+                    setPriceFormat(context
+                            .read<CartBloc>()
+                            .state
+                            .getCartsResponse['total_base_discounted_price']) +
+                        "원",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, 'NotoSansKR', 18.0),
+                  ),
+                ],
               ),
             ],
           ),
