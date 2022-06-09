@@ -91,15 +91,23 @@ class _CartPageState extends State<CartPage> {
                         builder: (context, state) {
                           return InkWell(
                             onTap: () {
-                              context
+                              if (context
                                   .read<CartBloc>()
-                                  .add(ClickBuyButtonEvent());
+                                  .state
+                                  .selectedProductsId
+                                  .isNotEmpty) {
+                                context
+                                    .read<CartBloc>()
+                                    .add(ClickBuyButtonEvent());
 
-                              Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          Order(orderBloc: orderBloc)));
+                                    builder: (context) =>
+                                        Order(orderBloc: orderBloc),
+                                  ),
+                                );
+                              }
                             },
                             child: Container(
                               height: 50 * Scale.height,
