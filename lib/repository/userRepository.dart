@@ -5,7 +5,8 @@ class UserRepository extends HttpRepository {
 
   Future<dynamic> addLike(String productId) async {
     try {
-      response = await super.httpPost("/users/shoppers/like/$productId");
+      response =
+          await super.httpPost("/users/shoppers/like/products/$productId");
 
       return response['data'];
     } catch (e) {
@@ -15,7 +16,8 @@ class UserRepository extends HttpRepository {
 
   Future<dynamic> deleteLike(String productId) async {
     try {
-      response = await super.httpDelete("/users/shoppers/like/$productId");
+      response =
+          await super.httpDelete("/users/shoppers/like/products/$productId");
       print(response);
       return response['data'];
     } catch (e) {

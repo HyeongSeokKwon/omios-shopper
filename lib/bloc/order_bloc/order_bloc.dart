@@ -29,8 +29,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   void calculatePriceInfo(
       CalculatePriceInfoEvent event, Emitter<OrderState> emit) {
     print(shopperInfoBloc.state.shopperInfo);
-    final membershipDiscountRate =
-        shopperInfoBloc.state.shopperInfo['membership']['discount_rate'];
+    final membershipDiscountRate = double.parse(
+        shopperInfoBloc.state.shopperInfo['membership']['discount_rate']);
+
     int baseDiscountPrice;
     int totalProductPrice = 0;
     int baseDiscountedPrice = 0;
@@ -106,8 +107,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       item['count'] = value.count;
       item['sale_price'] = value.salePrice * value.count;
       item['membership_discount_price'] = (value.baseDiscountedPrice *
-                  (shopperInfoBloc.state.shopperInfo['membership']
-                          ['discount_rate'] /
+                  (double.parse(shopperInfoBloc.state.shopperInfo['membership']
+                          ['discount_rate']) /
                       100))
               .toInt() *
           value.count;
@@ -124,7 +125,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         totalPrice.toInt() - state.usedPoint; //결제할 금액
     body['used_point'] = state.usedPoint;
     body['earned_point'] = (body['actual_payment_price'] * 0.01).toInt();
-    print(totalPrice);
+
+    print("====order=====");
     print(body);
 
     try {
