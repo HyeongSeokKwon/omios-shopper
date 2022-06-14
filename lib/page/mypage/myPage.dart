@@ -1,4 +1,5 @@
 import 'package:cloth_collection/bloc/bloc.dart';
+import 'package:cloth_collection/page/coupon/coupon.dart';
 import 'package:cloth_collection/page/mypage/serviceCenter.dart';
 import 'package:cloth_collection/page/orderHistory/orderHistory.dart';
 import 'package:cloth_collection/page/point/point.dart';
@@ -267,47 +268,55 @@ class _MyPageState extends State<MyPage> {
             },
           ),
         ),
-        Container(
-          width: 180 * Scale.width,
-          height: 66 * Scale.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            border: Border.all(color: const Color(0xffe2e2e2), width: 1),
-            boxShadow: [
-              BoxShadow(
-                  color: const Color(0x0f000000),
-                  offset: Offset(0, 3),
-                  blurRadius: 15,
-                  spreadRadius: 0)
-            ],
-            color: const Color(0xffffffff),
-          ),
-          child: Padding(
-            padding: EdgeInsets.only(left: 12 * Scale.width),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "쿠폰",
-                  style: textStyle(
-                    const Color(0xff797979),
-                    FontWeight.w400,
-                    "NotoSansKR",
-                    14.0,
-                  ),
+        InkWell(
+          onTap: (() => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Coupon(),
                 ),
-                SizedBox(height: 2 * Scale.height),
-                Text(
-                  "0 장",
-                  style: textStyle(
-                    const Color(0xff333333),
-                    FontWeight.w500,
-                    "NotoSansKR",
-                    16.0,
-                  ),
-                )
+              )),
+          child: Container(
+            width: 180 * Scale.width,
+            height: 66 * Scale.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              border: Border.all(color: const Color(0xffe2e2e2), width: 1),
+              boxShadow: [
+                BoxShadow(
+                    color: const Color(0x0f000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 15,
+                    spreadRadius: 0)
               ],
+              color: const Color(0xffffffff),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(left: 12 * Scale.width),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "쿠폰",
+                    style: textStyle(
+                      const Color(0xff797979),
+                      FontWeight.w400,
+                      "NotoSansKR",
+                      14.0,
+                    ),
+                  ),
+                  SizedBox(height: 2 * Scale.height),
+                  Text(
+                    "0 장",
+                    style: textStyle(
+                      const Color(0xff333333),
+                      FontWeight.w500,
+                      "NotoSansKR",
+                      16.0,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
