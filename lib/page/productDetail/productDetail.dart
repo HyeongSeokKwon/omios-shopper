@@ -36,7 +36,6 @@ class _ProductDetailState extends State<ProductDetail>
   final ProductDetailController productDetailController =
       ProductDetailController();
   final PageController pageController = PageController();
-
   late TabController _controller;
   late NavigatorState navigator;
   late Future recommandProductFuture;
@@ -1075,6 +1074,7 @@ class BuyingBottomSheet extends StatefulWidget {
 class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
   OrderBloc orderBloc = OrderBloc();
   late CartBloc cartBloc;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   int selectedShow = 1;
 
   @override
@@ -1470,7 +1470,17 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                       Column(
                         children: [
                           SizedBox(height: 10 * Scale.height),
-                          BlocBuilder<CartBloc, CartState>(
+                          BlocConsumer<CartBloc, CartState>(
+                            listener: ((context, state) {
+                              if (state.registToCartState == ApiState.success) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text('장바구니에 등록되었습니다.'),
+                                  ),
+                                );
+                              }
+                            }),
                             builder: (context, state) {
                               return TextButton(
                                 child: Text("장바구니",
