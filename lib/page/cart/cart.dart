@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloth_collection/page/cart/emptyCart.dart';
 import 'package:cloth_collection/page/order/order.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
@@ -57,6 +58,9 @@ class _CartPageState extends State<CartPage> {
               context.read<CartBloc>().add(GetCartsProductEvent());
               return progressBar();
             } else if (state.getCartsState == ApiState.success) {
+              if (state.getCartsData.isEmpty) {
+                return EmptyCart();
+              }
               return scrollArea();
             } else if (state.getCartsState == ApiState.fail) {
               return ErrorCard();
@@ -71,6 +75,9 @@ class _CartPageState extends State<CartPage> {
               context.read<CartBloc>().add(GetCartsProductEvent());
               return progressBar();
             } else if (state.getCartsState == ApiState.success) {
+              if (state.getCartsData.isEmpty) {
+                return SizedBox();
+              }
               return Container(
                 height: 80,
                 color: Colors.white.withOpacity(0.5),
