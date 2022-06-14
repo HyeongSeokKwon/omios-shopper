@@ -31,6 +31,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
     try {
       response = await _cartRepository.registItemToCarts(body);
+      emit(state.copyWith(registToCartState: ApiState.success));
     } catch (e) {
       emit(state.copyWith(registToCartState: ApiState.fail));
     }
@@ -76,17 +77,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> changeProductsCount(
       ChangeProductsCountEvent event, Emitter<CartState> emit) async {
     Map response;
-    Map getDatareponse;
+    Map getDataResponse;
     Map body = {};
     body['count'] = event.count;
     try {
       response = await _cartRepository.patchItemFromCart(event.id, body);
-      getDatareponse = await _cartRepository.getItemFromCarts();
+      getDataResponse = await _cartRepository.getItemFromCarts();
 
       emit(state.copyWith(
         patchCartsState: ApiState.success,
-        getCartsResponse: response,
-        getCartsData: getDatareponse['results'],
+        getCartsResponse: getDataResponse,
+        getCartsData: getDataResponse['results'],
       ));
     } catch (e) {
       emit(state.copyWith(patchCartsState: ApiState.fail));
@@ -116,12 +117,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                 size: option['size'],
                 name: productList[index]['name'],
                 imageUrl: productList[index]['main_image'],
-                optionId: option['id'],
+                optionId: option['option'],
                 baseDiscountedPrice: productList[index]
                     ['base_discounted_price'],
                 baseDiscountRate: productList[index]['base_discount_rate'],
                 count: option['count'],
-                salePrice: productList[index]['price']),
+                salePrice: productList[index]['sale_price']),
           );
         }
       }
