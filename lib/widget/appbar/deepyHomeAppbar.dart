@@ -87,7 +87,8 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
               GestureDetector(
                 onTap: () {
                   Vibrate.feedback(VIBRATETYPE);
-                  Get.to(() => CartPage());
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => CartPage()));
                 },
                 child: SvgPicture.asset("assets/images/svg/cart.svg",
                     width: 26 * Scale.width, height: 26 * Scale.width),
