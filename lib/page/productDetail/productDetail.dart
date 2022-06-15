@@ -155,6 +155,10 @@ class _ProductDetailState extends State<ProductDetail>
                   SizedBox(height: 14 * Scale.height),
                   _buildProductInfo(),
                   _buildDiscountPriceArea(),
+                  SizedBox(height: 20 * Scale.height),
+                  _buildDetailInfoArea(),
+                  SizedBox(height: 10 * Scale.height),
+                  _buildSizeInfo(),
                   _buildDivider(),
                   _buildSatisfaction(),
                   _buildDivider(),
@@ -491,7 +495,7 @@ class _ProductDetailState extends State<ProductDetail>
                     text: "배송:일반배송 "),
                 TextSpan(
                     style: textStyle(
-                        Color(0xff333333), FontWeight.w500, "NotoSansKR", 12.0),
+                        Color(0xff666666), FontWeight.w500, "NotoSansKR", 12.0),
                     text: " (영업일 기준 3~7일)"),
               ],
             ),
@@ -506,7 +510,6 @@ class _ProductDetailState extends State<ProductDetail>
       children: [
         _buildProductImages(),
         SizedBox(height: 24 * Scale.height),
-        _buildDetailInfoButton(),
       ],
     );
   }
@@ -577,43 +580,51 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  Widget _buildDetailInfoButton() {
-    return Center(
-      child: OutlinedButton(
+  Widget _buildDetailInfoArea() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+      child: Center(
+        child: InkWell(
+          onTap: () {
+            showModalBottomSheet(
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                context: context,
+                builder: productDetailBottomSheetArea);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "상품 상세 설명 ",
+                style: textStyle(
+                    Color(0xff555555), FontWeight.w500, "NotoSansKR", 16.0),
+              ),
+              Icon(Icons.keyboard_arrow_right, size: 30 * Scale.width),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSizeInfo() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+      child: Center(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "상품 상세 펼치기 ",
+              "사이즈 정보 ",
               style: textStyle(
-                  Color(0xff555555), FontWeight.w500, "NotoSansKR", 15.0),
+                  Color(0xff555555), FontWeight.w500, "NotoSansKR", 16.0),
             ),
-            SvgPicture.asset("assets/images/svg/unfoldInfo.svg")
+            Icon(Icons.keyboard_arrow_right, size: 30 * Scale.width),
           ],
         ),
-        style: ButtonStyle(
-          side: MaterialStateProperty.all(
-            BorderSide(color: const Color(0xffeaedf0), width: 1),
-          ),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-          fixedSize: MaterialStateProperty.all<Size>(
-              Size(370 * Scale.width, 44 * Scale.height)),
-          backgroundColor:
-              MaterialStateProperty.all<Color>(const Color(0xfffafafa)),
-        ),
-        onPressed: () {
-          showModalBottomSheet(
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              context: context,
-              builder: productDetailBottomSheetArea);
-        },
       ),
     );
   }
