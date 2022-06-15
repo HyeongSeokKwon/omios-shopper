@@ -7,15 +7,16 @@ class OrderHistoryState extends Equatable {
   final DateTime? end;
   final ApiState getOrderHistoryState;
   final OrderHistoryData? orderHistory;
+  final Map orderDetailPriceInfo;
 
-  OrderHistoryState({
-    required this.orderHistoryList,
-    required this.orderStatistics,
-    this.start,
-    this.end,
-    required this.getOrderHistoryState,
-    required this.orderHistory,
-  });
+  OrderHistoryState(
+      {required this.orderHistoryList,
+      required this.orderStatistics,
+      this.start,
+      this.end,
+      required this.getOrderHistoryState,
+      required this.orderHistory,
+      required this.orderDetailPriceInfo});
 
   factory OrderHistoryState.initial() {
     return OrderHistoryState(
@@ -25,6 +26,7 @@ class OrderHistoryState extends Equatable {
       end: DateTime(0),
       getOrderHistoryState: ApiState.initial,
       orderHistory: null,
+      orderDetailPriceInfo: {},
     );
   }
 
@@ -36,7 +38,8 @@ class OrderHistoryState extends Equatable {
       start,
       end,
       getOrderHistoryState,
-      orderHistory
+      orderHistory,
+      orderDetailPriceInfo,
     ];
   }
 
@@ -47,6 +50,7 @@ class OrderHistoryState extends Equatable {
     DateTime? end,
     ApiState? getOrderHistoryState,
     OrderHistoryData? orderHistory,
+    Map? orderDetailPriceInfo,
   }) {
     return OrderHistoryState(
       orderHistoryList: orderHistoryList ?? this.orderHistoryList,
@@ -55,6 +59,7 @@ class OrderHistoryState extends Equatable {
       end: end ?? this.end,
       getOrderHistoryState: getOrderHistoryState ?? this.getOrderHistoryState,
       orderHistory: orderHistory ?? this.orderHistory,
+      orderDetailPriceInfo: orderDetailPriceInfo ?? this.orderDetailPriceInfo,
     );
   }
 }

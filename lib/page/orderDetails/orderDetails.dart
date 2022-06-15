@@ -477,24 +477,6 @@ class _OrderDetailsState extends State<OrderDetails> {
     );
   }
 
-  // Widget htmlExample() {
-  //   final _htmlContent = """
-  //     <div>
-  //   <h1>This is a title</h1>
-  //   <p>This is a <strong>paragraph</strong>.</p>
-  //   <p>I like <i>dogs</i></p>
-  //   <p>Red text</p>
-  //   <ul>
-  //       <li>List item 1</li>
-  //       <li>List item 2</li>
-  //       <li>List item 3</li>
-  //   </ul>
-  //   <img src='https://www.kindacode.com/wp-content/uploads/2020/11/my-dog.jpg' />
-  // </div>
-  //   """;
-  //   //return Html(data: _htmlContent);
-  // }
-
   Widget exchangeInfoArea() {
     return Column(
       children: [Row()],
@@ -527,128 +509,155 @@ class _OrderDetailsState extends State<OrderDetails> {
   }
 
   Widget discountInfoArea() {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: 20 * Scale.width, vertical: 40 * Scale.height),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "할인 정보",
-            style: textStyle(
-                const Color(0xff333333), FontWeight.w500, "NotoSansKR", 18.0),
-          ),
-          SizedBox(height: 14 * Scale.height),
-          Container(
-            height: 162 * Scale.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              border: Border.all(color: const Color(0xfff2f4f9), width: 1),
-              color: const Color(0xfffbfcfe),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(left: 20 * Scale.width),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  discountInfoRow("상품 할인", -5400),
-                  SizedBox(height: 14 * Scale.height),
-                  discountInfoRow("등급 할인", -556),
-                  SizedBox(height: 14 * Scale.height),
-                  discountInfoRow("쿠폰 할인", -2500),
-                  SizedBox(height: 14 * Scale.height),
-                  Row(
-                    children: [
-                      Container(
-                        width: 120 * Scale.width,
-                        child: Text(
-                          "총 할인 금액",
-                          style: textStyle(const Color(0xff333333),
-                              FontWeight.w500, "NotoSansKR", 14.0),
-                        ),
-                      ),
-                      RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: "-${setPriceFormat(8000)}원",
-                            style: textStyle(const Color(0xff333333),
-                                FontWeight.w700, "NotoSansKR", 14.0)),
-                        TextSpan(
-                            text: "(-12%)",
-                            style: textStyle(const Color(0xffec5363),
-                                FontWeight.w400, "NotoSansKR", 13.0)),
-                      ]))
-                    ],
-                  )
-                ],
+    return BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 20 * Scale.width, vertical: 40 * Scale.height),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "할인 정보",
+                style: textStyle(const Color(0xff333333), FontWeight.w500,
+                    "NotoSansKR", 18.0),
               ),
-            ),
+              SizedBox(height: 14 * Scale.height),
+              Container(
+                height: 162 * Scale.height,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(color: const Color(0xfff2f4f9), width: 1),
+                  color: const Color(0xfffbfcfe),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20 * Scale.width),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      discountInfoRow(
+                          "상품 할인",
+                          -state.orderDetailPriceInfo[
+                              'total_base_discounted_price']),
+                      SizedBox(height: 14 * Scale.height),
+                      discountInfoRow(
+                          "등급 할인",
+                          -state.orderDetailPriceInfo[
+                              'total_membership_discounted_price']),
+                      SizedBox(height: 14 * Scale.height),
+                      discountInfoRow(
+                          "쿠폰 할인",
+                          -state.orderDetailPriceInfo[
+                              'total_coupon_discounted_price']),
+                      SizedBox(height: 14 * Scale.height),
+                      Row(
+                        children: [
+                          Container(
+                            width: 120 * Scale.width,
+                            child: Text(
+                              "총 할인 금액",
+                              style: textStyle(const Color(0xff333333),
+                                  FontWeight.w500, "NotoSansKR", 14.0),
+                            ),
+                          ),
+                          RichText(
+                              text: TextSpan(children: [
+                            TextSpan(
+                                text:
+                                    "-${setPriceFormat(state.orderDetailPriceInfo['total_discounted_price'])}원",
+                                style: textStyle(const Color(0xff333333),
+                                    FontWeight.w700, "NotoSansKR", 14.0)),
+                            TextSpan(
+                                text:
+                                    "(${state.orderDetailPriceInfo['total_discount_rate']}%)",
+                                style: textStyle(const Color(0xffec5363),
+                                    FontWeight.w400, "NotoSansKR", 13.0)),
+                          ]))
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget paymentInfoArea() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-          20 * Scale.width, 0, 20 * Scale.width, 55 * Scale.height),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "결제 정보",
-            style: textStyle(
-                const Color(0xff333333), FontWeight.w500, "NotoSansKR", 18.0),
-          ),
-          SizedBox(height: 14 * Scale.height),
-          Container(
-            height: 162 * Scale.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              border: Border.all(color: const Color(0xfff2f4f9), width: 1),
-              color: const Color(0xfffbfcfe),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(left: 20 * Scale.width),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  discountInfoRow("상품 금액", 23280),
-                  SizedBox(height: 14 * Scale.height),
-                  discountInfoRow("총 할인금액", -8000),
-                  SizedBox(height: 14 * Scale.height),
-                  discountInfoRow("쿠폰 할인", -2500),
-                  SizedBox(height: 14 * Scale.height),
-                  Row(
-                    children: [
-                      Container(
-                        width: 120 * Scale.width,
-                        child: Text(
-                          "결제 금액",
-                          style: textStyle(const Color(0xff333333),
-                              FontWeight.w500, "NotoSansKR", 14.0),
-                        ),
-                      ),
-                      RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: "${setPriceFormat(15820)}원 ",
-                            style: textStyle(const Color(0xff333333),
-                                FontWeight.w700, "NotoSansKR", 14.0)),
-                        TextSpan(
-                            text: " 카카오페이 결제",
-                            style: textStyle(const Color(0xffec5363),
-                                FontWeight.w400, "NotoSansKR", 13.0)),
-                      ]))
-                    ],
-                  )
-                ],
+    return BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(
+              20 * Scale.width, 0, 20 * Scale.width, 55 * Scale.height),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "결제 정보",
+                style: textStyle(const Color(0xff333333), FontWeight.w500,
+                    "NotoSansKR", 18.0),
               ),
-            ),
+              SizedBox(height: 14 * Scale.height),
+              Container(
+                height: 162 * Scale.height,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(color: const Color(0xfff2f4f9), width: 1),
+                  color: const Color(0xfffbfcfe),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20 * Scale.width),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      discountInfoRow("상품 금액",
+                          state.orderDetailPriceInfo['total_product_price']),
+                      SizedBox(height: 14 * Scale.height),
+                      discountInfoRow(
+                          "총 할인금액",
+                          -state
+                              .orderDetailPriceInfo['total_discounted_price']),
+                      SizedBox(height: 14 * Scale.height),
+                      discountInfoRow(
+                          "쿠폰 할인",
+                          -state.orderDetailPriceInfo[
+                              'total_coupon_discounted_price']),
+                      SizedBox(height: 14 * Scale.height),
+                      Row(
+                        children: [
+                          Container(
+                            width: 120 * Scale.width,
+                            child: Text(
+                              "결제 금액",
+                              style: textStyle(const Color(0xff333333),
+                                  FontWeight.w500, "NotoSansKR", 14.0),
+                            ),
+                          ),
+                          RichText(
+                              text: TextSpan(children: [
+                            TextSpan(
+                                text:
+                                    "${setPriceFormat(state.orderDetailPriceInfo['total_payment_price'])}원 ",
+                                style: textStyle(const Color(0xff333333),
+                                    FontWeight.w700, "NotoSansKR", 14.0)),
+                            TextSpan(
+                                text: " 카카오페이 결제",
+                                style: textStyle(const Color(0xffec5363),
+                                    FontWeight.w400, "NotoSansKR", 13.0)),
+                          ]))
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
