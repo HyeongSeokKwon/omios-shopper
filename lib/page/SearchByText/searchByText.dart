@@ -87,9 +87,9 @@ class _SearchByTextState extends State<SearchByText> {
                                 .add(ClickedSearchButtonEvent(text: value));
                           }
                         },
+                        cursorColor: Colors.grey[400],
                         style: textStyle(Colors.grey[600]!, FontWeight.w500,
                             'NotoSansKR', 15.0),
-                        showCursor: false,
                         decoration: InputDecoration(
                             isDense: true,
                             contentPadding: EdgeInsets.all(11 * Scale.width),
