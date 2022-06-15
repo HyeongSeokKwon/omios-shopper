@@ -114,10 +114,30 @@ class ProductCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: 4 * Scale.height),
-          Text(
-            "${setPriceFormat(product.salePrice)}원",
-            style: textStyle(
-                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 17.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "${setPriceFormat(product.discountedPrice)}원",
+                style: textStyle(const Color(0xff333333), FontWeight.w700,
+                    'NotoSansKR', 17.0),
+              ),
+              // product.salePrice != product.discountedPrice
+              //     ? Padding(
+              //         padding:
+              //             EdgeInsets.symmetric(horizontal: 4 * Scale.width),
+              //         child: Text(
+              //           "${setPriceFormat(product.salePrice)}원",
+              //           style: TextStyle(
+              //               color: const Color(0xff333333),
+              //               fontWeight: FontWeight.w500,
+              //               fontFamily: "NotoSansKR",
+              //               fontSize: 14.0,
+              //               decoration: TextDecoration.lineThrough),
+              //         ),
+              //       )
+              //     : SizedBox(),
+            ],
           ),
         ],
       ),

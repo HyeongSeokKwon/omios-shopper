@@ -6,6 +6,7 @@ List<Map> temporaryProduct = [
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
+    'sale_price': 30000,
     'base_discounted_price': 26000,
     'shopper_like': false,
   },
@@ -14,6 +15,7 @@ List<Map> temporaryProduct = [
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "텍스처 라운드 정장 자켓",
+    'sale_price': 30000,
     'base_discounted_price': 26000,
     'shopper_like': false,
   },
@@ -22,6 +24,7 @@ List<Map> temporaryProduct = [
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "탄탄한 앤디 텍스처 라운드 숄더",
+    'sale_price': 10000,
     'base_discounted_price': 8400,
     'shopper_like': false,
   },
@@ -30,6 +33,7 @@ List<Map> temporaryProduct = [
     'mainImage':
         "https://deepy.s3.ap-northeast-2.amazonaws.com/media/product/sample/product_27.jpg",
     'name': "머슬 분또 잠바",
+    'sale_price': 12000,
     'base_discounted_price': 8400,
     'shopper_like': false,
   }
@@ -41,7 +45,8 @@ List<Product> getProduct() {
       id: product['id'],
       mainImage: product['mainImage'],
       name: product['name'],
-      salePrice: product['base_discounted_price'],
+      salePrice: product['sale_price'],
+      discountedPrice: product['base_discounted_price'],
       isLike: product['shopper_like'],
     ));
   }
@@ -57,6 +62,7 @@ Future<List<Product>> getProducts() async {
         mainImage: product['mainImage'],
         name: product['name'],
         salePrice: product['sale_price'],
+        discountedPrice: product['base_discounted_price'],
         isLike: product['shopper_like'],
       ),
     );

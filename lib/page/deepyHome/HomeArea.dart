@@ -115,14 +115,14 @@ class _HomeAreaState extends State<HomeArea>
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 0.55,
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.6,
                         mainAxisSpacing: 10 * Scale.height),
-                    itemCount: 9,
+                    itemCount: 8,
                     itemBuilder: (context, index) {
                       return ProductCard(
                           product: Product.fromJson(snapshot.data[index]),
-                          imageWidth: 115 * Scale.width);
+                          imageWidth: 176 * Scale.width);
                     },
                   ),
                 ],
