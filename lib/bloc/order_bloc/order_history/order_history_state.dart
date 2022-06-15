@@ -2,6 +2,7 @@ part of 'order_history_bloc.dart';
 
 class OrderHistoryState extends Equatable {
   final List<OrderHistoryData> orderHistoryList;
+  final List orderStatistics;
   final DateTime? start;
   final DateTime? end;
   final ApiState getOrderHistoryState;
@@ -9,6 +10,7 @@ class OrderHistoryState extends Equatable {
 
   OrderHistoryState({
     required this.orderHistoryList,
+    required this.orderStatistics,
     this.start,
     this.end,
     required this.getOrderHistoryState,
@@ -18,6 +20,7 @@ class OrderHistoryState extends Equatable {
   factory OrderHistoryState.initial() {
     return OrderHistoryState(
       orderHistoryList: [],
+      orderStatistics: [],
       start: DateTime(0),
       end: DateTime(0),
       getOrderHistoryState: ApiState.initial,
@@ -27,11 +30,19 @@ class OrderHistoryState extends Equatable {
 
   @override
   List<Object?> get props {
-    return [orderHistoryList, start, end, getOrderHistoryState, orderHistory];
+    return [
+      orderHistoryList,
+      orderStatistics,
+      start,
+      end,
+      getOrderHistoryState,
+      orderHistory
+    ];
   }
 
   OrderHistoryState copyWith({
     List<OrderHistoryData>? orderHistoryList,
+    List? orderStatistics,
     DateTime? start,
     DateTime? end,
     ApiState? getOrderHistoryState,
@@ -39,6 +50,7 @@ class OrderHistoryState extends Equatable {
   }) {
     return OrderHistoryState(
       orderHistoryList: orderHistoryList ?? this.orderHistoryList,
+      orderStatistics: orderStatistics ?? this.orderStatistics,
       start: start ?? this.start,
       end: end ?? this.end,
       getOrderHistoryState: getOrderHistoryState ?? this.getOrderHistoryState,

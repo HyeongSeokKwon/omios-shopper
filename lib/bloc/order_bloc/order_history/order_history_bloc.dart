@@ -20,24 +20,27 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
 
   Future<void> initOrderHistory(
       OrderHistoryEvent event, Emitter<OrderHistoryState> emit) async {
-    Map<String, dynamic> response;
+    Map<String, dynamic> orderHistoryResponse;
+    List orderStatisticsResponse;
     List<OrderHistoryData> orderHistoryList;
 
     try {
       emit(state.copyWith(getOrderHistoryState: ApiState.loading));
-      response = await _orderRepository.getOrderHistory();
+      orderHistoryResponse = await _orderRepository.getOrderHistory();
+      orderStatisticsResponse = await _orderRepository.getOrderStatistics();
+
       orderHistoryList = List.generate(
-        response['data'].length,
+        orderHistoryResponse['data'].length,
         (index) {
-          return OrderHistoryData.from(response['data'][index]);
+          return OrderHistoryData.from(orderHistoryResponse['data'][index]);
         },
       );
 
       emit(
         state.copyWith(
-          getOrderHistoryState: ApiState.success,
-          orderHistoryList: orderHistoryList,
-        ),
+            getOrderHistoryState: ApiState.success,
+            orderHistoryList: orderHistoryList,
+            orderStatistics: orderStatisticsResponse),
       );
     } catch (e) {
       emit(state.copyWith(getOrderHistoryState: ApiState.fail));
