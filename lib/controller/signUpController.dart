@@ -25,7 +25,6 @@ class SignUpController extends GetxController {
     var response;
     Map<String, dynamic> queryParams = {};
     RegExp regex = RegExp(r'^[a-zA-Z0-9]+$');
-    print("validate");
     if (regex.hasMatch(id) && id.length >= 4) {
       queryParams['username'] = id;
       response =

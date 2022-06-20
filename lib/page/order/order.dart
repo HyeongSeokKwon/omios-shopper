@@ -71,8 +71,6 @@ class _OrderState extends State<Order> {
 
             return BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
               builder: (context, state) {
-                print(state.getDefaultShippingAddressState);
-                print(shopperInfoBloc.state.getShopperInfoState);
                 if (shippingAddressBloc.state.getDefaultShippingAddressState ==
                         ApiState.initial &&
                     shopperInfoBloc.state.getShopperInfoState ==
@@ -157,7 +155,6 @@ class _OrderState extends State<Order> {
   Widget orderProduct() {
     return BlocBuilder<OrderBloc, OrderState>(
       builder: (context, state) {
-        print(context.read<OrderBloc>().state.productCart);
         return ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,

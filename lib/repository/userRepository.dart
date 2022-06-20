@@ -18,7 +18,6 @@ class UserRepository extends HttpRepository {
     try {
       response =
           await super.httpDelete("/users/shoppers/like/products/$productId");
-      print(response);
       return response['data'];
     } catch (e) {
       throw (e);

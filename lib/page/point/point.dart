@@ -139,7 +139,6 @@ class _PointPageState extends State<PointPage>
                           ],
                           onTap: (index) {
                             setState(() {
-                              print(setState);
                               selectedTab = index;
                             });
                           },

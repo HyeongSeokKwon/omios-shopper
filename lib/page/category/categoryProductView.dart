@@ -110,7 +110,6 @@ class _CategoryProductViewState extends State<CategoryProductView>
             if (snapshot.hasData) {
               List<Tab> tabs = [];
               List<Widget> tabBarViewList = [];
-              print(snapshot.data);
               for (int i = 0; i <= snapshot.data.length; i++) {
                 i == 0
                     ? tabs.add(Tab(text: '전체'))
@@ -313,8 +312,6 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                           return productController
                                               .initGetProducts()
                                               .catchError((e) {
-                                            // print('err');
-                                            // showAlertDialog(context, e);
                                             setState(() {});
                                           });
                                         },
@@ -346,8 +343,6 @@ class _ProductViewAreaState extends State<ProductViewArea>
                                       return productController
                                           .initGetProducts()
                                           .catchError((e) {
-                                        // print('err');
-                                        // showAlertDialog(context, e);
                                         setState(() {});
                                       });
                                     },
@@ -989,7 +984,6 @@ class _ProductViewAreaState extends State<ProductViewArea>
                     min: 0,
                     max: controller.endPrice,
                     onChanged: (value) {
-                      print(value.end);
                       controller.priceRangeChange(value);
                     }),
               ),

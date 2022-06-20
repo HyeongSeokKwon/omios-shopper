@@ -45,7 +45,7 @@ class ProductDetailController extends GetxController {
     try {
       await httpRepository.getToken();
       var response = await httpRepository.httpGet('/products/$productId');
-      print(response);
+
       productInfo = ProductDetailInfo.fromJson(response['data']);
       for (Map color in productInfo.colors) {
         if (color['on_sale'] == true) {
@@ -62,14 +62,12 @@ class ProductDetailController extends GetxController {
   Future<dynamic> getRecommandProductInfo() async {
     Map<String, String> queryParams = {};
     queryParams['sub_category'] = "7";
-    print("getRecommandProducts");
+
     await httpRepository.getToken();
     var response =
         await httpRepository.httpGet("/products", queryParams).catchError((e) {
-      print(e);
       throw e;
     });
-    print(response);
     return response['data']['results'];
   }
 
@@ -85,7 +83,6 @@ class ProductDetailController extends GetxController {
       colorCount = colorData.length;
     }
     isColorButtonClicked = !isColorButtonClicked;
-    print(isColorButtonClicked);
     update();
   }
 

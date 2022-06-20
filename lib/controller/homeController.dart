@@ -18,8 +18,6 @@ class HomeController extends GetxController {
         await httpRepository.httpGet("/products", queryParams).catchError((e) {
       throw e;
     });
-    print(response);
-    print("getTodaysProducts");
     return response['data']['results'];
   }
 }

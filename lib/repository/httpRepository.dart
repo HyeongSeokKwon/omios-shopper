@@ -16,7 +16,6 @@ class HttpRepository {
   late SharedPreferences pref;
 
   dynamic _response(http.Response response) {
-    print(response.body);
     switch (response.statusCode) {
       case 200:
         var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
@@ -167,7 +166,6 @@ class HttpRepository {
             body: body);
       }));
       responseJson = _response(response);
-      print(responseJson);
       return responseJson;
     } on SocketException {
       throw const SocketException('연결된 인터넷이 없습니다.');
@@ -210,7 +208,6 @@ class HttpRepository {
             },
             body: body);
       }));
-      print(response.body);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {
@@ -237,7 +234,6 @@ class HttpRepository {
             },
             body: body);
       }));
-      print(response.body);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {

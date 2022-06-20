@@ -25,13 +25,6 @@ class OrderHistory extends StatefulWidget {
 }
 
 class _OrderHistoryState extends State<OrderHistory> {
-  static const String purchaseConfirmation = "구매 확정";
-  static const String shippingCompledte = "배송 완료";
-  static const String preparingShipping = "배송 준비 중";
-  static const String shippingInProgress = "배송 중";
-  static const String paymentComplete = "결제 완료";
-  static const String waitingDeposit = "입금 대기";
-
   ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
   OrderHistoryBloc orderHistoryBloc = OrderHistoryBloc();
   late OrderstatusChangeBloc orderstatusChangeBloc;
@@ -73,19 +66,62 @@ class _OrderHistoryState extends State<OrderHistory> {
           elevation: 0.0,
           titleSpacing: 0.0,
         ),
-        body: scrollArea(),
+        body: ScrollArea(
+          orderHistoryBloc: orderHistoryBloc,
+          orderstatusChangeBloc: orderstatusChangeBloc,
+          shippingAddressBloc: shippingAddressBloc,
+        ),
       ),
     );
   }
+}
 
-  Widget scrollArea() {
+class ScrollArea extends StatefulWidget {
+  final OrderHistoryBloc orderHistoryBloc;
+  final OrderstatusChangeBloc orderstatusChangeBloc;
+  final ShippingAddressBloc shippingAddressBloc;
+  ScrollArea(
+      {Key? key,
+      required this.orderHistoryBloc,
+      required this.orderstatusChangeBloc,
+      required this.shippingAddressBloc})
+      : super(key: key);
+
+  @override
+  State<ScrollArea> createState() => _ScrollAreaState();
+}
+
+class _ScrollAreaState extends State<ScrollArea> {
+  static const String purchaseConfirmation = "구매 확정";
+  static const String shippingCompledte = "배송 완료";
+  static const String preparingShipping = "배송 준비 중";
+  static const String shippingInProgress = "배송 중";
+  static const String paymentComplete = "결제 완료";
+  static const String waitingDeposit = "입금 대기";
+
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    print('initState');
+    scrollController.addListener(() {
+      print(scrollController.offset);
+      if (scrollController.offset ==
+          scrollController.position.maxScrollExtent) {
+        context.read<OrderHistoryBloc>().add(PagenationEvent());
+        print('get');
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
       builder: (context, state) {
-        if (state.getOrderHistoryState == ApiState.initial) {
-          context.read<OrderHistoryBloc>().add(InitOrderHistoryEvent());
-          return progressBar();
-        } else if (state.getOrderHistoryState == ApiState.success) {
+        if (state.getOrderHistoryState == ApiState.success) {
           return SingleChildScrollView(
+            controller: scrollController,
             child: Column(
               children: [
                 summaryInfoArea(),
@@ -97,6 +133,9 @@ class _OrderHistoryState extends State<OrderHistory> {
           );
         } else if (state.getOrderHistoryState == ApiState.fail) {
           return ErrorCard();
+        } else if (state.getOrderHistoryState == ApiState.initial) {
+          context.read<OrderHistoryBloc>().add(InitOrderHistoryEvent());
+          return progressBar();
         } else {
           return progressBar();
         }
@@ -382,7 +421,7 @@ class _OrderHistoryState extends State<OrderHistory> {
             context: context,
             builder: (context) {
               return BlocProvider.value(
-                value: orderHistoryBloc,
+                value: widget.orderHistoryBloc,
                 child: BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
                   builder: (context, state) {
                     DateTime date = DateTime.now();
@@ -830,7 +869,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                     context: context,
                     builder: (context) =>
                         BlocProvider<OrderstatusChangeBloc>.value(
-                      value: orderstatusChangeBloc,
+                      value: widget.orderstatusChangeBloc,
                       child: Stack(
                         children: [
                           BlocBuilder<OrderstatusChangeBloc,
@@ -883,16 +922,11 @@ class _OrderHistoryState extends State<OrderHistory> {
                                               ),
                                               BlocProvider<
                                                   OrderHistoryBloc>.value(
-                                                value: orderHistoryBloc,
+                                                value: widget.orderHistoryBloc,
                                                 child: BlocBuilder<
                                                     OrderstatusChangeBloc,
                                                     OrderstatusChangeState>(
                                                   builder: (context, state) {
-                                                    print(context
-                                                        .read<
-                                                            OrderstatusChangeBloc>()
-                                                        .state
-                                                        .getOptionInfoState);
                                                     if (state
                                                             .getOptionInfoState ==
                                                         ApiState.success) {
@@ -946,7 +980,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                                                 (context) {
                                                                               if (Platform.isIOS) {
                                                                                 return BlocProvider.value(
-                                                                                  value: orderstatusChangeBloc,
+                                                                                  value: widget.orderstatusChangeBloc,
                                                                                   child: CupertinoAlertDialog(
                                                                                     content: BlocBuilder<OrderstatusChangeBloc, OrderstatusChangeState>(
                                                                                       builder: (context, state) {
@@ -1212,8 +1246,8 @@ class _OrderHistoryState extends State<OrderHistory> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            ChangeShippingAddress(shippingAddressBloc: shippingAddressBloc),
+        builder: (context) => ChangeShippingAddress(
+            shippingAddressBloc: widget.shippingAddressBloc),
       ),
     );
   }

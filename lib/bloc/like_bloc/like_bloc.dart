@@ -15,7 +15,6 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
 
   Future<void> clickLikeButton(
       ClickLikeButtonEvent event, Emitter<LikeState> emit) async {
-    print(event.isLike);
     if (event.isLike) {
       await likeRequest(event.productId);
       return;

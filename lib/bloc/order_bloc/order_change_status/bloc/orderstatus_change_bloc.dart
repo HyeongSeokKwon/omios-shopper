@@ -80,7 +80,6 @@ class OrderstatusChangeBloc
       emit(state.copyWith(changeOptionState: ApiState.success));
       orderHistoryBloc.add(InitOrderHistoryEvent());
     } catch (e) {
-      print(e.toString());
       emit(state.copyWith(changeOptionState: ApiState.fail));
     }
   }

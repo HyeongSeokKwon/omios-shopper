@@ -65,7 +65,6 @@ class ShippingAddressBloc
         emit(state.copyWith(getDefaultShippingAddressState: ApiState.success));
       }
     } catch (e) {
-      print(e.toString());
       emit(state.copyWith(getDefaultShippingAddressState: ApiState.fail));
     }
   }
@@ -77,7 +76,7 @@ class ShippingAddressBloc
     try {
       emit(state.copyWith(getShippingAddressesState: ApiState.loading));
       addressList = await _addressRepository.getAddressList();
-      print(addressList);
+
       emit(state.copyWith(
           getShippingAddressesState: ApiState.success,
           shippingAddresses: addressList));
@@ -223,8 +222,6 @@ class ShippingAddressBloc
         updateData.remove(key);
       }
     }
-    print("update data");
-    print(updateData);
 
     try {
       emit(state.copyWith(postShippingAddressState: ApiState.loading));

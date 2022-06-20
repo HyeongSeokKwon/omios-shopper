@@ -106,7 +106,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
 
       response = await _productRepository.getProductInfoByIdList(productIdList);
-      print(response);
+
       productList = response['results'];
 
       for (int index = 0; index < productList.length; index++) {
@@ -137,7 +137,5 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     } else {
       state.selectedProductsId.remove(event.index);
     }
-
-    print(state.selectedProductsId);
   }
 }

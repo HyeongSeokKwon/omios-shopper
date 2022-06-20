@@ -75,10 +75,8 @@ class _QnaScrollAreaState extends State<QnaScrollArea> {
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      print(scrollController.offset);
       if (scrollController.offset ==
           scrollController.position.maxScrollExtent) {
-        print("reached to max");
         context.read<InfinityScrollBloc>().add(AddDataEvent());
       }
     });

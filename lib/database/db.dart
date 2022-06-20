@@ -45,7 +45,6 @@ Future<void> setRecentView(Future<Database> db, int productId) async {
   final List<Map<String, dynamic>> maps = await database.rawQuery(
     'SELECT * FROM RECENTVIEW ORDER BY time DESC',
   );
-  print(maps.toString());
 }
 
 void deleteRecent(Future<Database> db, int productId) async {

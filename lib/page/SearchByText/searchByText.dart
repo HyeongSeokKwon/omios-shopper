@@ -148,10 +148,8 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      print(scrollController.offset);
       if (scrollController.offset ==
           scrollController.position.maxScrollExtent) {
-        print("reached to max");
         context.read<InfinityScrollBloc>().add(AddDataEvent());
       }
     });
@@ -169,7 +167,6 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                   true) {
                 if (context.read<SearchBloc>().state.isClickedSearchingButton ==
                     true) {
-                  print('build');
                   return GridView.builder(
                     controller: scrollController,
                     shrinkWrap: true,
@@ -405,10 +402,6 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                                   ),
                                 ),
                                 onTap: () {
-                                  print(context
-                                      .read<SearchBloc>()
-                                      .state
-                                      .searchBoxList['keyword'][index]);
                                   widget.searchTextController.text = context
                                       .read<SearchBloc>()
                                       .state

@@ -66,8 +66,6 @@ class _SearchAddressWebViewState extends State<SearchAddressWebView> {
                 controller.addJavaScriptHandler(
                     handlerName: 'handlerAddr',
                     callback: (args) async {
-                      print('callback');
-                      print(args[0]);
                       context
                           .read<ShippingAddressBloc>()
                           .add(SetAddressEvent(addressInfo: args[0]));
@@ -77,9 +75,7 @@ class _SearchAddressWebViewState extends State<SearchAddressWebView> {
               },
               onLoadStop: (InAppWebViewController controller, Uri? uri) {},
               onConsoleMessage: (InAppWebViewController controller,
-                  ConsoleMessage consoleMessage) {
-                print(consoleMessage.message);
-              },
+                  ConsoleMessage consoleMessage) {},
             );
           },
         ),

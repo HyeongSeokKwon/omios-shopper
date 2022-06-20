@@ -29,13 +29,11 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
     try {
       emit(state.copyWith(qnaGetState: ApiState.loading));
       qnaData = await _qnaRepository.getQnaList(productId);
-      print("==========");
-      print(qnaData);
+
       infinityScrollBloc.state.getData = qnaData;
       infinityScrollBloc.state.targetDatas = qnaData['data']['results'];
       emit(state.copyWith(qnaGetState: ApiState.success));
     } catch (e) {
-      print(e.toString());
       emit(state.copyWith(qnaGetState: ApiState.fail));
     }
   }
@@ -108,7 +106,7 @@ class QnaBloc extends Bloc<QnaEvent, QnaState> {
         };
 
         response = await _qnaRepository.postQuestion(productId, body);
-        print("success");
+
         emit(state.copyWith(
             qnaValidate: ValidateState.success, postState: ApiState.success));
       } catch (e) {

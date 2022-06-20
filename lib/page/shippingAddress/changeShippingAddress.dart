@@ -70,7 +70,6 @@ class ChangeShippingAddress extends StatelessWidget {
   Widget scrollArea() {
     return BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
       builder: (context, state) {
-        print(state.getShippingAddressesState);
         if (state.getShippingAddressesState == ApiState.success) {
           return SingleChildScrollView(child: shippingAddressList());
         } else if (state.getShippingAddressesState == ApiState.initial) {

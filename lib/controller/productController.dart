@@ -153,7 +153,6 @@ class ProductController extends GetxController {
     queryParams['color'] = List.generate(
         selectedColor.length, (index) => selectedColor[index].toString());
 
-    print(queryParams);
     response =
         await httpRepository.httpGet("/products", queryParams).catchError((e) {
       throw e;

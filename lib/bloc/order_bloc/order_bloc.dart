@@ -28,7 +28,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   void calculatePriceInfo(
       CalculatePriceInfoEvent event, Emitter<OrderState> emit) {
-    print(shopperInfoBloc.state.shopperInfo);
     final membershipDiscountRate = double.parse(
         shopperInfoBloc.state.shopperInfo['membership']['discount_rate']);
 
@@ -89,9 +88,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     shippingAddress['zip_code'] = shippingAddressBloc.state.zipCode;
     shippingAddress['base_address'] = shippingAddressBloc.state.baseAddress;
     shippingAddress['detail_address'] = shippingAddressBloc.state.detailAddress;
-    print(event.requirement);
-    print(shippingAddressBloc.state.requirement);
-    print(shippingAddress['shipping_message']);
+
     shippingAddress['shipping_message'] =
         shippingAddressBloc.state.requirement == "직접 입력"
             ? event.requirement
@@ -125,9 +122,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         totalPrice.toInt() - state.usedPoint; //결제할 금액
     body['used_point'] = state.usedPoint;
     body['earned_point'] = (body['actual_payment_price'] * 0.01).toInt();
-
-    print("====order=====");
-    print(body);
 
     try {
       emit(state.copyWith(registOrderState: ApiState.loading));

@@ -30,7 +30,6 @@ class OrderRepository extends HttpRepository {
   Future<dynamic> getOrderHistoryById(int id) async {
     try {
       response = await super.httpGet("/orders/$id");
-      print(response);
       return response['data'];
     } catch (e) {
       throw e;
@@ -52,7 +51,6 @@ class OrderRepository extends HttpRepository {
       body['order_items'] = [itemId];
       response =
           await super.httpPost('/orders/$orderId/cancel', json.encode(body));
-      print(response);
       return response['data'];
     } catch (e) {
       throw e;

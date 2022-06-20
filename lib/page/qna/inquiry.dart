@@ -79,7 +79,6 @@ class _InquiryState extends State<Inquiry> {
               child: Text("확인"),
               onPressed: () {
                 event();
-                print("확인");
               }),
         ],
       );
@@ -417,7 +416,6 @@ class _InquiryState extends State<Inquiry> {
       // listenWhen: ((previous, current) =>
       //     previous.qnaValidate != current.qnaValidate),
       listener: ((context, state) {
-        print(state.qnaValidate);
         if (state.qnaValidate == ValidateState.fail &&
             state.validateErrorReason.isNotEmpty) {
           showDialog(
@@ -465,7 +463,6 @@ class _InquiryState extends State<Inquiry> {
               ),
             ),
             onTap: () {
-              print("완료");
               context
                   .read<QnaBloc>()
                   .add(ClickCompleteEvent(inquery: inqueryController.text));

@@ -452,7 +452,6 @@ class _RegistShippingAddressState extends State<RegistShippingAddress> {
                               .state
                               .noPhoneNumber,
                           onChanged: (value) {
-                            print(value);
                             if (value == true) {
                               phoneNumberController.text = '';
                             }

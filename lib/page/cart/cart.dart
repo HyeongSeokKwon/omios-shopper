@@ -209,7 +209,6 @@ class _CartPageState extends State<CartPage> {
                       onChanged: (value) {
                         setState(() {
                           isChecked = !isChecked;
-                          print(isChecked);
                           context.read<CartBloc>().add(SelectProductEvent(
                               index: cartIndex, isChecked: isChecked));
                         });
