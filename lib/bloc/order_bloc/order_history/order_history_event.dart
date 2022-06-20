@@ -15,6 +15,8 @@ class GetOrderHistoryByIdEvent extends OrderHistoryEvent {
   const GetOrderHistoryByIdEvent({required this.orderId});
 }
 
+class PagenationEvent extends OrderHistoryEvent {}
+
 class ChangeStartTimeEvent extends OrderHistoryEvent {
   final DateTime? startTime;
   const ChangeStartTimeEvent({required this.startTime});

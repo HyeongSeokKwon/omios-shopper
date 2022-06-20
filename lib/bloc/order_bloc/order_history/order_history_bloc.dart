@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.dart';
+import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:cloth_collection/repository/orderRepository.dart';
 import 'package:equatable/equatable.dart';
 
@@ -10,28 +12,32 @@ part 'order_history_state.dart';
 
 class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
   final OrderRepository _orderRepository = OrderRepository();
+  final HttpRepository _httpRepository = HttpRepository();
+  InfinityScrollBloc infinityScrollBloc = InfinityScrollBloc();
+
   OrderHistoryBloc() : super(OrderHistoryState.initial()) {
-    on<OrderHistoryEvent>(initOrderHistory);
+    on<InitOrderHistoryEvent>(initOrderHistory);
     on<ChangeStartTimeEvent>(changeStartTime);
     on<ChangeEndTimeEvent>(changeEndTime);
     on<GetOrderHistoryByIdEvent>(getOrderHistoryById);
+    on<PagenationEvent>(pagenation);
   }
 
   Future<void> initOrderHistory(
-      OrderHistoryEvent event, Emitter<OrderHistoryState> emit) async {
+      InitOrderHistoryEvent event, Emitter<OrderHistoryState> emit) async {
     Map<String, dynamic> orderHistoryResponse;
     List orderStatisticsResponse;
     List<OrderHistoryData> orderHistoryList;
-
+    print('init history');
     try {
-      emit(state.copyWith(getOrderHistoryState: ApiState.loading));
       orderHistoryResponse = await _orderRepository.getOrderHistory();
       orderStatisticsResponse = await _orderRepository.getOrderStatistics();
-
+      infinityScrollBloc.state.getData = orderHistoryResponse;
       orderHistoryList = List.generate(
-        orderHistoryResponse['data'].length,
+        orderHistoryResponse['data']['results'].length,
         (index) {
-          return OrderHistoryData.from(orderHistoryResponse['data'][index]);
+          return OrderHistoryData.from(
+              orderHistoryResponse['data']['results'][index]);
         },
       );
 
@@ -47,6 +53,33 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
     // 주문 내역 가져오기
   }
 
+  Future<void> pagenation(
+      PagenationEvent event, Emitter<OrderHistoryState> emit) async {
+    Map<String, dynamic> orderHistoryResponse;
+    List<OrderHistoryData> orderHistoryList;
+    try {
+      Uri url = Uri.parse(infinityScrollBloc.state.getData['data']['next']);
+
+      orderHistoryResponse =
+          await _httpRepository.httpGet(url.path, url.queryParameters);
+
+      orderHistoryList = List.generate(
+        orderHistoryResponse['data']['results'].length,
+        (index) {
+          return OrderHistoryData.from(
+              orderHistoryResponse['data']['results'][index]);
+        },
+      );
+      infinityScrollBloc.state.getData = orderHistoryResponse;
+      emit(state.copyWith(
+          getOrderHistoryState: ApiState.success,
+          orderHistoryList: List.of(state.orderHistoryList)
+            ..addAll(orderHistoryList)));
+    } catch (e) {
+      emit(state.copyWith(getOrderHistoryState: ApiState.fail));
+    }
+  }
+
   void changeStartTime(
       ChangeStartTimeEvent event, Emitter<OrderHistoryState> emit) {
     emit(state.copyWith(start: event.startTime));
@@ -54,10 +87,7 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
 
   void changeEndTime(
       ChangeEndTimeEvent event, Emitter<OrderHistoryState> emit) {
-    print("*******");
-    print(event.endTime);
     emit(state.copyWith(end: event.endTime));
-    print(state.end);
   }
 
   Future<void> getOrderHistoryById(
@@ -68,7 +98,7 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
       emit(state.copyWith(getOrderHistoryState: ApiState.loading));
 
       response = await _orderRepository.getOrderHistoryById(event.orderId);
-      print(response);
+
       emit(state.copyWith(
         getOrderHistoryState: ApiState.success,
         orderHistory: OrderHistoryData.from(response),
