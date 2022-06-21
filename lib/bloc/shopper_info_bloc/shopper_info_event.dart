@@ -9,4 +9,11 @@ abstract class ShopperInfoEvent extends Equatable {
 
 class GetShopperInfoEvent extends ShopperInfoEvent {}
 
-class GetPointHistoryEvent extends ShopperInfoEvent {}
+class GetPointHistoryEvent extends ShopperInfoEvent {
+  final String type;
+  const GetPointHistoryEvent({
+    required this.type,
+  });
+}
+
+class PointPagenationEvent extends ShopperInfoEvent {}

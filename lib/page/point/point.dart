@@ -14,15 +14,9 @@ class PointPage extends StatefulWidget {
   State<PointPage> createState() => _PointPageState();
 }
 
-class _PointPageState extends State<PointPage>
-    with SingleTickerProviderStateMixin {
+class _PointPageState extends State<PointPage> {
   late TabController tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 3, vsync: this);
-  }
+  ScrollController scrollController = ScrollController();
 
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -53,10 +47,12 @@ class _PointPageState extends State<PointPage>
         body: BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
           builder: (context, state) {
             if (state.getPointHistoryState == ApiState.initial) {
-              context.read<ShopperInfoBloc>().add(GetPointHistoryEvent());
+              context
+                  .read<ShopperInfoBloc>()
+                  .add(GetPointHistoryEvent(type: 'All'));
               return progressBar();
             } else if (state.getPointHistoryState == ApiState.success) {
-              return scrollArea();
+              return ScrollArea(point: widget.point);
             } else if (state.getPointHistoryState == ApiState.fail) {
               return ErrorCard();
             } else {
@@ -67,6 +63,38 @@ class _PointPageState extends State<PointPage>
       ),
     );
   }
+}
+
+class ScrollArea extends StatefulWidget {
+  final int point;
+  const ScrollArea({Key? key, required this.point}) : super(key: key);
+
+  @override
+  State<ScrollArea> createState() => _ScrollAreaState();
+}
+
+class _ScrollAreaState extends State<ScrollArea>
+    with SingleTickerProviderStateMixin {
+  final ScrollController scrollController = ScrollController();
+  late final TabController tabController;
+  late int selectedTab;
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+    selectedTab = 0;
+    scrollController.addListener(() {
+      if (scrollController.offset ==
+          scrollController.position.maxScrollExtent) {
+        context.read<ShopperInfoBloc>().add(PointPagenationEvent());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return scrollArea();
+  }
 
   Widget scrollArea() {
     List<Widget> tabBarViewList = [
@@ -74,8 +102,8 @@ class _PointPageState extends State<PointPage>
       getPointTab(),
       usedPointTab()
     ];
-    int selectedTab = 0;
     return SingleChildScrollView(
+      controller: scrollController,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
         child: Column(
@@ -134,13 +162,35 @@ class _PointPageState extends State<PointPage>
                             Tab(
                               text: "전체",
                             ),
-                            Tab(text: "적립"),
-                            Tab(text: "사용"),
+                            Tab(
+                              text: "적립",
+                            ),
+                            Tab(
+                              text: "사용",
+                            ),
                           ],
                           onTap: (index) {
-                            setState(() {
-                              selectedTab = index;
-                            });
+                            switch (index) {
+                              case 0:
+                                context
+                                    .read<ShopperInfoBloc>()
+                                    .add(GetPointHistoryEvent(type: 'All'));
+                                break;
+                              case 1:
+                                context
+                                    .read<ShopperInfoBloc>()
+                                    .add(GetPointHistoryEvent(type: 'SAVE'));
+                                break;
+                              case 2:
+                                context
+                                    .read<ShopperInfoBloc>()
+                                    .add(GetPointHistoryEvent(type: 'USE'));
+                                break;
+                              default:
+                            }
+                            // setState(() {
+                            //   selectedTab = index;
+                            // });
                           },
                           labelPadding:
                               EdgeInsets.only(right: 25 * Scale.width),

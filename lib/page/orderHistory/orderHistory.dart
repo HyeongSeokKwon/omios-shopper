@@ -104,13 +104,10 @@ class _ScrollAreaState extends State<ScrollArea> {
   @override
   void initState() {
     super.initState();
-    print('initState');
     scrollController.addListener(() {
-      print(scrollController.offset);
       if (scrollController.offset ==
           scrollController.position.maxScrollExtent) {
         context.read<OrderHistoryBloc>().add(PagenationEvent());
-        print('get');
       }
     });
   }

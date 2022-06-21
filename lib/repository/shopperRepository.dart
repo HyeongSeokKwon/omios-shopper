@@ -13,9 +13,23 @@ class ShopperRepository extends HttpRepository {
     }
   }
 
-  Future<dynamic> getPointHistory() async {
+  Future<dynamic> getPointHistory(String type) async {
     try {
-      response = await super.httpGet("/users/shoppers/point-histories");
+      switch (type) {
+        case "All":
+          response = await super.httpGet("/users/shoppers/point-histories");
+          break;
+        case "USE":
+          response = await super
+              .httpGet("/users/shoppers/point-histories", {'type': 'USE'});
+          break;
+
+        case "SAVE":
+          response = await super
+              .httpGet("/users/shoppers/point-histories", {'type': 'SAVE'});
+          break;
+      }
+
       return response['data'];
     } catch (e) {
       throw e;
