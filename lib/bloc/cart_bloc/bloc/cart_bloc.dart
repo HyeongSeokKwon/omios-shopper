@@ -18,6 +18,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<RemoveCartProductsEvent>(removeCartProducts);
     on<ChangeProductsCountEvent>(changeProductsCount);
     on<SelectProductEvent>(selectProduct);
+    on<ClickSelectAllProductButtonEvent>(clickSelectAllProductButton);
     on<ClickBuyButtonEvent>(clickBuyButton);
   }
 
@@ -46,10 +47,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         value['product_price'] = value['carts'][0]['base_discounted_price'] /
             value['carts'][0]['count'];
       }
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           getCartsState: ApiState.success,
           getCartsResponse: response,
-          getCartsData: response['results']));
+          getCartsData: response['results'],
+          selectedProductsId:
+              List.generate(response['results'].length, (index) => index),
+        ),
+      );
     } catch (e) {
       emit(state.copyWith(
         getCartsState: ApiState.fail,
@@ -132,10 +138,36 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void selectProduct(SelectProductEvent event, Emitter<CartState> emit) {
+    List<int> selectedProductsId = [...state.selectedProductsId];
     if (event.isChecked) {
-      state.selectedProductsId.add(event.index);
+      selectedProductsId.add(event.index);
+      emit(state.copyWith(selectedProductsId: selectedProductsId));
     } else {
-      state.selectedProductsId.remove(event.index);
+      selectedProductsId.remove(event.index);
+      emit(state.copyWith(selectedProductsId: selectedProductsId));
     }
   }
+
+  void clickSelectAllProductButton(
+      ClickSelectAllProductButtonEvent event, Emitter<CartState> emit) {
+    if (event.isChecked) {
+      emit(state.copyWith(
+          selectedProductsId:
+              List.generate(state.getCartsData.length, (index) => index)));
+      return;
+    } else {
+      emit(state.copyWith(selectedProductsId: []));
+      return;
+    }
+  }
+
+  // void calculatePrice(){
+  //   int totalSalePrice = 0;
+  //   int totalDiscountedPrice = 0;
+  //   int totalPaymentPrice = 0;
+
+  //   for(int index in state.selectedProductsId){
+  //     totalSalePrice = state.getCartsData[index]
+  //   }
+  // }
 }

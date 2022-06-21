@@ -38,4 +38,10 @@ class SelectProductEvent extends CartEvent {
   });
 }
 
+class ClickSelectAllProductButtonEvent extends CartEvent {
+  final bool isChecked;
+
+  const ClickSelectAllProductButtonEvent({required this.isChecked});
+}
+
 class ClickBuyButtonEvent extends CartEvent {}

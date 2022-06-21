@@ -48,6 +48,41 @@ class _CartPageState extends State<CartPage> {
               ),
             ],
           ),
+          bottom: PreferredSize(
+              child: BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            context.read<CartBloc>().add(
+                                ClickSelectAllProductButtonEvent(
+                                    isChecked:
+                                        state.selectedProductsId.length ==
+                                                state.getCartsData.length
+                                            ? false
+                                            : true));
+                          },
+                          child: Text(
+                            "전체 선택",
+                            style: textStyle(Colors.grey[700]!, FontWeight.w400,
+                                'NotoSansKR', 14.0),
+                          ),
+                        ),
+                        Text(
+                          "상품 삭제",
+                          style: textStyle(Colors.grey[700]!, FontWeight.w400,
+                              'NotoSansKR', 14.0),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              preferredSize: Size.fromHeight(10 * Scale.height)),
           backgroundColor: Colors.white,
           elevation: 0.0,
           titleSpacing: 0.0,
@@ -85,15 +120,6 @@ class _CartPageState extends State<CartPage> {
                   padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
                   child: Row(children: [
                     Expanded(
-                      flex: 1,
-                      child: Text(
-                        "개  ${setPriceFormat(state.getCartsResponse['total_base_discounted_price'])}",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
                       child: BlocBuilder<OrderBloc, OrderState>(
                         builder: (context, state) {
                           return InkWell(
@@ -153,6 +179,10 @@ class _CartPageState extends State<CartPage> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          Divider(
+            thickness: 10 * Scale.height,
+            color: Colors.grey[50],
+          ),
           productInfoArea(),
           Divider(
             thickness: 15 * Scale.height,
@@ -187,106 +217,105 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget cartInfoArea(int cartIndex, int totalPrice) {
-    bool isChecked = false;
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
+          child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10 * Scale.width),
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: StatefulBuilder(builder: (context, setState) {
-                    return Checkbox(
-                      activeColor: Colors.grey[500],
-                      side: BorderSide(
-                          color: Colors.grey[500]!, width: 1 * Scale.width),
-                      value: isChecked,
-                      onChanged: (value) {
-                        setState(() {
-                          isChecked = !isChecked;
-                          context.read<CartBloc>().add(SelectProductEvent(
-                              index: cartIndex, isChecked: isChecked));
-                        });
-                      },
-                    );
-                  }),
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10 * Scale.width),
+                    child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Checkbox(
+                          activeColor: Colors.grey[500],
+                          side: BorderSide(
+                              color: Colors.grey[500]!, width: 1 * Scale.width),
+                          value: state.selectedProductsId.contains(cartIndex),
+                          onChanged: (value) {
+                            context.read<CartBloc>().add(SelectProductEvent(
+                                index: cartIndex, isChecked: value!));
+                          },
+                        )),
+                  ),
+                  BlocBuilder<CartBloc, CartState>(
+                    builder: (context, state) {
+                      return Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 20 * Scale.width),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  productPicture(
+                                      state.getCartsData[cartIndex]['image']),
+                                  SizedBox(width: 10 * Scale.width),
+                                  Expanded(
+                                    child: Text(
+                                      state.getCartsData[cartIndex]
+                                          ['product_name'],
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, 'NotoSansKR', 17.0),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 15 * Scale.height),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
               BlocBuilder<CartBloc, CartState>(
                 builder: (context, state) {
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 20 * Scale.width),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: state.getCartsData[cartIndex]['carts'].length,
+                    itemBuilder: (context, optionIndex) {
+                      return Column(
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              productPicture(
-                                  state.getCartsData[cartIndex]['image']),
-                              SizedBox(width: 10 * Scale.width),
-                              Expanded(
-                                child: Text(
-                                  state.getCartsData[cartIndex]['product_name'],
-                                  style: textStyle(Colors.black,
-                                      FontWeight.w500, 'NotoSansKR', 17.0),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15 * Scale.height),
+                          optionArea(cartIndex, optionIndex),
                         ],
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
-            ],
-          ),
-          BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: state.getCartsData[cartIndex]['carts'].length,
-                itemBuilder: (context, optionIndex) {
-                  return Column(
-                    children: [
-                      optionArea(cartIndex, optionIndex),
-                    ],
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                            setPriceFormat(state.getCartsData[cartIndex]
+                                        .containsKey('cart_price')
+                                    ? state.getCartsData[cartIndex]
+                                        ['cart_price']
+                                    : totalPrice) +
+                                '원',
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                'NotoSansKR', 18)),
+                      ],
+                    ),
                   );
                 },
-              );
-            },
+              )
+            ],
           ),
-          BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                        setPriceFormat(state.getCartsData[cartIndex]
-                                    .containsKey('cart_price')
-                                ? state.getCartsData[cartIndex]['cart_price']
-                                : totalPrice) +
-                            '원',
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, 'NotoSansKR', 18)),
-                  ],
-                ),
-              );
-            },
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
