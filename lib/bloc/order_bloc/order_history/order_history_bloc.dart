@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.dart';
 import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:cloth_collection/repository/orderRepository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../model/orderHistoryModel.dart';
-import '../../bloc.dart';
 
 part 'order_history_event.dart';
 part 'order_history_state.dart';

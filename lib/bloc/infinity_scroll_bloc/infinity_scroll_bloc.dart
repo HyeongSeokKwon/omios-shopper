@@ -24,14 +24,11 @@ class InfinityScrollBloc
       emit(state.copyWith(getState: ApiState.loading));
       response =
           await httpRepository.httpGet(nextLink.path, nextLink.queryParameters);
-      print(state.targetDatas.length);
       emit(state.copyWith(
           getState: ApiState.success,
           targetDatas: List.of(state.targetDatas)
             ..addAll(response['data']['results']),
           getData: response['data']));
-
-      print(state.targetDatas.length);
     }
   }
 

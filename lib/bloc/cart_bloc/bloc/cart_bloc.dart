@@ -160,14 +160,4 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       return;
     }
   }
-
-  // void calculatePrice(){
-  //   int totalSalePrice = 0;
-  //   int totalDiscountedPrice = 0;
-  //   int totalPaymentPrice = 0;
-
-  //   for(int index in state.selectedProductsId){
-  //     totalSalePrice = state.getCartsData[index]
-  //   }
-  // }
 }
