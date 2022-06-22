@@ -4,6 +4,7 @@ import 'package:cloth_collection/page/mypage/serviceCenter.dart';
 import 'package:cloth_collection/page/orderHistory/orderHistory.dart';
 import 'package:cloth_collection/page/point/point.dart';
 import 'package:cloth_collection/page/recentviewProduct.dart';
+import 'package:cloth_collection/page/review/createReview.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
@@ -165,6 +166,10 @@ class _MyPageState extends State<MyPage> {
                       "NotoSansKR", 14.0)),
             ],
           ),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateReview()));
+          },
         ),
         GestureDetector(
           child: Column(
