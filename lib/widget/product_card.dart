@@ -120,7 +120,7 @@ class ProductCard extends StatelessWidget {
               Text(
                 "${setPriceFormat(product.discountedPrice)}원",
                 style: textStyle(const Color(0xff333333), FontWeight.w700,
-                    'NotoSansKR', 17.0),
+                    'NotoSansKR', 14.0),
               ),
               // product.salePrice != product.discountedPrice
               //     ? Padding(
