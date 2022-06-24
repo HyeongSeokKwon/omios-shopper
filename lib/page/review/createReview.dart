@@ -1,8 +1,11 @@
+import 'package:cloth_collection/bloc/review_bloc/review_bloc.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../../bloc/review_bloc/review_state.dart';
 
 class CreateReview extends StatefulWidget {
   const CreateReview({Key? key}) : super(key: key);
@@ -16,33 +19,36 @@ class _CreateReviewState extends State<CreateReview> {
   static const createReview = "리뷰 작성";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return BlocProvider(
+      create: (context) => ReviewBloc(),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: SvgPicture.asset(
-                moveTobackUrl,
-                width: 10 * Scale.width,
-                height: 20 * Scale.height,
-                fit: BoxFit.scaleDown,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: SvgPicture.asset(
+                  moveTobackUrl,
+                  width: 10 * Scale.width,
+                  height: 20 * Scale.height,
+                  fit: BoxFit.scaleDown,
+                ),
               ),
-            ),
-            SizedBox(width: 14 * Scale.width),
-            Text(createReview,
-                style: textStyle(const Color(0xff333333), FontWeight.w700,
-                    "NotoSansKR", 22.0)),
-          ],
+              SizedBox(width: 14 * Scale.width),
+              Text(createReview,
+                  style: textStyle(const Color(0xff333333), FontWeight.w700,
+                      "NotoSansKR", 22.0)),
+            ],
+          ),
         ),
+        body: ScrollArea(),
+        bottomSheet: CreateCompleteButton(),
       ),
-      body: ScrollArea(),
-      bottomSheet: CreateCompleteButton(),
     );
   }
 }
@@ -213,58 +219,169 @@ class ProductQuestionArea extends StatelessWidget {
             sizeQuestion,
             style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 17.0),
           ),
-          optionButtonsArea(sizeOption),
+          Padding(
+            padding: EdgeInsets.only(
+                top: 8 * Scale.height, bottom: 15 * Scale.height),
+            child: Row(
+              children: [
+                sizeOptionButton(sizeOption[0]),
+                SizedBox(width: 12 * Scale.width),
+                sizeOptionButton(sizeOption[1]),
+                SizedBox(width: 12 * Scale.width),
+                sizeOptionButton(sizeOption[2]),
+              ],
+            ),
+          ),
           Text(
             colorQuestion,
             style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 17.0),
           ),
-          optionButtonsArea(colorOption),
+          Padding(
+            padding: EdgeInsets.only(
+                top: 8 * Scale.height, bottom: 15 * Scale.height),
+            child: Row(
+              children: [
+                colorOptionButton(colorOption[0]),
+                SizedBox(width: 12 * Scale.width),
+                colorOptionButton(colorOption[1]),
+                SizedBox(width: 12 * Scale.width),
+                colorOptionButton(colorOption[2]),
+              ],
+            ),
+          ),
           Text(
             qualityQuestion,
             style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 17.0),
           ),
-          optionButtonsArea(qualityOption),
-        ],
-      ),
-    );
-  }
-
-  Widget optionButtonsArea(List optionList) {
-    return Padding(
-      padding:
-          EdgeInsets.only(top: 8 * Scale.height, bottom: 15 * Scale.height),
-      child: Row(
-        children: [
-          optionButton(optionList[0]),
-          SizedBox(width: 12 * Scale.width),
-          optionButton(optionList[1]),
-          SizedBox(width: 12 * Scale.width),
-          optionButton(optionList[2])
-        ],
-      ),
-    );
-  }
-
-  Widget optionButton(String option) {
-    return InkWell(
-      child: Container(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 15 * Scale.width, vertical: 10.0 * Scale.width),
-          child: Text(
-            option,
-            style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
-          ),
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.all(
-            Radius.circular(
-              10,
+          Padding(
+            padding: EdgeInsets.only(
+                top: 8 * Scale.height, bottom: 15 * Scale.height),
+            child: Row(
+              children: [
+                qualityOptionButton(qualityOption[0]),
+                SizedBox(width: 12 * Scale.width),
+                qualityOptionButton(qualityOption[1]),
+                SizedBox(width: 12 * Scale.width),
+                qualityOptionButton(qualityOption[2]),
+              ],
             ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+
+  Widget sizeOptionButton(String option) {
+    return BlocBuilder<ReviewBloc, ReviewState>(
+      builder: (context, state) {
+        return InkWell(
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 15 * Scale.width, vertical: 10.0 * Scale.width),
+              child: Text(
+                option,
+                style: textStyle(
+                    state.selectedSizeOpinion == option
+                        ? MAINCOLOR
+                        : Colors.black,
+                    FontWeight.w500,
+                    'NotoSansKR',
+                    15.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.all(
+                Radius.circular(
+                  10,
+                ),
+              ),
+            ),
+          ),
+          onTap: () {
+            context
+                .read<ReviewBloc>()
+                .add(ClickSizeOpinionEvent(content: option));
+          },
+        );
+      },
+    );
+  }
+
+  Widget colorOptionButton(String option) {
+    return BlocBuilder<ReviewBloc, ReviewState>(
+      builder: (context, state) {
+        return InkWell(
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 15 * Scale.width, vertical: 10.0 * Scale.width),
+              child: Text(
+                option,
+                style: textStyle(
+                    state.selectedColorOpinion == option
+                        ? MAINCOLOR
+                        : Colors.black,
+                    FontWeight.w500,
+                    'NotoSansKR',
+                    15.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.all(
+                Radius.circular(
+                  10,
+                ),
+              ),
+            ),
+          ),
+          onTap: () {
+            context
+                .read<ReviewBloc>()
+                .add(ClickColorOpinionEvent(content: option));
+          },
+        );
+      },
+    );
+  }
+
+  Widget qualityOptionButton(String option) {
+    return BlocBuilder<ReviewBloc, ReviewState>(
+      builder: (context, state) {
+        return InkWell(
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 15 * Scale.width, vertical: 10.0 * Scale.width),
+              child: Text(
+                option,
+                style: textStyle(
+                    state.selectedQualityOpinion == option
+                        ? MAINCOLOR
+                        : Colors.black,
+                    FontWeight.w500,
+                    'NotoSansKR',
+                    15.0),
+              ),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.all(
+                Radius.circular(
+                  10,
+                ),
+              ),
+            ),
+          ),
+          onTap: () {
+            context
+                .read<ReviewBloc>()
+                .add(ClickQualityOpinionEvent(content: option));
+          },
+        );
+      },
     );
   }
 }
@@ -431,56 +548,120 @@ class AttachPhotoArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.0 * Scale.width),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            commentString,
-            style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 19.0),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
-            child: Text(
-              commentString2,
-              style: textStyle(Colors.red, FontWeight.w400, 'NotoSansKR', 14.0),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: 10 * Scale.height, bottom: 10 * Scale.height),
-            child: DottedBorder(
-              color: Colors.grey[500]!,
-              borderType: BorderType.RRect,
-              radius: Radius.circular(7),
-              child: Padding(
-                padding: EdgeInsets.all(20 * Scale.width),
-                child: Container(
-                  width: 60 * Scale.width,
-                  height: 60 * Scale.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.camera_alt_outlined),
-                      Text(
-                        "0/5",
-                        style: textStyle(Colors.grey[400]!, FontWeight.w400,
-                            'NotoSansKR', 14.0),
-                      )
-                    ],
-                  ),
+    return BlocBuilder<ReviewBloc, ReviewState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0 * Scale.width),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                commentString,
+                style: textStyle(
+                    Colors.black, FontWeight.w500, 'NotoSansKR', 19.0),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
+                child: Text(
+                  commentString2,
+                  style: textStyle(
+                      Colors.red, FontWeight.w400, 'NotoSansKR', 14.0),
                 ),
               ),
-            ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 0.8,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 5,
+                ),
+                itemCount: state.pickedPhotoList.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return InkWell(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: 10 * Scale.height,
+                        ),
+                        child: DottedBorder(
+                          color: Colors.grey[500]!,
+                          borderType: BorderType.RRect,
+                          radius: Radius.circular(7),
+                          child: Padding(
+                            padding: EdgeInsets.all(20 * Scale.width),
+                            child: Center(
+                              child: Container(
+                                width: 60 * Scale.width,
+                                height: 60 * Scale.width,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.camera_alt_outlined),
+                                    Text(
+                                      "${state.pickedPhotoList.length}/5",
+                                      style: textStyle(Colors.grey[400]!,
+                                          FontWeight.w400, 'NotoSansKR', 14.0),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        context.read<ReviewBloc>().add(ClickAddPhotoEvent());
+                      },
+                    );
+                  } else {
+                    return Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 10 * Scale.height,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            child: Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              color: Colors.grey[200],
+                              child: Image.file(
+                                state.pickedPhotoList[index - 1],
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 10,
+                          child: InkWell(
+                            child:
+                                SvgPicture.asset('assets/images/svg/close.svg'),
+                            onTap: () {
+                              context
+                                  .read<ReviewBloc>()
+                                  .add(ClickRemovePhotoEvent(index: index - 1));
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+              Text(
+                commentString3,
+                style: textStyle(
+                    Colors.grey[400]!, FontWeight.w400, 'NotoSansKR', 13.0),
+              ),
+            ],
           ),
-          Text(
-            commentString3,
-            style: textStyle(
-                Colors.grey[400]!, FontWeight.w400, 'NotoSansKR', 13.0),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
