@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.dart';
-import 'package:cloth_collection/page/point/point.dart';
 import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:cloth_collection/repository/shopperRepository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart';
 
 import '../bloc.dart';
 
@@ -18,6 +18,7 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
     on<GetShopperInfoEvent>(getShopperInfo);
     on<GetPointHistoryEvent>(getPointHistory);
     on<PointPagenationEvent>(pagenation);
+    on<PatchShopperInfoEvent>(patchShopperInfo);
   }
 
   Future<void> getShopperInfo(
@@ -32,6 +33,31 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
     } catch (e) {
       print(e.toString());
       emit(state.copyWith(getShopperInfoState: ApiState.fail));
+    }
+  }
+
+  Future<void> patchShopperInfo(
+      PatchShopperInfoEvent event, Emitter<ShopperInfoState> emit) async {
+    Map body = {};
+    Map response;
+    try {
+      if (event.email != state.shopperInfo['email']) {
+        body['email'] = event.email;
+      }
+      if (event.nickname != state.shopperInfo['nickname']) {
+        body['nickname'] = event.nickname;
+      }
+      if (event.height != state.shopperInfo['height']) {
+        body['height'] = event.height;
+      }
+      if (event.weight != state.shopperInfo['weight']) {
+        body['weight'] = event.weight;
+      }
+      response = await _shopperRepository.patchShopperInfo(body);
+      print(response);
+      emit(state.copyWith(patchShopperInfoState: ApiState.success));
+    } catch (e) {
+      emit(state.copyWith(patchShopperInfoState: ApiState.fail));
     }
   }
 

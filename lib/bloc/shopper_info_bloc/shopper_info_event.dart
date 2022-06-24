@@ -16,4 +16,18 @@ class GetPointHistoryEvent extends ShopperInfoEvent {
   });
 }
 
+class PatchShopperInfoEvent extends ShopperInfoEvent {
+  final String email;
+  final String nickname;
+  final String height;
+  final String weight;
+
+  const PatchShopperInfoEvent({
+    required this.email,
+    required this.nickname,
+    required this.height,
+    required this.weight,
+  });
+}
+
 class PointPagenationEvent extends ShopperInfoEvent {}

@@ -1,6 +1,7 @@
 import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/page/coupon/coupon.dart';
 import 'package:cloth_collection/page/mypage/serviceCenter.dart';
+import 'package:cloth_collection/page/mypage/setting.dart';
 import 'package:cloth_collection/page/orderHistory/orderHistory.dart';
 import 'package:cloth_collection/page/point/point.dart';
 import 'package:cloth_collection/page/recentviewProduct.dart';
@@ -22,10 +23,11 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  final ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ShopperInfoBloc(),
+      create: (context) => shopperInfoBloc,
       child: BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
         builder: (context, state) {
           if (state.getShopperInfoState == ApiState.initial) {
@@ -125,11 +127,21 @@ class _MyPageState extends State<MyPage> {
                 ),
               ],
             ),
-            SvgPicture.asset(
-              "assets/images/svg/mypageMove.svg",
-              width: 24 * Scale.width,
-              height: 24 * Scale.width,
-              fit: BoxFit.scaleDown,
+            InkWell(
+              onTap: (() {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => Setting(
+                              shopperInfoBloc: shopperInfoBloc,
+                            ))));
+              }),
+              child: SvgPicture.asset(
+                "assets/images/svg/mypageMove.svg",
+                width: 24 * Scale.width,
+                height: 24 * Scale.width,
+                fit: BoxFit.scaleDown,
+              ),
             ),
           ],
         );
