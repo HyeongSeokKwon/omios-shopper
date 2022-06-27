@@ -4,6 +4,7 @@ import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.
 import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:cloth_collection/repository/orderRepository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 import '../../../model/orderHistoryModel.dart';
 
@@ -20,6 +21,7 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
     on<ChangeStartTimeEvent>(changeStartTime);
     on<ChangeEndTimeEvent>(changeEndTime);
     on<GetOrderHistoryByIdEvent>(getOrderHistoryById);
+    on<GetOrderHistoryByDateEvent>(getOrderHistoryByDate);
     on<PagenationEvent>(pagenation);
   }
 
@@ -105,6 +107,36 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
         orderHistory: OrderHistoryData.from(response),
       ));
       emit(state.copyWith(orderDetailPriceInfo: calculateTotalPrice()));
+    } catch (e) {
+      emit(state.copyWith(getOrderHistoryState: ApiState.fail));
+    }
+  }
+
+  Future<void> getOrderHistoryByDate(
+      GetOrderHistoryByDateEvent event, Emitter<OrderHistoryState> emit) async {
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    Map<String, dynamic> orderHistoryResponse;
+    List<OrderHistoryData> orderHistoryList;
+    try {
+      emit(state.copyWith(getOrderHistoryState: ApiState.loading));
+      print(formatter.format(state.start!).toString());
+      print(formatter.format(state.end!).toString());
+      orderHistoryResponse = await _orderRepository.getOrderHistoryByDate(
+          formatter.format(state.start!).toString(),
+          formatter.format(state.end!).toString());
+      print(orderHistoryResponse);
+      infinityScrollBloc.state.getData = orderHistoryResponse;
+      orderHistoryList = List.generate(
+        orderHistoryResponse['data']['results'].length,
+        (index) {
+          return OrderHistoryData.from(
+              orderHistoryResponse['data']['results'][index]);
+        },
+      );
+      print(orderHistoryList);
+      emit(state.copyWith(
+          getOrderHistoryState: ApiState.success,
+          orderHistoryList: orderHistoryList));
     } catch (e) {
       emit(state.copyWith(getOrderHistoryState: ApiState.fail));
     }

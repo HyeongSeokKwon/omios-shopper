@@ -36,6 +36,19 @@ class OrderRepository extends HttpRepository {
     }
   }
 
+  Future<dynamic> getOrderHistoryByDate(
+      String startDate, String endDate) async {
+    Map<String, dynamic> queryString = {};
+    try {
+      queryString['start_date'] = startDate;
+      queryString['end_date'] = endDate;
+      response = await super.httpGet("/orders", queryString);
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<dynamic> getOrderStatistics() async {
     try {
       response = await super.httpGet('/orders/items/statistics');

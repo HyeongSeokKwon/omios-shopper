@@ -402,6 +402,37 @@ class _ScrollAreaState extends State<ScrollArea> {
                     decoration: BoxDecoration(color: const Color(0xffaaaaaa))),
               ),
               selectDateArea("end"),
+              SizedBox(
+                width: 5 * Scale.width,
+              ),
+              BlocBuilder<OrderHistoryBloc, OrderHistoryState>(
+                builder: (context, state) {
+                  return InkWell(
+                    onTap: () {
+                      context
+                          .read<OrderHistoryBloc>()
+                          .add(GetOrderHistoryByDateEvent());
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 13 * Scale.width,
+                            vertical: 5 * Scale.height),
+                        child: Text(
+                          '조회',
+                          style: textStyle(Colors.black, FontWeight.w400,
+                              'NotoSansKR', 14.0),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: const Color(0xffe2e2e2), width: 1),
+                        color: const Color(0xffffffff),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ],
