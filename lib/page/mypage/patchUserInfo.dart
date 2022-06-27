@@ -6,18 +6,27 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../bloc/bloc.dart';
 
-class PatchUserInfo extends StatelessWidget {
-  final ShopperInfoBloc shopperInfoBloc;
+class PatchUserInfo extends StatefulWidget {
+  ShopperInfoBloc shopperInfoBloc;
   PatchUserInfo({Key? key, required this.shopperInfoBloc}) : super(key: key);
 
+  @override
+  State<PatchUserInfo> createState() => _PatchUserInfoState();
+}
+
+class _PatchUserInfoState extends State<PatchUserInfo> {
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController nickNameController = TextEditingController();
+
   final TextEditingController heightController = TextEditingController();
+
   final TextEditingController weightController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => shopperInfoBloc,
+    return BlocProvider.value(
+      value: widget.shopperInfoBloc,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

@@ -100,8 +100,4 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: Colors.white,
     );
   }
-
-  // Widget _searchArea() {
-  //   return
-  // }
 }

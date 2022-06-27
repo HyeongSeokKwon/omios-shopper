@@ -3,7 +3,6 @@ import 'package:cloth_collection/bloc/infinity_scroll_bloc/infinity_scroll_bloc.
 import 'package:cloth_collection/repository/httpRepository.dart';
 import 'package:cloth_collection/repository/shopperRepository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:http/http.dart';
 
 import '../bloc.dart';
 
@@ -40,7 +39,9 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
       PatchShopperInfoEvent event, Emitter<ShopperInfoState> emit) async {
     Map body = {};
     Map response;
+    Map<String, dynamic> info;
     try {
+      emit(state.copyWith(patchShopperInfoState: ApiState.initial));
       if (event.email != state.shopperInfo['email']) {
         body['email'] = event.email;
       }
@@ -54,8 +55,9 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
         body['weight'] = event.weight;
       }
       response = await _shopperRepository.patchShopperInfo(body);
-      print(response);
-      emit(state.copyWith(patchShopperInfoState: ApiState.success));
+      info = await _shopperRepository.getShopperInfo();
+      emit(state.copyWith(
+          patchShopperInfoState: ApiState.success, shopperInfo: info));
     } catch (e) {
       emit(state.copyWith(patchShopperInfoState: ApiState.fail));
     }

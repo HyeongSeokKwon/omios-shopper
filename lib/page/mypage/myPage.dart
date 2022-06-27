@@ -23,7 +23,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  final ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
+  ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
