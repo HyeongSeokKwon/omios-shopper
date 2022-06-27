@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../bloc/bloc.dart';
 
 class PatchUserInfo extends StatefulWidget {
-  ShopperInfoBloc shopperInfoBloc;
+  final ShopperInfoBloc shopperInfoBloc;
   PatchUserInfo({Key? key, required this.shopperInfoBloc}) : super(key: key);
 
   @override
