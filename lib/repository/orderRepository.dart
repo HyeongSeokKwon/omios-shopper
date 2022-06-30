@@ -40,8 +40,10 @@ class OrderRepository extends HttpRepository {
       String startDate, String endDate) async {
     Map<String, dynamic> queryString = {};
     try {
-      queryString['start_date'] = startDate;
-      queryString['end_date'] = endDate;
+      if (startDate.isNotEmpty || endDate.isNotEmpty) {
+        queryString['start_date'] = startDate;
+        queryString['end_date'] = endDate;
+      }
       response = await super.httpGet("/orders", queryString);
       return response;
     } catch (e) {
