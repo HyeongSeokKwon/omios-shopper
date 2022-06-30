@@ -40,6 +40,7 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
     Map body = {};
     Map response;
     Map<String, dynamic> info;
+    emit(state.copyWith(patchShopperInfoState: ApiState.loading));
     try {
       emit(state.copyWith(patchShopperInfoState: ApiState.initial));
       if (event.email != state.shopperInfo['email']) {

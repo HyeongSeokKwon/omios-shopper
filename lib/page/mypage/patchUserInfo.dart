@@ -1,4 +1,5 @@
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,7 +56,16 @@ class _PatchUserInfoState extends State<PatchUserInfo> {
                           "NotoSansKR", 22.0)),
                 ],
               ),
-              BlocBuilder<ShopperInfoBloc, ShopperInfoState>(
+              BlocConsumer<ShopperInfoBloc, ShopperInfoState>(
+                listener: ((context, state) {
+                  if (state.patchShopperInfoState == ApiState.success) {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return showAlertDialog(context, "정보를 변경했습니다.");
+                        });
+                  }
+                }),
                 builder: (context, state) {
                   return InkWell(
                     onTap: () {
