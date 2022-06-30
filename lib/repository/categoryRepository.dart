@@ -1,10 +1,12 @@
 import 'httpRepository.dart';
 
 class CategoryRepository extends HttpRepository {
+  static const String categoryUrl = "/products/categories";
+
   Future<dynamic> getCategory() async {
     Map response;
     try {
-      response = await super.httpPublicGet("/products/categories");
+      response = await super.httpPublicGet(categoryUrl);
       return response['data'];
     } catch (e) {
       throw (e);

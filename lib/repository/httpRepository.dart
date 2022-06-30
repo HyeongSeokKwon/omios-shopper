@@ -12,7 +12,7 @@ class HttpRepository {
   String? accessToken;
   late int id;
 
-  String addressUrl = '13.209.244.41';
+  static const String addressUrl = 'test.omios.co.kr';
   late SharedPreferences pref;
 
   dynamic _response(http.Response response) {

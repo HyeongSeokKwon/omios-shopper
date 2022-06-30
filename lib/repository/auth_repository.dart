@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cloth_collection/repository/httpRepository.dart';
 
 class AuthRepository extends HttpRepository {
+  static const String createTokenUrl = "users/tokens";
+  static const String createAccessTokenByRefreshUrl = "users/tokens/refresh";
   late Map response;
 
   Future<dynamic> basicLogin(String id, String password) async {
@@ -12,7 +14,7 @@ class AuthRepository extends HttpRepository {
     };
 
     try {
-      response = await super.httpPublicPost('users/tokens', json.encode(body));
+      response = await super.httpPublicPost(createTokenUrl, json.encode(body));
       return response;
     } catch (e) {
       rethrow;
@@ -25,8 +27,8 @@ class AuthRepository extends HttpRepository {
     };
 
     try {
-      response =
-          await super.httpPost('users/tokens/refresh', json.encode(body));
+      response = await super
+          .httpPost(createAccessTokenByRefreshUrl, json.encode(body));
       return response;
     } catch (e) {
       rethrow;

@@ -1,6 +1,8 @@
 import 'package:cloth_collection/repository/httpRepository.dart';
 
 class SearchRepository extends HttpRepository {
+  static const String relatedSearchWordsUrl = "/products/related-search-words";
+  static const String productUrl = "/products";
   late Map response;
   late Map<String, dynamic> queryParams;
 
@@ -8,8 +10,7 @@ class SearchRepository extends HttpRepository {
     queryParams = {};
     queryParams['search_word'] = text;
     try {
-      response = await super
-          .httpPublicGet("/products/related-search-words", queryParams);
+      response = await super.httpPublicGet(relatedSearchWordsUrl, queryParams);
 
       return response['data'];
     } catch (e) {
@@ -21,7 +22,7 @@ class SearchRepository extends HttpRepository {
     queryParams = {};
     queryParams['search_word'] = text;
     try {
-      response = await super.httpGet("/products", queryParams);
+      response = await super.httpGet(productUrl, queryParams);
 
       return response['data'];
     } catch (e) {

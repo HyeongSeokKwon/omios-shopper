@@ -7,9 +7,10 @@ class QnaRepository extends HttpRepository {
   late Map<String, dynamic> queryParams;
 
   Future<dynamic> getQnaList(int productId) async {
+    final String getQnaListUrl = "/products/$productId/question-answers";
+
     try {
-      response =
-          await super.httpPublicGet("/products/$productId/question-answers");
+      response = await super.httpPublicGet(getQnaListUrl);
       return response;
     } catch (e) {
       throw e;
@@ -17,9 +18,10 @@ class QnaRepository extends HttpRepository {
   }
 
   Future<dynamic> getQuestionClassification() async {
+    final String getQuestionClassificationUrl =
+        "/products/question-answers/classifications";
     try {
-      response =
-          await super.httpGet("/products/question-answers/classifications");
+      response = await super.httpGet(getQuestionClassificationUrl);
 
       return response['data'];
     } catch (e) {
@@ -28,9 +30,9 @@ class QnaRepository extends HttpRepository {
   }
 
   Future<dynamic> postQuestion(int productId, Map<String, dynamic> body) async {
+    final String registQuestionUrl = "/products/$productId/question-answers";
     try {
-      response = await super
-          .httpPost("/products/$productId/question-answers", json.encode(body));
+      response = await super.httpPost(registQuestionUrl, json.encode(body));
 
       return response['data'];
     } catch (e) {

@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'httpRepository.dart';
 
 class OrderRepository extends HttpRepository {
+  static const String orderUrl = "/orders";
+  static const String getOrderItemStatistics = "/orders/items/statistics";
+
   late Map response;
   late Map<String, dynamic> queryParams;
   Map body = {};
 
   Future<dynamic> postOrder(Map<String, dynamic> body) async {
     try {
-      response = await super.httpPost("/orders", json.encode(body));
+      response = await super.httpPost(orderUrl, json.encode(body));
 
       return response;
     } catch (e) {
@@ -19,7 +22,7 @@ class OrderRepository extends HttpRepository {
 
   Future<dynamic> getOrderHistory() async {
     try {
-      response = await super.httpGet("/orders");
+      response = await super.httpGet(orderUrl);
 
       return response;
     } catch (e) {
@@ -29,7 +32,7 @@ class OrderRepository extends HttpRepository {
 
   Future<dynamic> getOrderHistoryById(int id) async {
     try {
-      response = await super.httpGet("/orders/$id");
+      response = await super.httpGet(orderUrl + "/$id");
       return response['data'];
     } catch (e) {
       throw e;
@@ -44,7 +47,7 @@ class OrderRepository extends HttpRepository {
         queryString['start_date'] = startDate;
         queryString['end_date'] = endDate;
       }
-      response = await super.httpGet("/orders", queryString);
+      response = await super.httpGet(orderUrl, queryString);
       return response;
     } catch (e) {
       throw e;
@@ -53,7 +56,7 @@ class OrderRepository extends HttpRepository {
 
   Future<dynamic> getOrderStatistics() async {
     try {
-      response = await super.httpGet('/orders/items/statistics');
+      response = await super.httpGet(getOrderItemStatistics);
 
       return response['data'];
     } catch (e) {

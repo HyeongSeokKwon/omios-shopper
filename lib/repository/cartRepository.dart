@@ -3,10 +3,14 @@ import 'dart:convert';
 import 'httpRepository.dart';
 
 class CartRepository extends HttpRepository {
+  late Map<String, dynamic> response;
+
+  static const String cartItemUrl = '/users/shoppers/carts';
+  static const String deleteCartItemUrl = '/users/shoppers/carts/remove';
+
   Future<dynamic> getItemFromCarts() async {
-    Map<String, dynamic> response;
     try {
-      response = await super.httpGet('/users/shoppers/carts');
+      response = await super.httpGet(cartItemUrl);
       return response['data'];
     } catch (e) {
       throw e;
@@ -14,10 +18,8 @@ class CartRepository extends HttpRepository {
   }
 
   Future<dynamic> registItemToCarts(List body) async {
-    Map response;
     try {
-      response =
-          await super.httpPost("/users/shoppers/carts", json.encode(body));
+      response = await super.httpPost(cartItemUrl, json.encode(body));
       return response['data'];
     } catch (e) {
       throw (e);
@@ -25,11 +27,9 @@ class CartRepository extends HttpRepository {
   }
 
   Future<dynamic> patchItemFromCart(int cartId, Map body) async {
-    Map response;
-
     try {
-      response = await super
-          .httpPatch('/users/shoppers/carts/$cartId', json.encode(body));
+      response =
+          await super.httpPatch('$cartItemUrl/$cartId', json.encode(body));
       return response['data'];
     } catch (e) {
       throw (e);
@@ -37,12 +37,10 @@ class CartRepository extends HttpRepository {
   }
 
   Future<dynamic> deleteItemFromCart(List idList) async {
-    Map response;
     Map body = {};
     body['id'] = idList;
     try {
-      response = await super
-          .httpPost("/users/shoppers/carts/remove", json.encode(body));
+      response = await super.httpPost(deleteCartItemUrl, json.encode(body));
       return response['data'];
     } catch (e) {
       throw (e);
