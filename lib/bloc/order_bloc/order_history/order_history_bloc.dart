@@ -85,11 +85,21 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
 
   void changeStartTime(
       ChangeStartTimeEvent event, Emitter<OrderHistoryState> emit) {
+    if (state.end.toString().isNotEmpty &&
+        state.end!.isBefore(event.startTime!)) {
+      emit(state.copyWith(start: state.end, end: event.startTime));
+      return;
+    }
     emit(state.copyWith(start: event.startTime));
   }
 
   void changeEndTime(
       ChangeEndTimeEvent event, Emitter<OrderHistoryState> emit) {
+    if (state.start.toString().isNotEmpty &&
+        state.start!.isAfter(event.endTime!)) {
+      emit(state.copyWith(start: state.end, end: event.endTime));
+      return;
+    }
     emit(state.copyWith(end: event.endTime));
   }
 
