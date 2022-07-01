@@ -1,4 +1,5 @@
 import 'package:cloth_collection/controller/signUpController.dart';
+import 'package:cloth_collection/page/signUp/certificationPage.dart';
 import 'package:cloth_collection/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,7 @@ class _SignUpState extends State<SignUp> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             subjectArea(),
+            authenticationTextBtn(),
             idArea(),
             passwordArea(),
             passwordCheckArea(),
@@ -49,6 +51,20 @@ class _SignUpState extends State<SignUp> {
             termsArea(),
             signUpButtonArea(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget authenticationTextBtn() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Certification()));
+      },
+      child: Container(
+        child: Center(
+          child: Text('본인인증 TEST'),
         ),
       ),
     );
