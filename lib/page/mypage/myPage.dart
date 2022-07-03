@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../login/login.dart';
+import '../review/reviewPage.dart';
 
 class MyPage extends StatefulWidget {
   @override
@@ -179,8 +180,8 @@ class _MyPageState extends State<MyPage> {
             ],
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateReview()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ReviewPage()));
           },
         ),
         GestureDetector(
