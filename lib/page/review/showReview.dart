@@ -110,13 +110,6 @@ class _ScrollAreaState extends State<ScrollArea> {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-              right: 10 * Scale.width,
-            ),
-            child: SvgPicture.asset('assets/images/svg/mypageAddtionalMove.svg',
-                width: 15 * Scale.width, height: 15 * Scale.width),
-          )
         ],
       ),
     );
