@@ -1,4 +1,5 @@
 import 'package:cloth_collection/page/review/createReview.dart';
+import 'package:cloth_collection/page/review/showReview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -264,50 +265,58 @@ class _ScrollAreaState extends State<ScrollArea>
   Widget createdReviewBox() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10 * Scale.height),
-      child: Row(
-        children: [
-          Container(
-            width: 74 * Scale.width,
-            height: 74 * Scale.width * 4 / 3,
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.asset('assets/images/임시상품2.png')),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(14),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ShowReviewPage()));
+        },
+        child: Row(
+          children: [
+            Container(
+              width: 74 * Scale.width,
+              height: 74 * Scale.width * 4 / 3,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset('assets/images/임시상품2.png')),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(14),
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            width: 13 * Scale.width,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Product Name",
-                  style: textStyle(const Color(0xff333333), FontWeight.w500,
-                      "NotoSansKR", 16.0),
-                ),
-                SizedBox(height: 4 * Scale.height),
-                Text(
-                  "display_color_name / size | 수량 : N",
-                  style: textStyle(const Color(0xff797979), FontWeight.w400,
-                      "NotoSansKR", 13.0),
-                ),
-                SizedBox(height: 8 * Scale.height),
-              ],
+            SizedBox(
+              width: 13 * Scale.width,
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              right: 10 * Scale.width,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Product Name",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 16.0),
+                  ),
+                  SizedBox(height: 4 * Scale.height),
+                  Text(
+                    "display_color_name / size | 수량 : N",
+                    style: textStyle(const Color(0xff797979), FontWeight.w400,
+                        "NotoSansKR", 13.0),
+                  ),
+                  SizedBox(height: 8 * Scale.height),
+                ],
+              ),
             ),
-            child: SvgPicture.asset('assets/images/svg/mypageAddtionalMove.svg',
-                width: 15 * Scale.width, height: 15 * Scale.width),
-          )
-        ],
+            Padding(
+              padding: EdgeInsets.only(
+                right: 10 * Scale.width,
+              ),
+              child: SvgPicture.asset(
+                  'assets/images/svg/mypageAddtionalMove.svg',
+                  width: 15 * Scale.width,
+                  height: 15 * Scale.width),
+            )
+          ],
+        ),
       ),
     );
   }
