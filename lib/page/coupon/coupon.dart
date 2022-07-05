@@ -344,14 +344,28 @@ class _GetCouponState extends State<GetCoupon> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        '쿠폰 받기',
-                        style: textStyle(Colors.grey[600]!, FontWeight.w400,
-                            'NotoSansKR', 14.0),
-                      ),
-                    ],
+                  BlocBuilder<CouponBloc, CouponState>(
+                    builder: (context, state) {
+                      return InkWell(
+                        onTap: () {
+                          context
+                              .read<CouponBloc>()
+                              .add(ClickGetCouponEvent(id: data['id']));
+                          context
+                              .read<CouponBloc>()
+                              .add(ShowCanGetCouponEvent());
+                        },
+                        child: Column(
+                          children: [
+                            Text(
+                              '쿠폰 받기',
+                              style: textStyle(Colors.grey[600]!,
+                                  FontWeight.w400, 'NotoSansKR', 14.0),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(

@@ -7,8 +7,12 @@ abstract class CouponEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ShowCanGetCouponEvent extends CouponEvent{
-  
-}
+class ShowCanGetCouponEvent extends CouponEvent {}
 
-class ShowOwnCouponEvent extends CouponEvent{}
+class ShowOwnCouponEvent extends CouponEvent {}
+
+class ClickGetCouponEvent extends CouponEvent {
+  final int id;
+
+  const ClickGetCouponEvent({required this.id});
+}

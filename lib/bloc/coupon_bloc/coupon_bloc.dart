@@ -13,6 +13,7 @@ class CouponBloc extends Bloc<CouponEvent, CouponState> {
   CouponBloc(this.infinityScrollBloc) : super(CouponState.initial()) {
     on<ShowOwnCouponEvent>(getOwnCoupon);
     on<ShowCanGetCouponEvent>(getCanGetCoupon);
+    on<ClickGetCouponEvent>(clickGetCoupon);
   }
 
   Future<void> getOwnCoupon(
@@ -44,6 +45,17 @@ class CouponBloc extends Bloc<CouponEvent, CouponState> {
           ownCouponList: data['results'],
         ),
       );
+    } catch (e) {
+      emit(state.copyWith(canGetCouponState: ApiState.fail));
+    }
+  }
+
+  Future<void> clickGetCoupon(
+      ClickGetCouponEvent event, Emitter<CouponState> emit) async {
+    Map<String, dynamic> response;
+    try {
+      response = await _couponRepository.getCoupon(event.id);
+      emit(state.copyWith(canGetCouponState: ApiState.success));
     } catch (e) {
       emit(state.copyWith(canGetCouponState: ApiState.fail));
     }
