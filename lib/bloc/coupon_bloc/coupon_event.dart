@@ -6,3 +6,9 @@ abstract class CouponEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class ShowCanGetCouponEvent extends CouponEvent{
+  
+}
+
+class ShowOwnCouponEvent extends CouponEvent{}
