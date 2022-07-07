@@ -41,6 +41,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> getCartsProduct(
       GetCartsProductEvent event, Emitter<CartState> emit) async {
     Map response;
+    if (await _productRepository.isRefreshExpired()) {
+      emit(state.copyWith(getCartsState: ApiState.unauthenticated));
+      return;
+    }
     try {
       response = await _cartRepository.getItemFromCarts();
       for (var value in response['results']) {

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/page/cart/emptyCart.dart';
+import 'package:cloth_collection/page/login/login.dart';
 import 'package:cloth_collection/page/order/order.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
@@ -51,35 +52,40 @@ class _CartPageState extends State<CartPage> {
           bottom: PreferredSize(
               child: BlocBuilder<CartBloc, CartState>(
                 builder: (context, state) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            context.read<CartBloc>().add(
-                                ClickSelectAllProductButtonEvent(
-                                    isChecked:
-                                        state.selectedProductsId.length ==
-                                                state.getCartsData.length
-                                            ? false
-                                            : true));
-                          },
-                          child: Text(
-                            "전체 선택",
+                  if (state.getCartsState == ApiState.success) {
+                    return Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              context.read<CartBloc>().add(
+                                  ClickSelectAllProductButtonEvent(
+                                      isChecked:
+                                          state.selectedProductsId.length ==
+                                                  state.getCartsData.length
+                                              ? false
+                                              : true));
+                            },
+                            child: Text(
+                              "전체 선택",
+                              style: textStyle(Colors.grey[700]!,
+                                  FontWeight.w400, 'NotoSansKR', 14.0),
+                            ),
+                          ),
+                          Text(
+                            "상품 삭제",
                             style: textStyle(Colors.grey[700]!, FontWeight.w400,
                                 'NotoSansKR', 14.0),
                           ),
-                        ),
-                        Text(
-                          "상품 삭제",
-                          style: textStyle(Colors.grey[700]!, FontWeight.w400,
-                              'NotoSansKR', 14.0),
-                        ),
-                      ],
-                    ),
-                  );
+                        ],
+                      ),
+                    );
+                  } else {
+                    return SizedBox();
+                  }
                 },
               ),
               preferredSize: Size.fromHeight(10 * Scale.height)),
@@ -87,10 +93,14 @@ class _CartPageState extends State<CartPage> {
           elevation: 0.0,
           titleSpacing: 0.0,
         ),
-        body: BlocBuilder<CartBloc, CartState>(
-          builder: (context, state) {
+        body: BlocConsumer<CartBloc, CartState>(
+          listener: ((context, state) {
             if (state.getCartsState == ApiState.initial) {
               context.read<CartBloc>().add(GetCartsProductEvent());
+            }
+          }),
+          builder: (context, state) {
+            if (state.getCartsState == ApiState.initial) {
               return progressBar();
             } else if (state.getCartsState == ApiState.success) {
               if (state.getCartsData.isEmpty) {
@@ -99,6 +109,77 @@ class _CartPageState extends State<CartPage> {
               return scrollArea();
             } else if (state.getCartsState == ApiState.fail) {
               return ErrorCard();
+            } else if (state.getCartsState == ApiState.unauthenticated) {
+              return Container(
+                height: double.maxFinite,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "로그인이 필요한 서비스입니다.",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, 'NotoSansKR', 18.0),
+                      ),
+                      SizedBox(
+                        height: 15 * Scale.height,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey[400]!),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(11))),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15 * Scale.width,
+                                    vertical: 10 * Scale.height),
+                                child: Center(
+                                  child: Text(
+                                    '로그인',
+                                    style: textStyle(Colors.grey[600]!,
+                                        FontWeight.w500, 'NotoSansKR', 16.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Login(
+                                            routePage: CartPage(),
+                                          )));
+                            },
+                          ),
+                          SizedBox(width: 10 * Scale.width),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: MAINCOLOR,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(11))),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15 * Scale.width,
+                                  vertical: 10 * Scale.height),
+                              child: Center(
+                                child: Text(
+                                  '회원가입',
+                                  style: textStyle(Colors.white,
+                                      FontWeight.w500, 'NotoSansKR', 16.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
             } else {
               return progressBar();
             }
@@ -166,6 +247,8 @@ class _CartPageState extends State<CartPage> {
               );
             } else if (state.getCartsState == ApiState.fail) {
               return ErrorCard();
+            } else if (state.getCartsState == ApiState.unauthenticated) {
+              return SizedBox();
             } else {
               return progressBar();
             }
