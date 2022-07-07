@@ -22,10 +22,10 @@ class _SplashState extends State<Splash> {
   Future<bool> getAutoLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     autoLogin = prefs.getBool("autoLogin") ?? false;
-    print(autoLogin);
-    if (!autoLogin) {
-      Navigator.popAndPushNamed(context, '/login');
-    }
+    // print(autoLogin);
+    // if (!autoLogin) {
+    //   Navigator.popAndPushNamed(context, '/login');
+    // }
     return autoLogin;
   }
 
@@ -49,7 +49,7 @@ class _SplashState extends State<Splash> {
 
                     break;
                   case AuthStatus.unauthenticated:
-                    Navigator.popAndPushNamed(context, '/login');
+                    Navigator.popAndPushNamed(context, '/home');
                     break;
                   case AuthStatus.loginError:
                     if (Platform.isIOS) {
