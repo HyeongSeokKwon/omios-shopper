@@ -14,6 +14,7 @@ class AuthenticationState extends Equatable {
   final String id;
   final String password;
   final bool autoLogin;
+  final bool isAuthenticated;
   final AuthStatus authStatus;
   final String error;
 
@@ -21,6 +22,7 @@ class AuthenticationState extends Equatable {
     required this.id,
     required this.password,
     required this.autoLogin,
+    required this.isAuthenticated,
     required this.authStatus,
     required this.error,
   });
@@ -30,18 +32,21 @@ class AuthenticationState extends Equatable {
       id: '',
       password: '',
       autoLogin: autoLogin,
+      isAuthenticated: false,
       authStatus: AuthStatus.deviceInit,
       error: '',
     );
   }
 
   @override
-  List<Object> get props => [id, password, autoLogin, authStatus, error];
+  List<Object> get props =>
+      [id, password, autoLogin, isAuthenticated, authStatus, error];
 
   AuthenticationState copyWith({
     String? id,
     String? password,
     bool? autoLogin,
+    bool? isAuthenticated,
     AuthStatus? authStatus,
     String? error,
   }) {
@@ -49,6 +54,7 @@ class AuthenticationState extends Equatable {
       id: id ?? this.id,
       password: password ?? this.password,
       autoLogin: autoLogin ?? this.autoLogin,
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       authStatus: authStatus ?? this.authStatus,
       error: error ?? this.error,
     );
