@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloth_collection/bloc/auth_bloc/authentication_bloc.dart';
-import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/login/widget/login_widget.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +12,8 @@ import '../../repository/auth_repository.dart';
 import '../../util/util.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  final Widget routePage;
+  const Login({Key? key, required this.routePage}) : super(key: key);
   @override
   _LoginState createState() => _LoginState();
 }
@@ -51,12 +51,13 @@ class _LoginState extends State<Login> {
           listener: (context, state) {
             switch (state.authStatus) {
               case AuthStatus.loginSuccess:
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute<dynamic>(
-                      builder: (BuildContext context) => HomePage(),
-                    ),
-                    (route) => false);
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<dynamic>(
+                    builder: (BuildContext context) => widget.routePage,
+                  ),
+                );
                 break;
               case AuthStatus.loginFailure:
                 ScaffoldMessenger.of(context).showSnackBar(
