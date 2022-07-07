@@ -70,16 +70,18 @@ class HttpRepository {
     accessToken = changedAccessToken;
   }
 
-  bool isAccessExpired() {
-    if (accessToken == null || Jwt.isExpired(accessToken!)) {
+  Future<bool> isAccessExpired() async {
+    await getToken();
+    if (accessToken == '' || Jwt.isExpired(accessToken!)) {
       return true;
     } else {
       return false;
     }
   }
 
-  bool isRefreshExpired() {
-    if (refreshToken == null || Jwt.isExpired(refreshToken!)) {
+  Future<bool> isRefreshExpired() async {
+    await getToken();
+    if (refreshToken == '' || Jwt.isExpired(refreshToken!)) {
       return true;
     } else {
       return false;
@@ -90,9 +92,9 @@ class HttpRepository {
     // refresh token으로 accessToken 갱신시키는 함수
     Map<String, dynamic> responseJson;
     await getToken();
-    if (isAccessExpired()) {
+    if (await isAccessExpired()) {
       //access token 만료 되었으면
-      if (!isRefreshExpired()) {
+      if (!await isRefreshExpired()) {
         // refresh token 만료 되지 않았으면
         try {
           var response = await http.post(
