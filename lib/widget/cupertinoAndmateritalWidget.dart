@@ -75,6 +75,7 @@ dynamic loginAlertDialog(BuildContext context, Widget routePage) {
                 isDefaultAction: true,
                 child: Text("확인"),
                 onPressed: () {
+                  Navigator.of(context).pop();
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -105,6 +106,7 @@ dynamic loginAlertDialog(BuildContext context, Widget routePage) {
                       Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
                 ),
                 onPressed: () {
+                  Navigator.of(context).pop();
                   Navigator.push(
                       context,
                       MaterialPageRoute(
