@@ -1,13 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/model/productModel.dart';
+import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/productDetail/productDetail.dart';
 import 'package:cloth_collection/util/util.dart';
+import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
 import '../bloc/bloc.dart';
+import '../page/login/login.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -64,7 +67,12 @@ class ProductCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          child: BlocBuilder<LikeBloc, LikeState>(
+          child: BlocConsumer<LikeBloc, LikeState>(
+            listener: (context, state) {
+              if (state.postLikeState == ApiState.unauthenticated) {
+                loginAlertDialog(context, HomePage());
+              }
+            },
             builder: (context, state) {
               return StatefulBuilder(
                 builder: (context, setState) {

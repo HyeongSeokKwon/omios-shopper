@@ -15,6 +15,11 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
 
   Future<void> clickLikeButton(
       ClickLikeButtonEvent event, Emitter<LikeState> emit) async {
+    emit(state.copyWith(postLikeState: ApiState.initial));
+    if (await _userRepository.isRefreshExpired()) {
+      emit(state.copyWith(postLikeState: ApiState.unauthenticated));
+      return;
+    }
     if (event.isLike) {
       await likeRequest(event.productId);
       return;
@@ -25,6 +30,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
 
   Future<void> likeRequest(String productId) async {
     Map response;
+
     response = await _userRepository.addLike(productId);
   }
 
