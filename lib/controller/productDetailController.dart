@@ -42,9 +42,15 @@ class ProductDetailController extends GetxController {
   }
 
   Future<dynamic> getProductDetailInfo(int productId) async {
+    var response;
     try {
       await httpRepository.getToken();
-      var response = await httpRepository.httpGet('/products/$productId');
+
+      if (await httpRepository.isRefreshExpired()) {
+        response = await httpRepository.httpPublicGet('/products/$productId');
+      } else {
+        response = await httpRepository.httpGet('/products/$productId');
+      }
 
       productInfo = ProductDetailInfo.fromJson(response['data']);
       for (Map color in productInfo.colors) {
@@ -64,8 +70,9 @@ class ProductDetailController extends GetxController {
     queryParams['sub_category'] = "7";
 
     await httpRepository.getToken();
-    var response =
-        await httpRepository.httpGet("/products", queryParams).catchError((e) {
+    var response = await httpRepository
+        .httpPublicGet("/products", queryParams)
+        .catchError((e) {
       throw e;
     });
     return response['data']['results'];

@@ -13,11 +13,22 @@ class HomeController extends GetxController {
 
   Future<dynamic> getTodaysProducts() async {
     Map<String, String> queryParams = {};
+    var response;
     queryParams['sub_category'] = "6";
-    var response =
-        await httpRepository.httpGet("/products", queryParams).catchError((e) {
-      throw e;
-    });
+    if (await httpRepository.isRefreshExpired()) {
+      response = await httpRepository
+          .httpPublicGet("/products", queryParams)
+          .catchError((e) {
+        throw e;
+      });
+    } else {
+      response = await httpRepository
+          .httpGet("/products", queryParams)
+          .catchError((e) {
+        throw e;
+      });
+    }
+
     return response['data']['results'];
   }
 }
