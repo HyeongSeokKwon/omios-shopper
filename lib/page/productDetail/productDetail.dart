@@ -40,6 +40,7 @@ class _ProductDetailState extends State<ProductDetail>
   late NavigatorState navigator;
   late Future recommandProductFuture;
   late Future productDetailInfo;
+
   @override
   void initState() {
     super.initState();
@@ -61,12 +62,6 @@ class _ProductDetailState extends State<ProductDetail>
   void didChangeDependencies() {
     navigator = Navigator.of(context);
     super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    productDetailController.dispose();
-    super.dispose();
   }
 
   @override
@@ -1085,6 +1080,7 @@ class BuyingBottomSheet extends StatefulWidget {
 class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
   OrderBloc orderBloc = OrderBloc();
   late CartBloc cartBloc;
+  FocusNode focusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   int selectedShow = 1;
 
@@ -1100,7 +1096,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
     var bottomSheetView = [selectedOptionArea(), buyingBottomSheetArea()];
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => orderBloc),
+        BlocProvider.value(value: orderBloc),
         BlocProvider(create: (context) => cartBloc)
       ],
       child: Container(
@@ -1529,7 +1525,35 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                       Column(
                         children: [
                           SizedBox(height: 10 * Scale.height),
-                          BlocBuilder<OrderBloc, OrderState>(
+                          BlocConsumer<OrderBloc, OrderState>(
+                            listenWhen: ((previous, current) {
+                              if (previous.isauthenticated !=
+                                  current.isauthenticated) {
+                                return true;
+                              } else
+                                return false;
+                            }),
+                            listener: (context, state) {
+                              print(state);
+                              if (state.isauthenticated == false) {
+                                loginAlertDialog(
+                                    context,
+                                    Order(
+                                      orderBloc: orderBloc,
+                                    ));
+                              }
+                              if (state.isauthenticated == true) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: ((context) => Order(
+                                          orderBloc: orderBloc,
+                                        )),
+                                  ),
+                                );
+                                print("navigate to orderPage");
+                                return;
+                              }
+                            },
                             builder: (context, state) {
                               return TextButton(
                                 child: Text("바로구매",
@@ -1555,15 +1579,7 @@ class _BuyingBottomSheetState extends State<BuyingBottomSheet> {
                                           orderProduct: widget
                                               .productDetailController
                                               .productCart));
-
-                                  if (widget.productDetailController.productCart
-                                      .isNotEmpty) {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: ((context) => Order(
-                                                  orderBloc: orderBloc,
-                                                ))));
-                                  }
+                                  // Navigator.pop(context);
                                 },
                               );
                             },

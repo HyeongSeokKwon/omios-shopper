@@ -23,14 +23,18 @@ class ShopperInfoBloc extends Bloc<ShopperInfoEvent, ShopperInfoState> {
   Future<void> getShopperInfo(
       GetShopperInfoEvent event, Emitter<ShopperInfoState> emit) async {
     Map<String, dynamic> info;
+    print('getshopper');
+    emit(state.copyWith(getShopperInfoState: ApiState.loading));
+    if (await _shopperRepository.isRefreshExpired()) {
+      emit(state.copyWith(getShopperInfoState: ApiState.unauthenticated));
+      return;
+    }
     try {
-      emit(state.copyWith(getShopperInfoState: ApiState.loading));
       info = await _shopperRepository.getShopperInfo();
 
       emit(state.copyWith(
           shopperInfo: info, getShopperInfoState: ApiState.success));
     } catch (e) {
-      print(e.toString());
       emit(state.copyWith(getShopperInfoState: ApiState.fail));
     }
   }

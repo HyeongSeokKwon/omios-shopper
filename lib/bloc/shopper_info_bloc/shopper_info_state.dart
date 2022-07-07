@@ -7,7 +7,7 @@ class ShopperInfoState extends Equatable {
   final ApiState patchShopperInfoState;
   final ApiState getPointHistoryState;
 
-  ShopperInfoState({
+  const ShopperInfoState({
     required this.shopperInfo,
     required this.pointHistory,
     required this.getShopperInfoState,

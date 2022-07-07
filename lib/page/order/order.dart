@@ -20,14 +20,14 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
-  final ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
-  final ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
+  ShippingAddressBloc shippingAddressBloc = ShippingAddressBloc();
+  ShopperInfoBloc shopperInfoBloc = ShopperInfoBloc();
   TextEditingController requirementController = TextEditingController();
   @override
   void initState() {
+    super.initState();
     widget.orderBloc.shippingAddressBloc = shippingAddressBloc;
     widget.orderBloc.shopperInfoBloc = shopperInfoBloc;
-    super.initState();
   }
 
   @override
@@ -108,6 +108,7 @@ class _OrderState extends State<Order> {
             }
           }),
           builder: (context, state) {
+            print(state.productCart);
             return InkWell(
               onTap: () {
                 context

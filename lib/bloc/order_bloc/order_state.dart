@@ -3,6 +3,7 @@ part of 'order_bloc.dart';
 class OrderState extends Equatable {
   final List<OrderProduct> productCart;
   final ApiState registOrderState;
+  final bool? isauthenticated;
   final int totalProductPrice;
   final int baseDiscountPrice;
   final int membershipDiscountPrice;
@@ -17,6 +18,7 @@ class OrderState extends Equatable {
   OrderState(
       {required this.productCart,
       required this.registOrderState,
+      required this.isauthenticated,
       required this.totalProductPrice,
       required this.baseDiscountPrice,
       required this.membershipDiscountPrice,
@@ -30,6 +32,7 @@ class OrderState extends Equatable {
     return OrderState(
       productCart: [],
       registOrderState: ApiState.initial,
+      isauthenticated: null,
       totalProductPrice: 0,
       baseDiscountPrice: 0,
       membershipDiscountPrice: 0,
@@ -44,6 +47,7 @@ class OrderState extends Equatable {
   List<Object?> get props => [
         productCart,
         registOrderState,
+        isauthenticated,
         totalProductPrice,
         baseDiscountPrice,
         membershipDiscountPrice,
@@ -57,6 +61,7 @@ class OrderState extends Equatable {
   OrderState copyWith({
     List<OrderProduct>? productCart,
     ApiState? registOrderState,
+    bool? isauthenticated,
     int? totalProductPrice,
     int? baseDiscountPrice,
     int? membershipDiscountPrice,
@@ -69,6 +74,7 @@ class OrderState extends Equatable {
     return OrderState(
         productCart: productCart ?? this.productCart,
         registOrderState: registOrderState ?? this.registOrderState,
+        isauthenticated: isauthenticated,
         totalProductPrice: totalProductPrice ?? this.totalProductPrice,
         baseDiscountPrice: baseDiscountPrice ?? this.baseDiscountPrice,
         membershipDiscountPrice:

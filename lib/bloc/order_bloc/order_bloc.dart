@@ -62,12 +62,22 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             1000));
   }
 
-  void addProductToCart(AddProductToCartEvent event, Emitter<OrderState> emit) {
+  Future<void> addProductToCart(
+      AddProductToCartEvent event, Emitter<OrderState> emit) async {
+    emit(state.copyWith(isauthenticated: null, productCart: []));
+    if (await _orderRepository.isRefreshExpired()) {
+      emit(state.copyWith(
+          isauthenticated: false, productCart: event.orderProduct));
+      return;
+    }
     emit(
       state.copyWith(
+        isauthenticated: true,
         productCart: event.orderProduct,
       ),
     );
+    print(state.productCart);
+    print(state.isauthenticated);
   }
 
   Future<void> registOrder(
