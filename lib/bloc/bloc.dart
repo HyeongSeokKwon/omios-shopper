@@ -9,4 +9,4 @@ export 'package:cloth_collection/bloc/review_bloc/review_bloc.dart';
 export 'cart_bloc/bloc/cart_bloc.dart';
 export 'coupon_bloc/coupon_bloc.dart';
 
-enum ApiState { initial, loading, success, fail }
+enum ApiState { initial, loading, success, fail, unauthenticated }
