@@ -1,5 +1,6 @@
 import 'package:cloth_collection/bloc/bloc.dart';
 import 'package:cloth_collection/page/coupon/coupon.dart';
+import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/page/mypage/serviceCenter.dart';
 import 'package:cloth_collection/page/mypage/setting.dart';
 import 'package:cloth_collection/page/orderHistory/orderHistory.dart';
@@ -53,12 +54,59 @@ class _MyPageState extends State<MyPage> {
                 ),
               ),
             );
+          } else if (state.getShopperInfoState == ApiState.unauthenticated) {
+            return SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                  child: Column(
+                    children: [
+                      unauthenticatedWidget(),
+                      addtionalAppInfo(),
+                    ],
+                  ),
+                ),
+              ),
+            );
           } else if (state.getShopperInfoState == ApiState.fail) {
             return ErrorCard();
           } else {
             return progressBar();
           }
         },
+      ),
+    );
+  }
+
+  Widget unauthenticatedWidget() {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 20 * Scale.height),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          InkWell(
+            child: Text(
+              "로그인",
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Login(
+                    routePage: MyPage(),
+                  ),
+                ),
+              );
+            },
+          ),
+          SizedBox(width: 12 * Scale.width),
+          Container(
+            child: Text(
+              "회원가입",
+            ),
+          )
+        ],
       ),
     );
   }
@@ -113,10 +161,14 @@ class _MyPageState extends State<MyPage> {
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         prefs.setBool('autoLogin', false);
+                        prefs.setString('accessToken', '');
+                        prefs.setString('refreshToken', '');
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) => Login(),
+                            builder: (BuildContext context) => Login(
+                              routePage: HomePage(),
+                            ),
                           ),
                           (route) =>
                               false, //if you want to disable back feature set to false
