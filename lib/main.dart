@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
       ],
       routes: {
         '/splash': (context) => const Splash(),
-        '/login': (context) => const Login(),
         '/home': (context) => HomePage(),
       },
       builder: (context, child) {
