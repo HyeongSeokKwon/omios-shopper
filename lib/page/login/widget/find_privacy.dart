@@ -1,3 +1,4 @@
+import 'package:cloth_collection/page/home.dart';
 import 'package:flutter/material.dart';
 
 import '../../../util/util.dart';
@@ -35,7 +36,10 @@ class _FindId extends StatelessWidget {
       child: Text("아이디 찾기",
           style: textStyle(
               const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0)),
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      },
     );
   }
 }

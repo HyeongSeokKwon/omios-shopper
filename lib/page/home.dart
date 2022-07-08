@@ -21,6 +21,8 @@ const int CHAT = 3;
 const int MYPAGE = 4;
 
 class HomePage extends StatefulWidget {
+  late final int? initPageIndex;
+  HomePage([this.initPageIndex]);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -68,6 +70,9 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+    if (widget.initPageIndex != null) {
+      _currentIndex = widget.initPageIndex!;
+    }
     DBHelper().db;
   }
 

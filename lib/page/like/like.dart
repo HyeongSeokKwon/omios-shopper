@@ -1,6 +1,8 @@
 import 'package:cloth_collection/bloc/bloc.dart';
+import 'package:cloth_collection/page/home.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
+import 'package:cloth_collection/widget/needLoginWidget.dart';
 import 'package:cloth_collection/widget/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +41,9 @@ class _LikePageState extends State<LikePage> {
                 imageWidth: 115);
           },
         );
+      } else if (state.getAllLikeState == ApiState.unauthenticated) {
+        return NeedLoginWidget(
+            routePage: HomePage(2)); //likewidget index of homePage
       } else if (state.getAllLikeState == ApiState.fail) {
         return ErrorCard();
       } else {

@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloth_collection/page/cart/emptyCart.dart';
-import 'package:cloth_collection/page/login/login.dart';
 import 'package:cloth_collection/page/order/order.dart';
 import 'package:cloth_collection/widget/cupertinoAndmateritalWidget.dart';
 import 'package:cloth_collection/widget/error_card.dart';
+import 'package:cloth_collection/widget/needLoginWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -110,76 +110,7 @@ class _CartPageState extends State<CartPage> {
             } else if (state.getCartsState == ApiState.fail) {
               return ErrorCard();
             } else if (state.getCartsState == ApiState.unauthenticated) {
-              return Container(
-                height: double.maxFinite,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "로그인이 필요한 서비스입니다.",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, 'NotoSansKR', 18.0),
-                      ),
-                      SizedBox(
-                        height: 15 * Scale.height,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey[400]!),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(11))),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 15 * Scale.width,
-                                    vertical: 10 * Scale.height),
-                                child: Center(
-                                  child: Text(
-                                    '로그인',
-                                    style: textStyle(Colors.grey[600]!,
-                                        FontWeight.w500, 'NotoSansKR', 16.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Login(
-                                            routePage: CartPage(),
-                                          )));
-                            },
-                          ),
-                          SizedBox(width: 10 * Scale.width),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: MAINCOLOR,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(11))),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15 * Scale.width,
-                                  vertical: 10 * Scale.height),
-                              child: Center(
-                                child: Text(
-                                  '회원가입',
-                                  style: textStyle(Colors.white,
-                                      FontWeight.w500, 'NotoSansKR', 16.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
+              return NeedLoginWidget(routePage: CartPage());
             } else {
               return progressBar();
             }

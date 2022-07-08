@@ -42,6 +42,11 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
   Future<void> getAllLikeProducts(
       GetLikesProduct event, Emitter<LikeState> emit) async {
     Map likeData;
+
+    if (await _userRepository.isRefreshExpired()) {
+      emit(state.copyWith(getAllLikeState: ApiState.unauthenticated));
+      return;
+    }
     try {
       emit(state.copyWith(getAllLikeState: ApiState.loading));
       likeData = await _userRepository.getAllLikeProducts();
