@@ -72,6 +72,8 @@ class _HomePageState extends State<HomePage>
     super.initState();
     if (widget.initPageIndex != null) {
       _currentIndex = widget.initPageIndex!;
+      currentIconUrl[0] = navigationIconUrl[0];
+      currentIconUrl[_currentIndex] = navigationOnTapIconUrl[_currentIndex];
     }
     DBHelper().db;
   }

@@ -79,8 +79,6 @@ class ImageSlideHasNum extends StatefulWidget {
 }
 
 class _ImageSlideHasNumState extends State<ImageSlideHasNum> {
-  double _currentPosition = 0.0;
-
   @override
   void initState() {
     super.initState();
