@@ -40,12 +40,12 @@ class DeepyHomeAppbar extends StatelessWidget with PreferredSizeWidget {
                     Get.to(() => (SearchByText()));
                   },
                   child: Container(
-                    height: 45 * Scale.height,
+                    height: 40 * Scale.height,
                     width: 500,
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.all(
-                        Radius.circular(15),
+                        Radius.circular(9),
                       ),
                     ),
                     child: Center(
