@@ -139,15 +139,15 @@ class _MyPageState extends State<MyPage> {
                         children: [
                           TextSpan(
                               style: textStyle(Color(0xff797979),
-                                  FontWeight.w500, "NotoSansKR", 16.0),
+                                  FontWeight.w500, "NotoSansKR", 14.0),
                               text: context
                                   .read<ShopperInfoBloc>()
                                   .state
                                   .shopperInfo['membership']['name']),
                           TextSpan(
                               style: textStyle(const Color(0xff999999),
-                                  FontWeight.w400, "NotoSansKR", 16.0),
-                              text: "등급 혜택 보기 >")
+                                  FontWeight.w500, "NotoSansKR", 14.0),
+                              text: "등급 혜택 보기")
                         ],
                       ),
                     ),
@@ -155,7 +155,7 @@ class _MyPageState extends State<MyPage> {
                     Container(
                         child: InkWell(
                       child: Text("로그아웃",
-                          style: textStyle(Color(0xff797979), FontWeight.w400,
+                          style: textStyle(Color(0xff797979), FontWeight.w500,
                               "NotoSansKR", 14.0)),
                       onTap: () async {
                         SharedPreferences prefs =
@@ -202,66 +202,69 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget myActivityArea() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        GestureDetector(
-          child: Column(
-            children: [
-              SvgPicture.asset("assets/images/svg/mypageOrderHistory.svg"),
-              SizedBox(height: 4 * Scale.height),
-              Text("주문내역",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
-                      "NotoSansKR", 14.0)),
-            ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 18.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            child: Column(
+              children: [
+                SvgPicture.asset("assets/images/svg/mypageOrderHistory.svg"),
+                SizedBox(height: 4 * Scale.height),
+                Text("주문내역",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 13.0)),
+              ],
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => OrderHistory()));
+            },
           ),
-          onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => OrderHistory()));
-          },
-        ),
-        GestureDetector(
-          child: Column(
-            children: [
-              SvgPicture.asset("assets/images/svg/mypageMakeReview.svg"),
-              SizedBox(height: 4 * Scale.height),
-              Text("리뷰작성",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
-                      "NotoSansKR", 14.0)),
-            ],
+          GestureDetector(
+            child: Column(
+              children: [
+                SvgPicture.asset("assets/images/svg/mypageMakeReview.svg"),
+                SizedBox(height: 4 * Scale.height),
+                Text("리뷰작성",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 13.0)),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ReviewPage()));
+            },
           ),
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => ReviewPage()));
-          },
-        ),
-        GestureDetector(
-          child: Column(
-            children: [
-              SvgPicture.asset("assets/images/svg/mypageLikeProduct.svg"),
-              SizedBox(height: 4 * Scale.height),
-              Text("찜한상품",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
-                      "NotoSansKR", 14.0)),
-            ],
+          GestureDetector(
+            child: Column(
+              children: [
+                SvgPicture.asset("assets/images/svg/mypageLikeProduct.svg"),
+                SizedBox(height: 4 * Scale.height),
+                Text("찜한상품",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 13.0)),
+              ],
+            ),
           ),
-        ),
-        GestureDetector(
-          child: Column(
-            children: [
-              SvgPicture.asset(
-                  "assets/images/svg/mypageRecentlyViewProduct.svg"),
-              SizedBox(height: 4 * Scale.height),
-              Text("최근 본 상품",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
-                      "NotoSansKR", 14.0)),
-            ],
+          GestureDetector(
+            child: Column(
+              children: [
+                SvgPicture.asset(
+                    "assets/images/svg/mypageRecentlyViewProduct.svg"),
+                SizedBox(height: 4 * Scale.height),
+                Text("최근 본 상품",
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
+                        "NotoSansKR", 13.0)),
+              ],
+            ),
+            onTap: () {
+              Get.to(() => RecentviewProduct());
+            },
           ),
-          onTap: () {
-            Get.to(() => RecentviewProduct());
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -307,9 +310,9 @@ class _MyPageState extends State<MyPage> {
                         "포인트",
                         style: textStyle(
                           const Color(0xff797979),
-                          FontWeight.w400,
+                          FontWeight.w700,
                           "NotoSansKR",
-                          14.0,
+                          13.0,
                         ),
                       ),
                       SizedBox(height: 2 * Scale.height),
@@ -369,9 +372,9 @@ class _MyPageState extends State<MyPage> {
                     "쿠폰",
                     style: textStyle(
                       const Color(0xff797979),
-                      FontWeight.w400,
+                      FontWeight.w700,
                       "NotoSansKR",
-                      14.0,
+                      13.0,
                     ),
                   ),
                   SizedBox(height: 2 * Scale.height),
@@ -408,7 +411,7 @@ class _MyPageState extends State<MyPage> {
                 SizedBox(width: 16 * Scale.width),
                 Text(
                   "앱 문의",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
                       "NotoSansKR", 16.0),
                 ),
               ],
@@ -434,7 +437,7 @@ class _MyPageState extends State<MyPage> {
                   SizedBox(width: 16 * Scale.width),
                   Text(
                     "고객센터",
-                    style: textStyle(const Color(0xff333333), FontWeight.w400,
+                    style: textStyle(const Color(0xff333333), FontWeight.w500,
                         "NotoSansKR", 16.0),
                   ),
                 ],
@@ -456,7 +459,7 @@ class _MyPageState extends State<MyPage> {
                 SizedBox(width: 16 * Scale.width),
                 Text(
                   "이용약관",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
                       "NotoSansKR", 16.0),
                 ),
               ],
@@ -477,7 +480,7 @@ class _MyPageState extends State<MyPage> {
                 SizedBox(width: 16 * Scale.width),
                 Text(
                   "개인정보 취급방침",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
                       "NotoSansKR", 16.0),
                 ),
               ],
@@ -498,7 +501,7 @@ class _MyPageState extends State<MyPage> {
                 SizedBox(width: 16 * Scale.width),
                 Text(
                   "버전정보",
-                  style: textStyle(const Color(0xff333333), FontWeight.w400,
+                  style: textStyle(const Color(0xff333333), FontWeight.w500,
                       "NotoSansKR", 16.0),
                 ),
               ],
