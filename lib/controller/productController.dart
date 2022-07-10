@@ -61,8 +61,9 @@ class ProductController extends GetxController {
     } else {
       queryParams['main_category'] = '$mainCategoryId';
     }
-    response =
-        await httpRepository.httpGet("/products", queryParams).catchError((e) {
+    response = await httpRepository
+        .httpPublicGet("/products", queryParams)
+        .catchError((e) {
       throw e;
     });
 
@@ -86,7 +87,7 @@ class ProductController extends GetxController {
       var page = "page";
       queryParams['page'] = "${nextDataLink![nextDataLink!.indexOf(page) + 5]}";
       response = await httpRepository
-          .httpGet("/products", queryParams)
+          .httpPublicGet("/products", queryParams)
           .catchError((e) {
         throw e;
       });
