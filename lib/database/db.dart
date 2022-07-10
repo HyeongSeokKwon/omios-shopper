@@ -25,6 +25,9 @@ Future<Database> initDB() async {
       await db.execute(
         'CREATE TABLE IF NOT EXISTS RECENTVIEW(productId INTEGER PRIMARY KEY NOT NULL,time DATETIME)',
       );
+      await db.execute(
+        'CREATE TABLE IF NOT EXISTS RECENTSEARCHES(searches STRING PRIMARY KEY NOT NULL)',
+      );
     },
   );
 }
@@ -58,5 +61,33 @@ void deleteOldestRecent(Future<Database> db) async {
   Database database = await db;
   await database.rawQuery(
     'DELETE FROM RECENTVIEW WHERE productId=(SELECT productId FROM RECENTVIEW LIMIT 1,1)',
+  );
+}
+
+Future<void> setRecentSearches(Future<Database> db, String searches) async {
+  Database database = await db;
+  final List<Map<String, dynamic>> maps =
+      await database.rawQuery('INSERT INTO RECENTSEARCHES VALUES($searches)');
+}
+
+Future<List<dynamic>> getRecentSearches(Future<Database> db) async {
+  Database database = await db;
+  final List<Map<String, dynamic>> maps = await database.rawQuery(
+    'SELECT * FROM RECENTSEARCHES',
+  );
+  return maps;
+}
+
+void deleteRecentSearches(Future<Database> db, String searches) async {
+  Database database = await db;
+  await database.rawQuery(
+    'DELETE FROM RECENTVIEW WHERE searches=$searches',
+  );
+}
+
+void deleteAllRecentSearches(Future<Database> db) async {
+  Database database = await db;
+  await database.rawQuery(
+    'DELETE FROM RECENTVIEW',
   );
 }
