@@ -29,14 +29,6 @@ class _PhotoViewerState extends State<PhotoViewer> {
   }
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    scaleController.dispose();
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: Colors.white,
@@ -45,75 +37,62 @@ class _PhotoViewerState extends State<PhotoViewer> {
     return SafeArea(
       top: true,
       bottom: true,
-      child: WillPopScope(
-        onWillPop: () async {
-          if (Platform.isIOS) {
-            if (Navigator.of(context).userGestureInProgress)
-              return false;
-            else {
-              return true;
-            }
-          } else {
-            return true;
-          }
-        },
-        child: Scaffold(
-          backgroundColor: Colors.green,
-          body: Stack(
-            children: [
-              PhotoViewGallery.builder(
-                scrollPhysics: const ClampingScrollPhysics(),
-                builder: (BuildContext context, int index) {
-                  return PhotoViewGalleryPageOptions(
-                    scaleStateController: scaleController,
-                    imageProvider: CachedNetworkImageProvider(
-                        "${widget.imageList[index]['image_url']}"),
-                    minScale: PhotoViewComputedScale.contained,
-                    maxScale: PhotoViewComputedScale.contained * 1.75,
-                  );
-                },
-                itemCount: widget.imageList.length,
-                pageController: _pageController,
-                onPageChanged: (value) {
-                  setState(() {
-                    curIndex = value;
-                  });
-                },
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 20 * Scale.height, right: 20 * Scale.height),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.clear,
-                      color: Colors.white,
-                    ),
+      child: Scaffold(
+        backgroundColor: Colors.green,
+        body: Stack(
+          children: [
+            PhotoViewGallery.builder(
+              scrollPhysics: const ClampingScrollPhysics(),
+              builder: (BuildContext context, int index) {
+                return PhotoViewGalleryPageOptions(
+                  scaleStateController: scaleController,
+                  imageProvider: CachedNetworkImageProvider(
+                      "${widget.imageList[index]['image_url']}"),
+                  minScale: PhotoViewComputedScale.contained,
+                  maxScale: PhotoViewComputedScale.contained * 1.75,
+                );
+              },
+              itemCount: widget.imageList.length,
+              pageController: _pageController,
+              onPageChanged: (value) {
+                setState(() {
+                  curIndex = value;
+                });
+              },
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: 20 * Scale.height, right: 20 * Scale.height),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(
+                    Icons.clear,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              Positioned(
-                top: 0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20 * Scale.height),
-                  child: Container(
-                    width: 414 * Scale.width,
-                    child: Center(
-                      child: Text(
-                          "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
-                          style: textStyle(const Color(0xffffffff),
-                              FontWeight.w700, "NotoSansKR", 20.0)),
-                    ),
+            ),
+            Positioned(
+              top: 0,
+              child: Padding(
+                padding: EdgeInsets.only(top: 20 * Scale.height),
+                child: Container(
+                  width: 414 * Scale.width,
+                  child: Center(
+                    child: Text(
+                        "${(curIndex + 1).toInt()} / ${widget.imageList.length}",
+                        style: textStyle(const Color(0xffffffff),
+                            FontWeight.w700, "NotoSansKR", 20.0)),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:cloth_collection/controller/recentViewController.dart';
 import 'package:cloth_collection/model/productModel.dart';
 import 'package:cloth_collection/page/SearchByText/searchByText.dart';
 import 'package:cloth_collection/page/order/order.dart';
+import 'package:cloth_collection/page/productDetail/photoViewer.dart';
 import 'package:cloth_collection/page/productDetail/widget/review.dart';
 import 'package:cloth_collection/page/qna/qna.dart';
 import 'package:cloth_collection/util/util.dart';
@@ -19,6 +20,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../bloc/bloc.dart';
 import '../../bloc/cart_bloc/bloc/cart_state.dart';
@@ -37,7 +40,6 @@ class _ProductDetailState extends State<ProductDetail>
       ProductDetailController();
   final PageController pageController = PageController();
   late TabController _controller;
-  late NavigatorState navigator;
   late Future recommandProductFuture;
   late Future productDetailInfo;
 
@@ -56,12 +58,6 @@ class _ProductDetailState extends State<ProductDetail>
     pageController.addListener(() {
       productDetailController.changeOffset(pageController.offset);
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    navigator = Navigator.of(context);
-    super.didChangeDependencies();
   }
 
   @override
@@ -143,8 +139,7 @@ class _ProductDetailState extends State<ProductDetail>
               color: Colors.white,
               child: Column(
                 children: [
-                  ImageSlideHasDot(
-                      imageList: productDetailController.productInfo.images),
+                  _buildImages(),
                   SizedBox(height: 10 * Scale.height),
                   _buildShortProductInfo(),
                   SizedBox(height: 14 * Scale.height),
@@ -177,6 +172,63 @@ class _ProductDetailState extends State<ProductDetail>
             child: progressBar(),
           );
       },
+    );
+  }
+
+  Widget _buildImages() {
+    PageController _pageController = PageController(initialPage: 0);
+
+    return Container(
+      width: 414 * Scale.width,
+      height: 1.2 * 414 * Scale.width,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: productDetailController.productInfo.images.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                child: GestureDetector(
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        "${productDetailController.productInfo.images[index]['image_url']}",
+                    fit: BoxFit.fill,
+                    width: 414 * Scale.width,
+                    height: 1.2 * 414 * Scale.width,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PhotoViewer(
+                            imageList:
+                                productDetailController.productInfo.images,
+                            index: index)));
+                  },
+                ),
+              );
+            },
+            onPageChanged: (value) {
+              setState(() {});
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: SmoothPageIndicator(
+                controller: _pageController,
+                count: productDetailController.productInfo.images.length,
+                effect: WormEffect(
+                    spacing: 8.0,
+                    dotWidth: 15.0,
+                    dotHeight: 15.0,
+                    strokeWidth: 1.5,
+                    dotColor: Colors.grey,
+                    activeDotColor: Colors.black),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -241,7 +293,7 @@ class _ProductDetailState extends State<ProductDetail>
               Text(
                 "${productDetailController.productInfo.name}",
                 style: textStyle(const Color(0xff555555), FontWeight.w500,
-                    "NotoSansKR", 20.0),
+                    "NotoSansKR", 18.0),
               ),
               SizedBox(height: 13 * Scale.height),
               Row(
