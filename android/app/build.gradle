@@ -34,7 +34,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.cloth_collection"
-        minSdkVersion 19
+        minSdkVersion 20
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -44,6 +44,14 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            lintOptions {
+
+                disable 'InvalidPackage'
+                disable "Instantiatable"
+                checkReleaseBuilds false
+                abortOnError false
+
+            }
             signingConfig signingConfigs.debug
         }
     }
