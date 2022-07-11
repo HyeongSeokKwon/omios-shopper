@@ -426,62 +426,100 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                 context.read<SearchBloc>().add(ShowRecentSearchesEvent());
                 return progressBar();
               } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "최근 검색 목록",
-                        style: textStyle(Colors.grey[400]!, FontWeight.w500,
-                            'NotoSansKR', 13.0),
-                      ),
-                      SizedBox(height: 3 * Scale.height),
-                      Container(
-                        height: 40 * Scale.height,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: context
-                              .read<SearchBloc>()
-                              .state
-                              .recentSearches
-                              .length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(11),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BlocBuilder<SearchBloc, SearchState>(
+                      builder: (context, state) {
+                        if (state.recentSearches.isNotEmpty) {
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.0 * Scale.width),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "최근 검색 목록",
+                                      style: textStyle(Colors.grey[400]!,
+                                          FontWeight.w500, 'NotoSansKR', 13.0),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        context
+                                            .read<SearchBloc>()
+                                            .add(ClickDeleteSearchesEvent());
+                                      },
+                                      child: Text(
+                                        "지우기",
+                                        style: textStyle(
+                                          Colors.grey[800]!,
+                                          FontWeight.w500,
+                                          'NotoSansKR',
+                                          13.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 4 * Scale.height,
-                                    horizontal: 8 * Scale.width),
-                                child: Center(
-                                  child: Text(
-                                    context
+                              SizedBox(height: 3 * Scale.height),
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 15.0 * Scale.width),
+                                child: Container(
+                                  height: 40 * Scale.height,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: context
                                         .read<SearchBloc>()
                                         .state
-                                        .recentSearches[index]['searches'],
-                                    style: textStyle(Colors.black,
-                                        FontWeight.w500, 'NotoSansKR', 13.0),
+                                        .recentSearches
+                                        .length,
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        margin: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(11),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 4 * Scale.height,
+                                              horizontal: 8 * Scale.width),
+                                          child: Center(
+                                            child: Text(
+                                              context
+                                                      .read<SearchBloc>()
+                                                      .state
+                                                      .recentSearches[index]
+                                                  ['searches'],
+                                              style: textStyle(
+                                                  Colors.black,
+                                                  FontWeight.w500,
+                                                  'NotoSansKR',
+                                                  13.0),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15 * Scale.height),
-                      Text(
-                        "최근 본 상품",
-                        style: textStyle(Colors.grey[400]!, FontWeight.w500,
-                            'NotoSansKR', 13.0),
-                      ),
-                    ],
-                  ),
+                              SizedBox(height: 15 * Scale.height),
+                            ],
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
+                  ],
                 );
               }
             }

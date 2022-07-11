@@ -28,3 +28,5 @@ class ClickedSearchButtonEvent extends SearchEvent {
 }
 
 class ShowRecentSearchesEvent extends SearchEvent {}
+
+class ClickDeleteSearchesEvent extends SearchEvent {}

@@ -18,6 +18,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<ChangeSearchingText>(getSearchBox);
     on<ClickedSearchButtonEvent>(getSearchProducts);
     on<ShowRecentSearchesEvent>(showRecentSearches);
+    on<ClickDeleteSearchesEvent>(deleteSearches);
   }
 
   Future<void> getSearchBox(
@@ -70,5 +71,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(state.copyWith(
         recentSearchesState: ApiState.success,
         recentSearches: recentSearchResult));
+  }
+
+  Future<void> deleteSearches(
+      ClickDeleteSearchesEvent event, Emitter<SearchState> emit) async {
+    deleteAllRecentSearches(dbHelper.db);
+    emit(state.copyWith(recentSearches: []));
   }
 }
