@@ -71,52 +71,49 @@ class _SearchByTextState extends State<SearchByText> {
               child: BlocBuilder<InfinityScrollBloc, InfinityScrollState>(
                 builder: (context, state) {
                   return BlocBuilder<SearchBloc, SearchState>(
-                    builder: (context, state) {
-                      return TextField(
-                        controller: textController,
-                        autofocus: false,
-                        onChanged: (String value) {
+                      builder: (context, state) {
+                    return TextField(
+                      controller: textController,
+                      autofocus: false,
+                      onChanged: (String value) {
+                        context
+                            .read<SearchBloc>()
+                            .add(ChangeSearchingText(text: value));
+                      },
+                      onSubmitted: (String value) async {
+                        if (value.length >= 2) {
                           context
                               .read<SearchBloc>()
-                              .add(ChangeSearchingText(text: value));
-                        },
-                        onSubmitted: (String value) async {
-                          if (value.length >= 2) {
-                            context
-                                .read<SearchBloc>()
-                                .add(ClickedSearchButtonEvent(text: value));
-                          }
-                        },
-                        cursorColor: Colors.grey[400],
-                        style: textStyle(Colors.grey[600]!, FontWeight.w500,
-                            'NotoSansKR', 15.0),
-                        decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.all(11 * Scale.width),
-                            filled: true,
-                            fillColor: Colors.grey[5],
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(7)),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(7)),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(7)),
-                              borderSide: BorderSide.none,
-                            ),
-                            hintText: ' 검색어를 입력하세요',
-                            hintStyle: textStyle(Colors.grey[600]!,
-                                FontWeight.w500, 'NotoSansKR', 15.0)),
-                      );
-                    },
-                  );
+                              .add(ClickedSearchButtonEvent(text: value));
+                        }
+                      },
+                      cursorColor: Colors.grey[400],
+                      style: textStyle(Colors.grey[600]!, FontWeight.w500,
+                          'NotoSansKR', 15.0),
+                      decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.all(11 * Scale.width),
+                          filled: true,
+                          fillColor: Colors.grey[5],
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          border: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: ' 검색어를 입력하세요',
+                          hintStyle: textStyle(Colors.grey[600]!,
+                              FontWeight.w500, 'NotoSansKR', 15.0)),
+                    );
+                  });
                 },
               ),
             ),
@@ -425,7 +422,68 @@ class _SearchScrollAreaState extends State<SearchScrollArea> {
                 ApiState.loading) {
               return progressBar();
             } else {
-              return SizedBox();
+              if (state.recentSearchesState == ApiState.initial) {
+                context.read<SearchBloc>().add(ShowRecentSearchesEvent());
+                return progressBar();
+              } else {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20 * Scale.width),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "최근 검색 목록",
+                        style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                            'NotoSansKR', 13.0),
+                      ),
+                      SizedBox(height: 3 * Scale.height),
+                      Container(
+                        height: 40 * Scale.height,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: context
+                              .read<SearchBloc>()
+                              .state
+                              .recentSearches
+                              .length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(11),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 4 * Scale.height,
+                                    horizontal: 8 * Scale.width),
+                                child: Center(
+                                  child: Text(
+                                    context
+                                        .read<SearchBloc>()
+                                        .state
+                                        .recentSearches[index]['searches'],
+                                    style: textStyle(Colors.black,
+                                        FontWeight.w500, 'NotoSansKR', 13.0),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 15 * Scale.height),
+                      Text(
+                        "최근 본 상품",
+                        style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                            'NotoSansKR', 13.0),
+                      ),
+                    ],
+                  ),
+                );
+              }
             }
           },
         );
