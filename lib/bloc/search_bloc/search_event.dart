@@ -26,3 +26,5 @@ class ClickedSearchButtonEvent extends SearchEvent {
   final String text;
   ClickedSearchButtonEvent({required this.text});
 }
+
+class ShowRecentSearchesEvent extends SearchEvent {}
