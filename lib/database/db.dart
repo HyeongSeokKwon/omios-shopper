@@ -17,16 +17,18 @@ class DBHelper {
 Future<Database> initDB() async {
   var dbPath = await getDatabasesPath();
   String path = join(dbPath,
-      'deepy_database.db'); //database  경로 지정! join 함수를 통해 각 플랫폼 별로 경로 생성 보장가능)
+      'deepy_database.db'); //database 경로 지정! join 함수를 통해 각 플랫폼 별로 경로 생성 보장가능)
+
   return openDatabase(
     path,
-    version: 1,
-    onCreate: (db, version) async {
+    version: 3,
+    onOpen: (db) async {
       await db.execute(
         'CREATE TABLE IF NOT EXISTS RECENTVIEW(productId INTEGER PRIMARY KEY NOT NULL,time DATETIME)',
       );
+
       await db.execute(
-        'CREATE TABLE IF NOT EXISTS RECENTSEARCHES(searches STRING PRIMARY KEY NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS RECENTSEARCHES(searches TEXT PRIMARY KEY NOT NULL)',
       );
     },
   );
@@ -66,28 +68,27 @@ void deleteOldestRecent(Future<Database> db) async {
 
 Future<void> setRecentSearches(Future<Database> db, String searches) async {
   Database database = await db;
-  final List<Map<String, dynamic>> maps =
-      await database.rawQuery('INSERT INTO RECENTSEARCHES VALUES($searches)');
+  await database.execute('INSERT INTO RECENTSEARCHES VALUES("$searches")');
 }
 
 Future<List<dynamic>> getRecentSearches(Future<Database> db) async {
   Database database = await db;
-  final List<Map<String, dynamic>> maps = await database.rawQuery(
+  final List<Map<String, dynamic>> result = await database.rawQuery(
     'SELECT * FROM RECENTSEARCHES',
   );
-  return maps;
+  return List.from(result.reversed);
 }
 
-void deleteRecentSearches(Future<Database> db, String searches) async {
+Future<void> deleteRecentSearches(Future<Database> db, String searches) async {
   Database database = await db;
   await database.rawQuery(
-    'DELETE FROM RECENTVIEW WHERE searches=$searches',
+    'DELETE FROM RECENTSEARCHES WHERE searches="$searches"',
   );
 }
 
 void deleteAllRecentSearches(Future<Database> db) async {
   Database database = await db;
   await database.rawQuery(
-    'DELETE FROM RECENTVIEW',
+    'DELETE FROM RECENTSEARCHES',
   );
 }
